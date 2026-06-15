@@ -1,0 +1,194 @@
+/* =============================================
+   FOOTER STYLES
+   ============================================= */
+.main-footer {
+    background-color: #000;
+    color: #fff;
+    padding: 50px 20px 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.main-footer .footer-bottom {
+    border-top: 1px solid #222;
+    margin-top: 20px;
+    padding-top: 16px;
+    text-align: center;
+}
+
+.main-footer .copyright {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+    color: #555;
+    font-size: 12px;
+}
+
+.main-footer .disclaimer {
+    margin-top: 12px;
+    color: #444;
+    font-size: 10px;
+    line-height: 1.5;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.main-footer .disclaimer strong {
+    color: #666;
+}
+
+.main-footer .footer-top {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.main-footer .footer-logo img {
+    height: 40px;
+}
+
+.main-footer .tagline {
+    font-size: 12px;
+    color: #888;
+    font-style: italic;
+    margin-top: -5px;
+}
+
+/* 3-Column Layout */
+.main-footer .footer-content {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    justify-content: space-between;
+    gap: 50px;
+}
+
+.main-footer .footer-column {
+    flex: 1;
+}
+
+/* Column Headers */
+.main-footer .footer-column h3 {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+/* Link Lists */
+.main-footer .footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.main-footer .footer-links li {
+    margin-bottom: 10px;
+}
+
+.main-footer .footer-links li a {
+    color: #ddd;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    transition: color 0.2s;
+}
+
+.main-footer .footer-links li a:hover {
+    color: #87b942;
+}
+
+/* Address Box */
+.main-footer .address-box {
+    margin-bottom: 14px;
+}
+
+.main-footer .address-box h4 {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.main-footer .address-box p {
+    font-size: 13px;
+    color: #bbb;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Social Icons - Centered */
+.main-footer .footer-social {
+    max-width: 1100px;
+    margin: 30px auto 0;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #222;
+}
+
+.main-footer .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.main-footer .social-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.main-footer .social-btn:nth-child(1) { background: #25D366; } /* WhatsApp */
+.main-footer .social-btn:nth-child(2) { background: #1DA1F2; } /* Twitter */
+.main-footer .social-btn:nth-child(3) { background: #3B5998; } /* Facebook */
+.main-footer .social-btn:nth-child(4) { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); } /* Instagram */
+.main-footer .social-btn:nth-child(5) { background: #0088CC; } /* Telegram */
+.main-footer .social-btn:nth-child(6) { background: #0077B5; } /* LinkedIn */
+.main-footer .social-btn:nth-child(7) { background: #FF0000; } /* YouTube */
+.main-footer .social-btn:nth-child(8) { background: #666666; } /* Phone */
+
+.main-footer .social-btn img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.main-footer .social-btn:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+}
+
+/* Copyright */
+.main-footer .copyright {
+    border-top: 1px solid #222;
+    margin-top: 20px;
+    padding-top: 16px;
+    text-align: center;
+    color: #555;
+    font-size: 12px;
+}
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 768px) {
+    .main-footer .footer-content {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .main-footer { padding: 40px 16px 16px; }
+}
+
+@media (max-width: 480px) {
+    .main-footer { padding: 30px 16px 16px; }
+    .main-footer .footer-content { gap: 20px; }
+    .main-footer .social-icons { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .main-footer .footer-links li a { font-size: 13px; }
+    .main-footer .disclaimer { font-size: 9px; }
+}

@@ -1,0 +1,591 @@
+/* =============================================
+   PROFILE PAGE
+   ============================================= */
+
+.profile-hero {
+    background: linear-gradient(135deg, #2d4a1a 0%, #4a7c20 40%, #87b942 100%);
+    padding: 52px 40px 64px;
+}
+
+.profile-hero-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.profile-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -1px;
+}
+
+.profile-hero-info h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.profile-hero-info .hero-email {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 12px;
+}
+
+.profile-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.profile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.2px;
+}
+
+.badge-member {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.badge-type {
+    background: #fff;
+    color: #4a7c20;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.badge-since {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* ── Main layout ── */
+.profile-body {
+    max-width: 1300px;
+    margin: -28px auto 60px;
+    padding: 0 40px;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.pf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) { .pf-row { grid-template-columns: 1fr; } }
+
+/* ── Two-column card ── */
+.pf-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+}
+
+.pf-section {
+    padding: 28px;
+}
+
+.pf-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pf-divider {
+    background: #f0f0f0;
+    width: 1px;
+}
+
+/* ── Password strength bar ── */
+.pf-strength-bar {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.pf-strength-bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    transition: width 0.3s, background 0.3s;
+}
+
+@media (max-width: 780px) {
+    .pf-two-col {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1px auto;
+    }
+    .pf-divider { width: 100%; height: 1px; }
+}
+
+@media (max-width: 780px) {
+    .profile-grid { grid-template-columns: 1fr; }
+    .profile-hero-inner { flex-direction: column; text-align: center; }
+    .profile-badge-row { justify-content: center; }
+    .profile-body { padding: 0 16px; }
+    .profile-hero { padding: 40px 16px 52px; }
+}
+
+@media (max-width: 1024px) and (min-width: 781px) {
+    .profile-body { padding: 0 24px; }
+}
+
+/* ── Cards ── */
+.profile-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+}
+
+.profile-card-header {
+    padding: 22px 28px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #f0f8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #87b942;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.profile-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+.profile-card-body { padding: 28px; }
+
+/* ── Form elements ── */
+.pf-group {
+    margin-bottom: 22px;
+}
+
+.pf-group:last-of-type { margin-bottom: 0; }
+
+.pf-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+}
+
+.pf-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e4e4e4;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #1a1a1a;
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+
+.pf-input:focus {
+    border-color: #87b942;
+    box-shadow: 0 0 0 3px rgba(135, 185, 66, 0.12);
+}
+
+.pf-input.is-error { border-color: #e53935; }
+.pf-input.is-error:focus { box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1); }
+
+.pf-input[readonly] {
+    background: #f8f9fa;
+    color: #666;
+    cursor: default;
+}
+
+.pf-error {
+    font-size: 12px;
+    color: #e53935;
+    margin-top: 4px;
+    display: none;
+    font-family: 'Inter', sans-serif;
+}
+
+/* ── Save button ── */
+.pf-save-btn {
+    width: 100%;
+    padding: 11px;
+    background: #87b942;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+    margin-top: 20px;
+}
+
+.pf-save-btn:hover  { background: #75a336; }
+.pf-save-btn:active { transform: scale(0.98); }
+.pf-save-btn:disabled { background: #b8d98a; cursor: not-allowed; }
+
+/* ── Toast feedback ── */
+.pf-toast {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+}
+
+.pf-toast.success {
+    background: #f0f8e8;
+    color: #4a7c20;
+    border: 1px solid #c5e09a;
+    display: flex;
+}
+
+.pf-toast.error {
+    background: #fff0f0;
+    color: #c62828;
+    border: 1px solid #ffb3b3;
+    display: flex;
+}
+
+/* ── Account info card (full width) ── */
+.profile-info-card {
+    margin-top: 24px;
+}
+
+.pf-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-family: 'Inter', sans-serif;
+}
+
+.pf-info-row:last-child { border-bottom: none; }
+
+.pf-info-label {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+}
+
+.pf-info-value {
+    font-size: 14px;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.pf-type-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #f0f8e8;
+    color: #4a7c20;
+    border: 1px solid #c5e09a;
+}
+
+/* =============================================
+   KYC STATUS CARDS (on profile page)
+   ============================================= */
+
+.kyc-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-family: 'Inter', sans-serif;
+    margin: 36px 0 16px;
+}
+
+.kyc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 780px) { .kyc-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1024px) and (min-width: 781px) { .kyc-grid { grid-template-columns: 1fr 1fr; } }
+
+.kyc-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    padding: 26px 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.kyc-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.kyc-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.kyc-card-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-family: 'Inter', sans-serif;
+    margin: 0 0 2px;
+}
+
+.kyc-card-sub {
+    font-size: 12px;
+    color: #999;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Status badges */
+.kyc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+}
+
+.kyc-status.verified  { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.kyc-status.submitted { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+.kyc-status.pending   { background: #f5f5f5; color: #999;    border: 1px solid #e0e0e0; }
+
+.kyc-upload-btn {
+    width: 100%;
+    padding: 9px;
+    border-radius: 8px;
+    border: 1.5px solid #87b942;
+    background: transparent;
+    color: #87b942;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.kyc-upload-btn:hover { background: #87b942; color: #fff; }
+
+/* =============================================
+   KYC MODALS
+   ============================================= */
+
+.kyc-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.kyc-modal-overlay.open { display: flex; }
+
+.kyc-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: kycSlideIn 0.22s ease;
+}
+
+@keyframes kycSlideIn {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.kyc-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.kyc-modal-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.kyc-modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-family: 'Inter', sans-serif;
+    margin: 0 0 2px;
+}
+
+.kyc-modal-sub {
+    font-size: 12px;
+    color: #999;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+}
+
+.kyc-modal-close {
+    margin-left: auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #f5f5f5;
+    color: #666;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    transition: background 0.15s;
+}
+
+.kyc-modal-close:hover { background: #ebebeb; color: #333; }
+
+.kyc-modal-body { padding: 22px 24px 8px; }
+
+.kyc-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 480px) { .kyc-field-row { grid-template-columns: 1fr; } }
+
+.kyc-upload-box {
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    padding: 22px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.kyc-upload-box:hover { border-color: #87b942; background: #f9fef4; }
+
+.kyc-upload-label {
+    font-size: 13px;
+    color: #888;
+    font-family: 'Inter', sans-serif;
+}
+
+.kyc-file-name {
+    font-size: 12px;
+    color: #87b942;
+    font-family: 'Inter', sans-serif;
+    margin-top: 6px;
+    word-break: break-all;
+    min-height: 18px;
+}
+
+.kyc-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px 20px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 16px;
+}
+
+.kyc-cancel-btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: 1.5px solid #e4e4e4;
+    background: transparent;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.kyc-cancel-btn:hover { background: #f5f5f5; }

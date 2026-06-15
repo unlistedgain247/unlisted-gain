@@ -1,0 +1,163 @@
+/* =============================================
+   INVEST MODAL
+   ============================================= */
+.invest-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.invest-box {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+}
+
+.invest-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 24px;
+    border-bottom: 1px solid #eee;
+}
+
+.invest-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a1a;
+    flex: 1;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.invest-callback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1.5px solid #0a9396;
+    color: #0a9396;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+}
+
+.invest-callback-btn:hover {
+    background: #0a9396;
+    color: #fff;
+}
+
+.invest-callback-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.invest-close {
+    background: none;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0 2px;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.invest-close:hover { color: #333; }
+
+.invest-body {
+    padding: 24px;
+}
+
+.invest-body h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 18px;
+}
+
+.invest-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.invest-row span { color: #777; }
+
+.invest-row strong {
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+.invest-qty-input {
+    width: 100px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.invest-qty-input:focus { border-color: #87b942; }
+
+.invest-alert {
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 14px;
+}
+
+.invest-alert-success { background: #f0faf0; color: #2e7d32; border: 1px solid #a5d6a7; }
+.invest-alert-error   { background: #fff5f5; color: #c62828; border: 1px solid #ef9a9a; }
+
+.invest-submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #87b942;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.2s;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+}
+
+.invest-submit-btn:hover         { background: #6e9735; }
+.invest-submit-btn.sell-mode     { background: #dc3545; }
+.invest-submit-btn.sell-mode:hover { background: #c82333; }
+.invest-submit-btn:disabled      { opacity: 0.7; cursor: not-allowed; }
+
+body.invest-modal-open { overflow: hidden; }
+
+@media (max-width: 540px) {
+    .invest-box { border-radius: 10px; }
+    .invest-header { flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
+    .invest-title { font-size: 15px; order: -1; width: 100%; }
+    .invest-body { padding: 16px; }
+}

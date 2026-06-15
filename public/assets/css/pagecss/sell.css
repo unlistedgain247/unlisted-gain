@@ -1,0 +1,124 @@
+.ug-sell-process {
+    padding: 60px 20px;
+    background-color: #ffffff;
+    font-family: 'Inter', sans-serif;
+}
+
+.ug-sell-process .process-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    background: #fff;
+    /* Subtle shadow for the whole block if desired, or remove for flat look */
+}
+
+/* Steps Section */
+.ug-sell-process .process-steps {
+    flex: 1.2;
+    padding: 40px;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.ug-sell-process .process-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 35px;
+    color: #1a1a1a;
+}
+
+.ug-sell-process .process-title span {
+    color: #87b942; /* Brand Green */
+}
+
+.ug-sell-process .steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.ug-sell-process .steps-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.ug-sell-process .bullet {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+    border-radius: 50%;
+    margin-top: 8px;
+    flex-shrink: 0;
+}
+
+.ug-sell-process .steps-list p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #666;
+    margin: 0;
+}
+
+/* Visual Section */
+.ug-sell-process .process-visual {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ug-sell-process .illustration-wrap {
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 30px;
+}
+
+.ug-sell-process .illustration-wrap img {
+    width: 100%;
+    height: auto;
+}
+
+/* Green Button */
+.ug-sell-process .quote-btn {
+    display: inline-block;
+    background-color: #87b942;
+    color: #fff;
+    padding: 15px 35px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    transition: transform 0.2s ease, background 0.3s ease;
+    box-shadow: 0 4px 15px rgba(45, 161, 58, 0.3);
+}
+
+.ug-sell-process .quote-btn:hover {
+    background-color: #6e9735;
+    transform: translateY(-2px);
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
+    .ug-sell-process .process-container {
+        flex-direction: column;
+    }
+    
+    .ug-sell-process .process-steps {
+        padding: 25px;
+        width: 100%;
+    }
+
+    .ug-sell-process .process-title {
+        font-size: 26px;
+    }
+
+    .ug-sell-process .steps-list p {
+        font-size: 16px;
+    }
+}
