@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\UnlistedLead;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -87,28 +88,34 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         }
 
-        $user = User::create([
-            'name'               => $request->name,
-            'email'              => $request->email,
-            'phone'              => $request->phone,
-            'password'           => $request->password,
-            'user_type'          => 'member',
-            'unlisted_user_type' => $request->unlisted_user_type,
-            'session_token'      => Str::random(60),
-        ]);
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name'               => $request->name,
+                'email'              => $request->email,
+                'phone'              => $request->phone,
+                'password'           => $request->password,
+                'user_type'          => 'member',
+                'unlisted_user_type' => $request->unlisted_user_type,
+                'session_token'      => Str::random(60),
+            ]);
 
-        $now = now();
-        UnlistedLead::create([
-            'UL_LEAD_UID'                        => $user->uid,
-            'UL_LEAD_TYPE'                       => $request->unlisted_user_type,
-            'UL_LEAD_INSERT_TIME'                => $now,
-            'UL_LEAD_UPDATE_TIME'                => $now,
-            'UL_LEAD_CUSTOMER_LAST_VISITED_TIME' => $now,
-            'UL_LEAD_USER_TYPE'                  => $request->unlisted_user_type,
-            'UL_LEAD_COMPANY'                    => '',
-            'UL_LEAD_LANDING_PAGE'               => $request->input('landing_page', '/'),
-            'UL_LEAD_REQUEST_FOR_CALL'           => 'no',
-        ]);
+            $now = now();
+            UnlistedLead::create([
+                'UL_LEAD_UID'                        => $user->uid,
+                'UL_LEAD_TYPE'                       => $request->unlisted_user_type,
+                'UL_LEAD_INSERT_TIME'                => $now,
+                'UL_LEAD_UPDATE_TIME'                => $now,
+                'UL_LEAD_CUSTOMER_LAST_VISITED_TIME' => $now,
+                'UL_LEAD_DISPOSITION'                => 'New Lead',
+                'UL_LEAD_SUB_DISPOSITION'            => 'Sign Up',
+                'UL_LEAD_USER_TYPE'                  => $request->unlisted_user_type,
+                'UL_LEAD_COMPANY'                    => '',
+                'UL_LEAD_LANDING_PAGE'               => $request->input('landing_page', '/'),
+                'UL_LEAD_REQUEST_FOR_CALL'           => 'no',
+            ]);
+
+            return $user;
+        });
 
         session([
             'uid'                => $user->uid,
