@@ -143,6 +143,11 @@
             <div class="topbar d-flex align-items-center px-3">
                 <nav class="navbar navbar-expand w-100 p-0">
 
+                    {{-- Mobile hamburger (visible only on mobile via theme CSS) --}}
+                    <a href="javascript:;" class="mobile-toggle-menu me-2" style="font-size:22px;color:#555;text-decoration:none;">
+                        <i class='bx bx-menu'></i>
+                    </a>
+
                     {{-- Brand / Logo --}}
                     <a href="{{ url('/') }}" class="ug-admin-brand me-3">
                         <img src="{{ asset('assets/img/unlisted-head.jpeg') }}" alt="UnlistedGain">
@@ -220,17 +225,8 @@
 
         {{-- ── HORIZONTAL NAVIGATION ── --}}
         <div class="nav-container primary-menu px-3">
-            <nav class="navbar navbar-expand-xl w-100 p-0">
-
-                {{-- Mobile toggle --}}
-                <button class="navbar-toggler border-0" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#adminNavbar"
-                        style="color:#555;">
-                    <i class='bx bx-menu fs-4'></i>
-                </button>
-
-                <div class="collapse navbar-collapse" id="adminNavbar">
-                    <ul class="navbar-nav gap-1">
+            <nav class="navbar navbar-expand w-100 p-0">
+                <ul class="navbar-nav gap-1">
 
                         @if(session('privilege.admin'))
                         <li class="nav-item">
@@ -288,7 +284,6 @@
                         @endif
 
                     </ul>
-                </div>
             </nav>
         </div>
 
