@@ -103,16 +103,68 @@
         .page-wrapper {
             margin-top: 120px !important;
         }
-        @media screen and (max-width: 1199.5px) {
-            .page-wrapper {
-                margin-top: 60px !important;
-            }
-        }
         @media screen and (min-width: 1400px) {
             .page-wrapper {
                 padding-left: 20px !important;
                 padding-right: 20px !important;
             }
+        }
+
+        /* ── Mobile nav sidebar ── */
+        @media screen and (max-width: 1199px) {
+            .page-wrapper {
+                margin-top: 60px !important;
+            }
+            .nav-container {
+                position: fixed !important;
+                top: 0 !important;
+                left: -280px !important;
+                width: 260px !important;
+                height: 100% !important;
+                z-index: 1051 !important;
+                background: #fff !important;
+                box-shadow: 2px 0 12px rgba(0,0,0,0.15) !important;
+                transition: left 0.25s ease !important;
+                overflow-y: auto !important;
+                padding: 70px 10px 20px !important;
+                border-bottom: none !important;
+            }
+            .wrapper.toggled .nav-container {
+                left: 0 !important;
+            }
+            .nav-container .navbar {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 0 !important;
+            }
+            .nav-container .navbar-nav {
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 2px !important;
+            }
+            .nav-container .nav-item {
+                width: 100% !important;
+            }
+            .nav-container .nav-link {
+                width: 100% !important;
+                padding: 10px 14px !important;
+                border-radius: 8px !important;
+            }
+            /* Overlay backdrop */
+            .mobile-nav-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.45);
+                z-index: 1050;
+            }
+            .wrapper.toggled .mobile-nav-overlay {
+                display: block;
+            }
+        }
+        @media screen and (min-width: 1200px) {
+            .mobile-toggle-menu { display: none !important; }
+            .mobile-nav-overlay { display: none !important; }
         }
 
         /* ── Admin content full width ── */
@@ -132,6 +184,7 @@
 @endphp
 
 <div class="wrapper">
+<div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
 
     {{-- ═══════════════════════════════════════
          HEADER WRAPPER (fixed topbar + horiz nav)
@@ -305,17 +358,19 @@
 <script src="{{ asset('assets/admin-theme/js/app.js') }}"></script>
 
 <script>
-    // Sync page-wrapper top margin to actual header height (handles mobile collapse)
-    function syncPageTop() {
-        var h = document.querySelector('.header-wrapper').offsetHeight;
-        document.querySelector('.page-wrapper').style.marginTop = h + 'px';
-    }
-    syncPageTop();
-    window.addEventListener('resize', syncPageTop);
-    var adminNavbar = document.getElementById('adminNavbar');
-    if (adminNavbar) {
-        adminNavbar.addEventListener('shown.bs.collapse', syncPageTop);
-        adminNavbar.addEventListener('hidden.bs.collapse', syncPageTop);
+    // Mobile sidebar toggle
+    var wrapper = document.querySelector('.wrapper');
+    var overlay = document.getElementById('mobileNavOverlay');
+    document.querySelectorAll('.mobile-toggle-menu').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            wrapper.classList.toggle('toggled');
+        });
+    });
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            wrapper.classList.remove('toggled');
+        });
     }
 
     // Fullscreen toggle
