@@ -103,6 +103,11 @@
         .page-wrapper {
             margin-top: 120px !important;
         }
+        @media screen and (max-width: 1199.5px) {
+            .page-wrapper {
+                margin-top: 60px !important;
+            }
+        }
         @media screen and (min-width: 1400px) {
             .page-wrapper {
                 padding-left: 20px !important;
@@ -305,6 +310,19 @@
 <script src="{{ asset('assets/admin-theme/js/app.js') }}"></script>
 
 <script>
+    // Sync page-wrapper top margin to actual header height (handles mobile collapse)
+    function syncPageTop() {
+        var h = document.querySelector('.header-wrapper').offsetHeight;
+        document.querySelector('.page-wrapper').style.marginTop = h + 'px';
+    }
+    syncPageTop();
+    window.addEventListener('resize', syncPageTop);
+    var adminNavbar = document.getElementById('adminNavbar');
+    if (adminNavbar) {
+        adminNavbar.addEventListener('shown.bs.collapse', syncPageTop);
+        adminNavbar.addEventListener('hidden.bs.collapse', syncPageTop);
+    }
+
     // Fullscreen toggle
     document.getElementById('btnFullscreen').addEventListener('click', function () {
         var icon = document.getElementById('iconFullscreen');
