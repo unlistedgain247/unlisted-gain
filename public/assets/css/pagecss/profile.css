@@ -8,7 +8,7 @@
 }
 
 .profile-hero-inner {
-    max-width: 1300px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -84,7 +84,7 @@
 
 /* ── Main layout ── */
 .profile-body {
-    max-width: 1300px;
+    max-width: 1400px;
     margin: -28px auto 60px;
     padding: 0 40px;
 }

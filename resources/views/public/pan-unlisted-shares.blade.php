@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
 @endpush
 
+@section('subheader')
+@include('partials.breadcrumb', ['crumbs' => [['label' => 'PAN & Unlisted Shares']]])
+@endsection
+
 @section('content')
 <main>
     <div class="ug-content-page">

@@ -14,22 +14,23 @@
         <tbody>
             @forelse($stocks as $stock)
             @php
-                $slug      = $stock->UL_STOCKS_SLUG . '-unlisted-shares';
-                $detailUrl = '/companies/' . $slug . '/';
+                $detailUrl = '/companies/' . $stock->UL_STOCKS_SLUG . '/';
                 $mcap  = $stock->market_cap    !== null ? '₹' . number_format((float)$stock->market_cap, 0)    . ' Cr.' : '—';
                 $price = $stock->current_price !== null ? '₹' . number_format((float)$stock->current_price, 2) : '—';
                 $pe    = $stock->pe_ratio      !== null ? number_format((float)$stock->pe_ratio, 1)             : '—';
             @endphp
             <tr class="stock-row" data-href="{{ $detailUrl }}">
                 <td>
-                    <div class="company-cell">
-                        @if($stock->UL_STOCKS_LOGO_LINK)
-                        <img src="{{ url($stock->UL_STOCKS_LOGO_LINK) }}"
-                             alt="{{ $stock->UL_STOCKS_COMPNAME }}"
-                             onerror="this.style.display='none'">
-                        @endif
-                        <span>{{ $stock->UL_STOCKS_COMPNAME }}</span>
-                    </div>
+                    <a href="{{ $detailUrl }}" class="company-cell-link">
+                        <div class="company-cell">
+                            @if($stock->UL_STOCKS_LOGO_LINK)
+                            <img src="{{ url($stock->UL_STOCKS_LOGO_LINK) }}"
+                                 alt="{{ $stock->UL_STOCKS_COMPNAME }}"
+                                 onerror="this.style.display='none'">
+                            @endif
+                            <span>{{ $stock->UL_STOCKS_COMPNAME }}</span>
+                        </div>
+                    </a>
                 </td>
                 <td class="td-mcap">{{ $mcap }}</td>
                 <td class="td-price">{{ $price }}</td>

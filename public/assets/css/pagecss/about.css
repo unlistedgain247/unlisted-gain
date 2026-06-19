@@ -6,9 +6,9 @@
 }
 
 .ug-about-main .about-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 24px;
     display: flex;
     gap: 60px;
     align-items: flex-start;
@@ -370,7 +370,13 @@
 
 @media (max-width: 768px) {
     .ug-partners-licenses .partners-grid,
-    .ug-partners-licenses .licenses-grid {
-        grid-template-columns: 1fr;
-    }
+    .ug-partners-licenses .licenses-grid { grid-template-columns: 1fr; }
+    .ug-about-main { padding: 48px 0; }
+    .ug-about-main .about-container { flex-direction: column; gap: 32px; }
+}
+
+@media (max-width: 480px) {
+    .ug-about-main { padding: 36px 0; }
+    .ug-about-main .about-container { padding: 0 16px; gap: 24px; }
+    .ug-partners-licenses .licenses-grid { grid-template-columns: 1fr; }
 }

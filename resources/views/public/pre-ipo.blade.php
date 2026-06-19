@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/pre-ipo.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
 <style>
-    .pi-listing-section { padding: 40px 20px 20px; max-width: 1200px; margin: 0 auto; }
+    .pi-listing-section { padding: 40px 24px 20px; max-width: 1400px; margin: 0 auto; }
     .pi-listing-section .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: #1a1a1a; }
     .pi-listing-section .section-title span { color: #87b942; }
     .pi-controls { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
@@ -41,6 +41,10 @@
     .no-results { text-align: center; padding: 32px; color: #aaa; }
 </style>
 @endpush
+
+@section('subheader')
+@include('partials.breadcrumb', ['crumbs' => [['label' => 'Pre-IPO Investing']]])
+@endsection
 
 @section('content')
 <main>

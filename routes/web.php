@@ -79,6 +79,8 @@ Route::get('/pre-ipo-unlisted-shares/data',  [StocksController::class, 'preIpoDa
 Route::get('/unlisted-shares-price-list-india',       [StocksController::class, 'priceList'])->name('public.price-list');
 Route::get('/unlisted-shares-price-list-india/data',  [StocksController::class, 'priceListData'])->name('public.price-list.data');
 
+Route::get('/companies/{slug}/', [StocksController::class, 'company'])->name('public.company');
+
 // ── Admin entry ──────────────────────────────────────────────────────────────
 Route::get('/admin', [AdminController::class, 'redirectToDashboard'])->name('admin.index');
 

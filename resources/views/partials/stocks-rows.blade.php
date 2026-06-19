@@ -8,14 +8,16 @@
     data-name="{{ strtolower($stock->UL_STOCKS_COMPNAME) }}"
     data-mcap="{{ $stock->market_cap ?? 0 }}">
     <td>
-        <div class="company-cell">
-            @if($stock->UL_STOCKS_LOGO_LINK)
-            <img src="{{ url($stock->UL_STOCKS_LOGO_LINK) }}"
-                 alt="{{ $stock->UL_STOCKS_COMPNAME }}"
-                 onerror="this.style.display='none'">
-            @endif
-            <span>{{ $stock->UL_STOCKS_COMPNAME }}</span>
-        </div>
+        <a href="/companies/{{ $stock->UL_STOCKS_SLUG }}/" class="company-cell-link">
+            <div class="company-cell">
+                @if($stock->UL_STOCKS_LOGO_LINK)
+                <img src="{{ url($stock->UL_STOCKS_LOGO_LINK) }}"
+                     alt="{{ $stock->UL_STOCKS_COMPNAME }}"
+                     onerror="this.style.display='none'">
+                @endif
+                <span>{{ $stock->UL_STOCKS_COMPNAME }}</span>
+            </div>
+        </a>
     </td>
     <td class="td-mcap">{!! $mcap !!}</td>
     <td class="td-price">{!! $price !!}</td>

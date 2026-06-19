@@ -36,6 +36,10 @@
 </style>
 @endpush
 
+@section('subheader')
+@include('partials.breadcrumb', ['crumbs' => [['label' => 'Unlisted Share Price List']]])
+@endsection
+
 @section('content')
 <main>
     <section class="ug-price-section">
