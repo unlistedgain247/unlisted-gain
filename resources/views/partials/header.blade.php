@@ -111,3 +111,25 @@
         </button>
     </div>
 </header>
+
+<div class="nav-overlay" id="navOverlay"></div>
+
+<script>
+$(function () {
+    var $overlay = $('#navOverlay');
+    var $nav     = $('#mainNav');
+    var $toggle  = $('#mobileToggle');
+
+    $(document).on('click', '#mobileToggle', function () {
+        setTimeout(function () {
+            $overlay.toggleClass('active', $nav.hasClass('active'));
+        }, 0);
+    });
+
+    $overlay.on('click', function () {
+        $overlay.removeClass('active');
+        $nav.removeClass('active');
+        $toggle.removeClass('open');
+    });
+});
+</script>
