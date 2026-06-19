@@ -14,126 +14,145 @@
 
 @section('content')
 <main>
-    {{-- Team Section --}}
-    <section class="ug-connect-section">
-        <h2 class="section-title">Connect With <span>The Team</span></h2>
 
-        <div class="team-grid">
-            <div class="team-card">
-                <div class="image-wrap">
-                    <img src="{{ asset('assets/img/profile.jpeg') }}" alt="Pawan Singh">
+    {{-- Hero --}}
+    <section class="cn-hero">
+        <div class="cn-container">
+            <span class="cn-tag">GET IN TOUCH</span>
+            <h1>Connect With <span>Our Team</span></h1>
+            <p>Have questions about unlisted shares or Pre-IPO investments? Our experts are available via Call, Email, and WhatsApp — reach out anytime.</p>
+
+            <div class="cn-info-row">
+                <div class="cn-info-item">
+                    <div class="cn-info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <strong>Office Address</strong>
+                        <span>113/2, Meenakshi Garden, Tilak Nagar, New Delhi</span>
+                    </div>
                 </div>
-                <div class="member-info">
+                <div class="cn-info-item">
+                    <div class="cn-info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <strong>Email Us</strong>
+                        <span><a href="mailto:support@unlistedgain.com">support@unlistedgain.com</a></span>
+                    </div>
+                </div>
+                <div class="cn-info-item">
+                    <div class="cn-info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <strong>Working Hours</strong>
+                        <span>Mon – Sat, 10:00 AM – 7:00 PM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Team Cards --}}
+    <section class="cn-team">
+        <div class="cn-container">
+            <div class="cn-section-head">
+                <h2>Speak Directly With <span>Our Experts</span></h2>
+                <p>Choose a team member and connect instantly via your preferred channel.</p>
+            </div>
+
+            <div class="cn-team-grid">
+                <div class="cn-team-card">
+                    <div class="cn-avatar">PS</div>
                     <h3>Pawan Singh</h3>
+                    <span class="cn-designation">Director</span>
+                    <div class="cn-contact-btns">
+                        <a href="tel:+919718881886" class="cn-btn cn-call">
+                            <i class="fas fa-phone-alt"></i> Call
+                        </a>
+                        <a href="mailto:support@unlistedgain.com" class="cn-btn cn-email">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        <a href="https://wa.me/919718881886" class="cn-btn cn-whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
                 </div>
-                <div class="cta-buttons">
-                    <a href="tel:+919718881886" class="cta-btn cta-call"><i class="fas fa-phone-alt"></i> Call</a>
-                    <a href="mailto:support@unlistedgain.com" class="cta-btn cta-email"><i class="fas fa-envelope"></i> Email</a>
-                    <a href="https://wa.me/919718881886" class="cta-btn cta-whatsapp"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                </div>
-            </div>
 
-            <div class="team-card">
-                <div class="image-wrap">
-                    <img src="{{ asset('assets/img/profile.jpeg') }}" alt="Virendra Singh Rautela">
-                </div>
-                <div class="member-info">
+                <div class="cn-team-card">
+                    <div class="cn-avatar">VSR</div>
                     <h3>Virendra Singh Rautela</h3>
+                    <span class="cn-designation">CEO</span>
+                    <div class="cn-contact-btns">
+                        <a href="tel:+918506894923" class="cn-btn cn-call">
+                            <i class="fas fa-phone-alt"></i> Call
+                        </a>
+                        <a href="mailto:support@unlistedgain.com" class="cn-btn cn-email">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        <a href="https://wa.me/918506894923" class="cn-btn cn-whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
                 </div>
-                <div class="cta-buttons">
-                    <a href="tel:+918506894923" class="cta-btn cta-call"><i class="fas fa-phone-alt"></i> Call</a>
-                    <a href="mailto:support@unlistedgain.com" class="cta-btn cta-email"><i class="fas fa-envelope"></i> Email</a>
-                    <a href="https://wa.me/918506894923" class="cta-btn cta-whatsapp"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                </div>
-            </div>
 
-            <div class="team-card">
-                <div class="image-wrap">
-                    <img src="{{ asset('assets/img/profile.jpeg') }}" alt="Sarthak Bhatia">
-                </div>
-                <div class="member-info">
+                <div class="cn-team-card">
+                    <div class="cn-avatar">SB</div>
                     <h3>Sarthak Bhatia</h3>
-                </div>
-                <div class="cta-buttons">
-                    <a href="tel:+918826632646" class="cta-btn cta-call"><i class="fas fa-phone-alt"></i> Call</a>
-                    <a href="mailto:support@unlistedgain.com" class="cta-btn cta-email"><i class="fas fa-envelope"></i> Email</a>
-                    <a href="https://wa.me/918826632646" class="cta-btn cta-whatsapp"><i class="fab fa-whatsapp"></i> Whatsapp</a>
+                    <span class="cn-designation">Investment Advisor</span>
+                    <div class="cn-contact-btns">
+                        <a href="tel:+918826632646" class="cn-btn cn-call">
+                            <i class="fas fa-phone-alt"></i> Call
+                        </a>
+                        <a href="mailto:support@unlistedgain.com" class="cn-btn cn-email">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                        <a href="https://wa.me/918826632646" class="cn-btn cn-whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- Contact Form --}}
-    <section class="ug-contact-form-section">
-        <div class="contact-form-container">
-            <div class="form-header">
-                <h3>Send Us A <span>Message</span></h3>
-                <p>Have a specific inquiry? Fill out the form below and our team will get back to you within 24 hours.</p>
+    {{-- Social Links --}}
+    <section class="cn-social">
+        <div class="cn-container">
+            <div class="cn-section-head">
+                <h2>Follow Us <span>Online</span></h2>
+                <p>Stay updated with market insights, new listings and investment tips.</p>
             </div>
 
-            <form id="ugContactForm" class="contact-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="emailAddr">Email Address</label>
-                        <input type="email" id="emailAddr" name="emailAddr" placeholder="Enter your email" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phoneNum">Phone Number</label>
-                        <input type="tel" id="phoneNum" name="phoneNum" placeholder="Enter your mobile number" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <select id="subject" name="subject" required>
-                            <option value="" disabled selected>Select a subject</option>
-                            <option value="buy">Buy Unlisted Shares</option>
-                            <option value="sell">Sell Unlisted Shares</option>
-                            <option value="valuation">Portfolio Valuation</option>
-                            <option value="general">General Inquiry</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="message">Your Message</label>
-                    <textarea id="message" name="message" rows="5" placeholder="How can we help you?" required></textarea>
-                </div>
-
-                <div class="form-footer">
-                    <button type="submit" class="submit-btn" id="contactSubmitBtn">Send Message</button>
-                </div>
-            </form>
-
-            <div id="formSuccessMessage" class="form-success-message" style="display:none;">
-                <div class="success-icon">&#10003;</div>
-                <h4>Thank You!</h4>
-                <p>Your message has been sent successfully. Our team will contact you shortly.</p>
-                <button type="button" class="reset-btn" id="resetFormBtn">Send Another Message</button>
+            <div class="cn-social-grid">
+                <a href="https://x.com/Unlistedgain" target="_blank" class="cn-social-card cn-twitter">
+                    <img src="{{ asset('assets/img/twitter.png') }}" alt="Twitter">
+                    <span>Twitter / X</span>
+                </a>
+                <a href="https://www.facebook.com/profile.php?id=61587793225842" target="_blank" class="cn-social-card cn-facebook">
+                    <img src="{{ asset('assets/img/facebook.png') }}" alt="Facebook">
+                    <span>Facebook</span>
+                </a>
+                <a href="https://www.instagram.com/unlistedgain?igsh=MWU2ZXo1OGVuOHhvcQ==" target="_blank" class="cn-social-card cn-instagram">
+                    <img src="{{ asset('assets/img/instagram-pink.png') }}" alt="Instagram">
+                    <span>Instagram</span>
+                </a>
+                <a href="#" class="cn-social-card cn-telegram">
+                    <img src="{{ asset('assets/img/telegram.png') }}" alt="Telegram">
+                    <span>Telegram</span>
+                </a>
+                <a href="https://www.linkedin.com/company/unlistedgain-advantage-solutions-pvt-ltd/" target="_blank" class="cn-social-card cn-linkedin">
+                    <img src="{{ asset('assets/img/linkedin-white.png') }}" alt="LinkedIn">
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://youtube.com/@unlistedgain?si=VsojxJIjQXecf2Bj" target="_blank" class="cn-social-card cn-youtube">
+                    <img src="{{ asset('assets/img/youtube.png') }}" alt="YouTube">
+                    <span>YouTube</span>
+                </a>
             </div>
         </div>
     </section>
 
-    {{-- Social Box --}}
-    <div class="contact-box">
-        <h4>Like Share <span>Follow</span></h4>
-        <div class="social-row">
-            <a href="https://x.com/Unlistedgain" target="_blank"><img src="{{ asset('assets/img/twitter.png') }}" alt="Twitter"></a>
-            <a href="https://www.facebook.com/profile.php?id=61587793225842" target="_blank"><img src="{{ asset('assets/img/facebook.png') }}" alt="Facebook"></a>
-            <a href="https://www.instagram.com/unlistedgain?igsh=MWU2ZXo1OGVuOHhvcQ==" target="_blank"><img src="{{ asset('assets/img/instagram-pink.png') }}" alt="Instagram"></a>
-            <a href="#"><img src="{{ asset('assets/img/telegram.png') }}" alt="Telegram"></a>
-            <a href="https://www.linkedin.com/company/unlistedgain-advantage-solutions-pvt-ltd/" target="_blank"><img src="{{ asset('assets/img/linkedin-white.png') }}" alt="LinkedIn"></a>
-            <a href="https://youtube.com/@unlistedgain?si=VsojxJIjQXecf2Bj" target="_blank"><img src="{{ asset('assets/img/youtube.png') }}" alt="YouTube"></a>
-            <a href="#"><img src="{{ asset('assets/img/pinterest.png') }}" alt="Pinterest"></a>
-            <a href="#"><img src="{{ asset('assets/img/reddit.png') }}" alt="Reddit"></a>
-            <a href="tel:+919718881886"><img src="{{ asset('assets/img/phone-white.png') }}" alt="Phone"></a>
-        </div>
-    </div>
 </main>
 @endsection
-
