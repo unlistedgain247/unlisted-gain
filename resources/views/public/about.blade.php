@@ -224,7 +224,7 @@
                 <p>At Unlistedgain Advantage Solutions, we believe that the most significant wealth-building opportunities shouldn't be reserved for a select few.</p>
                 <div class="ab-cta-actions">
                     <a href="/connect" class="ab-cta-btn primary">Get in Touch</a>
-                    <a href="/buy-unlisted-shares" class="ab-cta-btn outline">Browse Stocks</a>
+                    <a href="/unlisted" class="ab-cta-btn outline">Browse Stocks</a>
                 </div>
                 <div class="ab-cta-contact">
                     <span>+91 85068 94923</span>
