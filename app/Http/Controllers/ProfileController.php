@@ -207,6 +207,63 @@ class ProfileController extends Controller
         return response()->json(['success' => true, 'message' => 'PAN details saved. Pending verification.']);
     }
 
+    // ── Avatar ───────────────────────────────────────────────
+
+    public function uploadAvatar(Request $request)
+    {
+        $user = $this->authUser();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Session expired.'], 401);
+        }
+
+        try {
+            $request->validate([
+                'avatar' => 'required|file|mimes:jpg,jpeg,png,webp|max:2048',
+            ], [
+                'avatar.required' => 'Please select an image.',
+                'avatar.mimes'    => 'Image must be JPG, PNG, or WebP.',
+                'avatar.max'      => 'Image must not exceed 2 MB.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        $file = $request->file('avatar');
+        $ext  = strtolower($file->getClientOriginalExtension());
+        $dir  = 'private/avatars';
+
+        // Delete any old avatar for this user
+        foreach (Storage::files($dir) as $existing) {
+            if (str_starts_with(basename($existing), 'avatar-' . $user->uid . '.')) {
+                Storage::delete($existing);
+            }
+        }
+
+        $filename = 'avatar-' . $user->uid . '.' . $ext;
+        $file->storeAs($dir, $filename);
+        $path = $dir . '/' . $filename;
+
+        $user->update(['avatar_path' => $path]);
+
+        return response()->json(['success' => true, 'message' => 'Profile photo updated.']);
+    }
+
+    public function serveAvatar()
+    {
+        $user = $this->authUser();
+        if (!$user || !$user->avatar_path || !Storage::exists($user->avatar_path)) {
+            abort(404);
+        }
+
+        $mime = Storage::mimeType($user->avatar_path) ?: 'image/jpeg';
+
+        return response()->file(Storage::path($user->avatar_path), [
+            'Content-Type'           => $mime,
+            'Cache-Control'          => 'private, max-age=3600',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
     // ── File helpers ──────────────────────────────────────────
 
     private function storeKycFile(UploadedFile $file, string $folder, int|string $uid): string
