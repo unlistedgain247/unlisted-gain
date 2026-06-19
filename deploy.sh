@@ -18,7 +18,7 @@ set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_FOLDER="$(basename "$APP_DIR")"
-PUBLIC_DIR="$HOME/public_html"
+PUBLIC_DIR="$(dirname "$APP_DIR")/public_html"
 
 # ── Guard: .env must exist ────────────────────────────────────────────────────
 if [ ! -f "$APP_DIR/.env" ]; then
