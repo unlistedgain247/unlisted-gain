@@ -101,6 +101,7 @@
         </section>
 
         {{-- Popular Unlisted Shares (Dynamic) --}}
+        @if($topStocks->isNotEmpty())
         <section class="popular-shares-section">
             <div class="slider-header">
                 <h2>Popular Unlisted <span>Shares In India</span>: High-Growth Opportunities</h2>
@@ -112,7 +113,7 @@
 
                 <div class="cards-viewport" id="sharesViewport">
                     <div class="cards-track">
-                        @forelse($topStocks as $stock)
+                        @foreach($topStocks as $stock)
                         <div class="share-card" onclick="location.href='/companies/{{ $stock->slug }}/'">
                             <div class="logo-box">
                                 @if($stock->logo)
@@ -153,13 +154,14 @@
                             </div>
                             <a href="/companies/{{ $stock->slug }}/" class="learn-more-btn" onclick="event.stopPropagation()">View Details</a>
                         </div>
-                        @endforelse
+                        @endforeach
                     </div>
                 </div>
 
                 <button class="nav-btn next" id="slideNext">&#8594;</button>
             </div>
         </section>
+        @endif
 
         {{-- Why UnlistedGain --}}
         <section class="ug-why-section">
