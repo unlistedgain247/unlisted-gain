@@ -50,19 +50,7 @@ document.addEventListener('click', function (e) {
         });
     }
 
-    // 2. FAQ accordion
-    const faqQuestion = e.target.closest('.faq-question');
-    if (faqQuestion) {
-        const item = faqQuestion.parentElement;
-        const isActive = item.classList.contains('active');
-        document.querySelectorAll('.faq-item').forEach(function (el) {
-            el.classList.remove('active');
-        });
-        if (!isActive) {
-            item.classList.add('active');
-        }
-        return;
-    }
+    // 2. FAQ accordion — handled by jQuery below
 
     // 3. Close mobile menu when clicking outside nav panel
     if (isMobile) {
@@ -105,4 +93,29 @@ document.addEventListener('click', function (e) {
             e.target.textContent = isOpen ? 'Show Less' : 'View All';
         }
     }
+});
+
+// =============================================
+// FAQ ACCORDION — jQuery slideDown/slideUp
+// =============================================
+
+$(function () {
+    $(document).on('click', '.faq-question', function () {
+        var $item   = $(this).closest('.faq-item');
+        var $answer = $item.find('.faq-answer');
+        var isOpen  = $item.hasClass('active');
+
+        // Close all others in the same container
+        $item.siblings('.faq-item').each(function () {
+            $(this).removeClass('active').find('.faq-answer').slideUp(250);
+        });
+
+        if (isOpen) {
+            $item.removeClass('active');
+            $answer.slideUp(250);
+        } else {
+            $item.addClass('active');
+            $answer.slideDown(250);
+        }
+    });
 });

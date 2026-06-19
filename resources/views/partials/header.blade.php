@@ -7,32 +7,52 @@
         </div>
 
         <nav id="mainNav" class="nav-menu">
+            <div class="nav-sidebar-head">
+                <span class="nav-sidebar-title">Navigation</span>
+            </div>
             <ul>
                 <li class="has-dropdown">
-                    <a href="#" class="nav-link">About Us <span class="arrow"></span></a>
+                    <a href="#" class="nav-link {{ request()->is('about') || request()->is('connect') ? 'nav-current' : '' }}">
+                        <i class="fa-solid fa-circle-info nav-icon"></i>
+                        <span>About Us</span>
+                        <span class="arrow"></span>
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('/about') }}">About</a></li>
-                        <li><a href="{{ url('/connect') }}">Connect</a></li>
+                        <li><a href="{{ url('/about') }}"><i class="fa-solid fa-building-columns sub-icon"></i>About</a></li>
+                        <li><a href="{{ url('/connect') }}"><i class="fa-solid fa-address-book sub-icon"></i>Connect</a></li>
                     </ul>
                 </li>
                 <li class="has-dropdown">
-                    <a href="#" class="nav-link">Services <span class="arrow"></span></a>
+                    <a href="#" class="nav-link {{ request()->is('pre-ipo*') ? 'nav-current' : '' }}">
+                        <i class="fa-solid fa-layer-group nav-icon"></i>
+                        <span>Services</span>
+                        <span class="arrow"></span>
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('/pre-ipo-unlisted-shares') }}">Pre-IPO | Unlisted Shares</a></li>
+                        <li><a href="{{ url('/pre-ipo-unlisted-shares') }}"><i class="fa-solid fa-rocket sub-icon"></i>Pre-IPO | Unlisted Shares</a></li>
                     </ul>
                 </li>
                 <li class="has-dropdown">
-                    <a href="#" class="nav-link {{ request()->is('unlisted') || request()->is('unlisted/*') || request()->is('buy') || request()->is('sell') ? 'nav-current' : '' }}">Buy/Sell <span class="arrow"></span></a>
+                    <a href="#" class="nav-link {{ request()->is('unlisted') || request()->is('unlisted/*') || request()->is('buy') || request()->is('sell') ? 'nav-current' : '' }}">
+                        <i class="fa-solid fa-chart-line nav-icon"></i>
+                        <span>Buy / Sell</span>
+                        <span class="arrow"></span>
+                    </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('unlisted') || request()->is('unlisted/*') ? 'nav-current' : '' }}">Buy</a></li>
-                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('unlisted') || request()->is('unlisted/*') ? 'nav-current' : '' }}">Sell</a></li>
+                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('unlisted') || request()->is('unlisted/*') ? 'nav-current' : '' }}"><i class="fa-solid fa-cart-shopping sub-icon"></i>Buy</a></li>
+                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('sell') ? 'nav-current' : '' }}"><i class="fa-solid fa-hand-holding-dollar sub-icon"></i>Sell</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="{{ url('/unlisted-shares-price-list-india') }}" class="nav-link">Unlisted Share Price</a>
+                    <a href="{{ url('/unlisted-shares-price-list-india') }}" class="nav-link {{ request()->is('unlisted-shares-price-list-india') ? 'nav-current' : '' }}">
+                        <i class="fa-solid fa-tags nav-icon"></i>
+                        <span>Share Price List</span>
+                    </a>
                 </li>
                 <li class="nav-cta-item">
-                    <a href="https://wa.me/919891881886" class="nav-cta-btn" target="_blank">Contact Us</a>
+                    <a href="https://wa.me/919891881886" class="nav-cta-btn" target="_blank">
+                        <i class="fa-brands fa-whatsapp"></i> Chat with Us
+                    </a>
                 </li>
             </ul>
 
@@ -43,7 +63,7 @@
                     @endif
                     <form action="{{ route('logout') }}" method="POST" style="width:100%">
                         @csrf
-                        <button type="submit" class="auth-btn auth-logout w-100">Logout</button>
+                        <button type="submit" class="auth-btn auth-logout">Logout</button>
                     </form>
                 @else
                     <a href="{{ url('/login') }}" class="auth-btn auth-signin">Sign In</a>
@@ -60,13 +80,19 @@
                 @endphp
                 <div class="account-wrapper has-dropdown">
                     <button class="account-trigger" type="button">
-                        <span class="account-avatar">{{ $initial }}</span>
+                        <span class="account-avatar">
+                            <img src="{{ route('profile.avatar') }}" alt="" class="account-avatar-dp" onerror="this.style.display='none'">
+                            <span class="account-avatar-initial">{{ $initial }}</span>
+                        </span>
                         <span class="account-text">My Account</span>
                         <span class="arrow"></span>
                     </button>
                     <ul class="dropdown-menu account-menu">
                         <li class="account-menu-header">
-                            <span class="account-menu-avatar">{{ $initial }}</span>
+                            <span class="account-menu-avatar">
+                                <img src="{{ route('profile.avatar') }}" alt="" class="account-menu-dp" onerror="this.style.display='none'">
+                                <span class="account-menu-initial">{{ $initial }}</span>
+                            </span>
                             <div class="account-menu-info">
                                 <span class="account-menu-name">{{ $displayName }}</span>
                             </div>
@@ -116,20 +142,33 @@
 
 <script>
 $(function () {
+    // Remove green bg from avatar circle when DP loads successfully
+    function applyDp($img) {
+        if ($img[0].complete && $img[0].naturalWidth > 0) {
+            $img.show().closest('.account-avatar, .account-menu-avatar')
+                .css('background', 'transparent')
+                .find('.account-avatar-initial, .account-menu-initial').hide();
+        }
+    }
+    $('.account-avatar-dp, .account-menu-dp').each(function () {
+        var $img = $(this);
+        $img.on('load', function () { applyDp($img); })
+            .on('error', function () { $img.hide(); });
+        applyDp($img);
+    });
+
     var $overlay = $('#navOverlay');
     var $nav     = $('#mainNav');
     var $toggle  = $('#mobileToggle');
 
+    function openSidebar()  { $nav.addClass('active'); $toggle.addClass('open'); $overlay.addClass('active'); }
+    function closeSidebar() { $nav.removeClass('active'); $toggle.removeClass('open'); $overlay.removeClass('active'); }
+
     $(document).on('click', '#mobileToggle', function () {
-        setTimeout(function () {
-            $overlay.toggleClass('active', $nav.hasClass('active'));
-        }, 0);
+        $nav.hasClass('active') ? closeSidebar() : openSidebar();
     });
 
-    $overlay.on('click', function () {
-        $overlay.removeClass('active');
-        $nav.removeClass('active');
-        $toggle.removeClass('open');
-    });
+    $(document).on('click', '#sidebarClose', function () { closeSidebar(); });
+    $overlay.on('click', function () { closeSidebar(); });
 });
 </script>
