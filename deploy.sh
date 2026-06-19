@@ -57,8 +57,8 @@ mkdir -p "$PUBLIC_DIR/assets"
 mkdir -p "$PUBLIC_DIR/js"
 mkdir -p "$PUBLIC_DIR/images"
 
-rsync -a --checksum "$APP_DIR/public/assets/" "$PUBLIC_DIR/assets/"
-rsync -a --checksum "$APP_DIR/public/js/"     "$PUBLIC_DIR/js/"
+rsync -a --checksum --delete "$APP_DIR/public/assets/" "$PUBLIC_DIR/assets/"
+rsync -a --checksum --delete "$APP_DIR/public/js/"     "$PUBLIC_DIR/js/"
 rsync -a --checksum "$APP_DIR/public/images/" "$PUBLIC_DIR/images/" 2>/dev/null || true
 
 cp "$APP_DIR/public/.htaccess" "$PUBLIC_DIR/.htaccess"
@@ -75,13 +75,13 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-if (file_exists(__DIR__ . '/../${APP_FOLDER}/storage/framework/maintenance.php')) {
-    require __DIR__ . '/../${APP_FOLDER}/storage/framework/maintenance.php';
+if (file_exists('${APP_DIR}/storage/framework/maintenance.php')) {
+    require '${APP_DIR}/storage/framework/maintenance.php';
 }
 
-require __DIR__ . '/../${APP_FOLDER}/vendor/autoload.php';
+require '${APP_DIR}/vendor/autoload.php';
 
-\$app = require_once __DIR__ . '/../${APP_FOLDER}/bootstrap/app.php';
+\$app = require_once '${APP_DIR}/bootstrap/app.php';
 
 // public_path() → public_html/ taaki uploaded images seedha yahan store hon
 \$app->bind('path.public', fn() => __DIR__);
