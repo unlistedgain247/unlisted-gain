@@ -64,6 +64,8 @@ Route::post('/invest-inquiry', [UnlistedLeadsController::class, 'investInquiry']
 Route::get('/profile',            [ProfileController::class, 'show'])->name('profile');
 Route::post('/profile/update',    [ProfileController::class, 'update'])->name('profile.update');
 Route::post('/profile/password',  [ProfileController::class, 'updatePassword'])->name('profile.password');
+Route::post('/profile/avatar',    [ProfileController::class, 'uploadAvatar'])->name('profile.avatar.upload');
+Route::get('/profile/avatar',     [ProfileController::class, 'serveAvatar'])->name('profile.avatar');
 Route::post('/profile/kyc/bank',  [ProfileController::class, 'uploadBank'])->name('profile.kyc.bank');
 Route::post('/profile/kyc/demat', [ProfileController::class, 'uploadDemat'])->name('profile.kyc.demat');
 Route::post('/profile/kyc/pan',   [ProfileController::class, 'uploadPan'])->name('profile.kyc.pan');

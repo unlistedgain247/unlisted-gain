@@ -25,7 +25,17 @@
 {{-- ── Profile Hero ── --}}
 <div class="profile-hero">
     <div class="profile-hero-inner">
-        <div class="profile-avatar">{{ $initial }}</div>
+        <div class="profile-avatar-wrap">
+            @if($user->avatar_path)
+                <img src="{{ route('profile.avatar') }}" alt="{{ $user->name }}" class="profile-avatar-img">
+            @else
+                <div class="profile-avatar">{{ $initial }}</div>
+            @endif
+            <label class="avatar-upload-btn" for="avatarInput" title="Change photo">
+                <i class="fa-solid fa-camera"></i>
+            </label>
+            <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none">
+        </div>
         <div class="profile-hero-info">
             <h1>{{ $user->name }}</h1>
             <p class="hero-email">{{ $user->email }}</p>
@@ -278,6 +288,43 @@
 <script>
 (function () {
     var CSRF = $('meta[name="csrf-token"]').attr('content');
+
+    // ── Avatar upload ────────────────────────────────────────
+    $('#avatarInput').on('change', function () {
+        var file = this.files[0];
+        if (!file) return;
+
+        var form = new FormData();
+        form.append('avatar', file);
+        form.append('_token', CSRF);
+
+        $.ajax({
+            url: '{{ route("profile.avatar.upload") }}',
+            method: 'POST',
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function () {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var $wrap = $('.profile-avatar-wrap');
+                    $wrap.find('.profile-avatar, .profile-avatar-img').remove();
+                    var $img = $('<img>').attr({
+                        src: e.target.result,
+                        alt: 'Profile Photo'
+                    }).addClass('profile-avatar-img');
+                    $wrap.prepend($img);
+                };
+                reader.readAsDataURL(file);
+            },
+            error: function (xhr) {
+                var msg = (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors.avatar)
+                    ? xhr.responseJSON.errors.avatar[0]
+                    : 'Upload failed. Try again.';
+                alert(msg);
+            }
+        });
+    });
 
     // ── Modal open / close ───────────────────────────────────
     window.openKycModal = function (id) {
