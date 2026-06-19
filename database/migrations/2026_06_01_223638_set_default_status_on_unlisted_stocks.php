@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -10,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         // Fill existing NULLs before switching to NOT NULL
-        DB::table('unlisted_stocks')
+        \DB::table('unlisted_stocks')
             ->whereNull('UL_STOCKS_STATUS')
             ->update(['UL_STOCKS_STATUS' => '1']);
 
