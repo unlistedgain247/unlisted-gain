@@ -153,14 +153,6 @@
                             </div>
                             <a href="/companies/{{ $stock->slug }}/" class="learn-more-btn" onclick="event.stopPropagation()">View Details</a>
                         </div>
-                        @empty
-                        {{-- Fallback if no DB stocks yet --}}
-                        <div class="share-card" onclick="location.href='/companies/nse-india-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/national-stock-exchange-ltd-nse.webp') }}" alt="NSE India"></div>
-                            <h3 class="card-title">NSE India Unlisted Shares</h3>
-                            <div class="card-meta"><span class="category">Financial Services</span></div>
-                            <a href="/companies/nse-india-unlisted-shares/" class="learn-more-btn" onclick="event.stopPropagation()">View Details</a>
-                        </div>
                         @endforelse
                     </div>
                 </div>

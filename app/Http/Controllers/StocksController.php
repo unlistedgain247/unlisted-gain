@@ -244,7 +244,7 @@ class StocksController extends Controller
     {
         $stock = UnlistedStock::query()
             ->where('UL_STOCKS_SLUG', $slug)
-            ->where('UL_STOCKS_STATUS', 1)
+            ->where('UL_STOCKS_STATUS', '1')
             ->firstOrFail();
 
         $fincode = $stock->UL_STOCKS_FINCODE;
