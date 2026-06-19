@@ -74,9 +74,9 @@ class StocksController extends Controller
                            AND uf.UL_FIN_Period_end = lf.max_period
                     WHERE uf.UL_FIN_STATUS = 1 AND uf.UL_FIN_No_months = '12'
                 ) f ON f.UL_FIN_FINCODE = s.UL_STOCKS_FINCODE
-                WHERE s.UL_STOCKS_STATUS = 1
+                WHERE s.UL_STOCKS_STATUS = '1'
             ) AS main
-            WHERE main.UL_PD_BID_PRICE IS NOT NULL
+            WHERE main.UL_PD_BID_PRICE > 0
             {$search}
             {$orderBy}
         ";
@@ -158,8 +158,8 @@ class StocksController extends Controller
                        AND uf.UL_FIN_Period_end = lf.max_period
                 WHERE uf.UL_FIN_STATUS = 1 AND uf.UL_FIN_No_months = '12'
             ) f ON f.UL_FIN_FINCODE = s.UL_STOCKS_FINCODE
-            WHERE s.UL_STOCKS_STATUS = 1
-              AND p.UL_PD_BID_PRICE IS NOT NULL
+            WHERE s.UL_STOCKS_STATUS = '1'
+              AND p.UL_PD_BID_PRICE > 0
               {$search}
             {$orderBy}
         ", $bindings));

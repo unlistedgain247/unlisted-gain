@@ -46,7 +46,7 @@ class PublicController extends Controller
                        AND uf.UL_FIN_Period_end = lf.max_period
                 WHERE uf.UL_FIN_STATUS = 1 AND UL_FIN_No_months = '12'
             ) f ON f.UL_FIN_FINCODE = s.UL_STOCKS_FINCODE
-            WHERE s.UL_STOCKS_STATUS = 1 AND p.UL_PD_BID_PRICE IS NOT NULL
+            WHERE s.UL_STOCKS_STATUS = '1' AND p.UL_PD_BID_PRICE > 0
             ORDER BY mcap DESC
             LIMIT 10
         "));
@@ -74,7 +74,7 @@ class PublicController extends Controller
                 ) lf ON lf.UL_FIN_FINCODE = uf.UL_FIN_FINCODE AND uf.UL_FIN_Period_end = lf.max_period
                 WHERE uf.UL_FIN_STATUS = 1 AND UL_FIN_No_months = '12'
             ) f ON f.UL_FIN_FINCODE = s.UL_STOCKS_FINCODE
-            WHERE s.UL_STOCKS_STATUS = 1 AND p.UL_PD_BID_PRICE IS NOT NULL
+            WHERE s.UL_STOCKS_STATUS = '1' AND p.UL_PD_BID_PRICE > 0
         ");
         $totalMcap = $totalMcapCr[0]->total ?? 0;
 
