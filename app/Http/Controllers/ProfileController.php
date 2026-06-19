@@ -232,6 +232,8 @@ class ProfileController extends Controller
         $ext  = strtolower($file->getClientOriginalExtension());
         $dir  = 'private/avatars';
 
+        Storage::makeDirectory($dir);
+
         // Delete any old avatar for this user
         foreach (Storage::files($dir) as $existing) {
             if (str_starts_with(basename($existing), 'avatar-' . $user->uid . '.')) {
