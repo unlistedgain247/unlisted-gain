@@ -25,15 +25,13 @@
 {{-- ── Profile Hero ── --}}
 <div class="profile-hero">
     <div class="profile-hero-inner">
-        <div class="profile-avatar-wrap" style="position:relative;width:96px;height:96px;flex-shrink:0">
+        <div class="profile-avatar-wrap">
             @if($user->avatar_path)
-                <img src="{{ route('profile.avatar') }}" alt="{{ $user->name }}" class="profile-avatar-img"
-                     style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.6);display:block">
+                <img src="{{ route('profile.avatar') }}" alt="{{ $user->name }}" class="profile-avatar-img">
             @else
                 <div class="profile-avatar">{{ $initial }}</div>
             @endif
-            <label class="avatar-upload-btn" for="avatarInput" title="Change photo"
-                   style="position:absolute;bottom:2px;right:2px;width:28px;height:28px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.25);color:#87b942;font-size:12px">
+            <label class="avatar-upload-btn" for="avatarInput" title="Change photo">
                 <i class="fa-solid fa-camera"></i>
             </label>
             <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" style="display:none">
@@ -314,12 +312,7 @@
                     var $img = $('<img>').attr({
                         src: e.target.result,
                         alt: 'Profile Photo'
-                    }).addClass('profile-avatar-img').css({
-                        width: '96px', height: '96px',
-                        borderRadius: '50%', objectFit: 'cover',
-                        border: '3px solid rgba(255,255,255,0.6)',
-                        display: 'block'
-                    });
+                    }).addClass('profile-avatar-img');
                     $wrap.prepend($img);
                 };
                 reader.readAsDataURL(file);
