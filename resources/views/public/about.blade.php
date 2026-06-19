@@ -1,7 +1,7 @@
 @extends('layout.app')
 
 @section('title', 'About UnlistedGain | Our Mission & Expertise in Unlisted Market')
-@section('meta_description', 'Learn about UnlistedGain, India\'s leading platform for unlisted shares. Our mission is to democratize access to pre-IPO investments with transparency and trust.')
+@section('meta_description', 'Learn about UnlistedGain Advantage Solutions Pvt. Ltd., India\'s premier gateway to Pre-IPO and Unlisted Shares. Meet our leadership team.')
 @section('meta_keywords', 'about unlistedgain, unlisted share experts, pre-ipo marketplace India, unlisted investment platform')
 
 @push('styles')
@@ -14,136 +14,250 @@
 
 @section('content')
 <main>
-    <section class="ug-about-main">
-        <div class="about-container">
-            <div class="about-content">
-                <h1 class="about-title">About <span>Unlistedgain Advantage Solutions Pvt. Ltd.</span></h1>
-                <p class="about-intro">
-                    Welcome to Unlistedgain Advantage Solutions Pvt. Ltd., your premier gateway to the evolving
-                    world of Pre-IPO and Unlisted Shares. We specialize in bridge-building between astute investors
-                    and high-growth opportunities that exist beyond the traditional stock exchange.
-                </p>
 
-                <div class="about-section">
-                    <h3>Our Leadership</h3>
-                    <p>Driven by the vision of our Director, <strong>Pawan Kumar Singh</strong>, Unlistedgain is
-                        built on a foundation of over 12 years of professional expertise. With a deep-rooted
-                        background in franchisee acquisition and strategic development, Mr. Singh brings a unique
-                        perspective to the private equity sector. His leadership is focused on sustainable business
-                        growth and creating a robust ecosystem where business associates and clients can thrive.</p>
-                </div>
-
-                <div class="about-section">
-                    <h3>What We Do</h3>
-                    <p>We facilitate the seamless buying and selling of unlisted shares, providing our clients with
-                        early access to companies poised for future public listings. In a market where timing and
-                        information are everything, we act as a trusted partner, offering:</p>
-                    <ul class="about-list">
-                        <li><strong>Strategic Value:</strong> We don't just facilitate transactions; we provide the
-                            strategic insight necessary to navigate the complexities of the Pre-IPO market.</li>
-                        <li><strong>Wealth Creation:</strong> Our primary goal is to help our clients and associates
-                            unlock long-term value and build wealth through diversified investment portfolios.</li>
-                        <li><strong>Expansion &amp; Growth:</strong> Leveraging our extensive network, we focus on
-                            identifying private equity opportunities that offer significant growth potential.</li>
-                    </ul>
-                </div>
-
-                <div class="about-section">
-                    <h3>Our Philosophy</h3>
-                    <p>At Unlistedgain, we believe that access to high-potential investments should be backed by
-                        transparency and expertise. We are committed to fostering a culture of strategic planning
-                        and excellence, ensuring that every associate we work with has the tools and opportunities
-                        to succeed in the dynamic financial landscape of India.</p>
+    {{-- WHO WE ARE --}}
+    <section class="ab-who">
+        <div class="ab-container">
+            <div class="ab-who-text">
+                <span class="ab-tag">WHO WE ARE</span>
+                <h1>About <span>Unlistedgain Advantage Solutions Pvt. Ltd.</span></h1>
+                <p>Welcome to Unlistedgain Advantage Solutions Pvt. Ltd., your premier gateway to the evolving world of Pre-IPO and Unlisted Shares. We specialize in bridge-building between astute investors and high-growth opportunities that exist beyond the traditional stock exchange.</p>
+                <div class="ab-who-pills">
+                    <span class="ab-pill">Simple</span>
+                    <span class="ab-pill">Effective</span>
+                    <span class="ab-pill">Affordable</span>
                 </div>
             </div>
-
-            <div class="about-image">
-                <img src="{{ asset('assets/img/about-leadership.png') }}" alt="Unlistedgain Leadership">
-            </div>
-        </div>
-    </section>
-
-    <section class="ug-about">
-        <div class="about-mission-grid">
-            <div class="mission-card">
-                <div class="icon-wrap">
-                    <svg viewBox="0 0 24 24" width="32" height="32">
-                        <path fill="#39b54a" d="M12,2L4.5,20.29L5.21,21L12,18L18.79,21L19.5,20.29L12,2Z" />
-                    </svg>
+            <div class="ab-who-stats">
+                <div class="ab-stat">
+                    <strong>15+</strong>
+                    <span>Years Combined Expertise</span>
                 </div>
-                <h3>Our Mission</h3>
-                <p>We believe every investor should have access to the unlisted market. Secure stakes in high-growth
-                    unicorns before their IPO, diversify into private equity, and trade with confidence via our
-                    secure, transparent platform.</p>
-            </div>
-            <div class="mission-card">
-                <div class="icon-wrap">
-                    <svg viewBox="0 0 24 24" width="32" height="32">
-                        <path fill="#39b54a"
-                            d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" />
-                    </svg>
+                <div class="ab-stat">
+                    <strong>5,000+</strong>
+                    <span>Families Served</span>
                 </div>
-                <h3>Our Vision</h3>
-                <p>Our vision is to democratize the unlisted market by providing transparent, secure access to
-                    private equity, empowering every investor to back future unicorns and diversify portfolios
-                    before they go public.</p>
-            </div>
-        </div>
-
-        <div class="about-values">
-            <div class="value-item">
-                <span class="value-number">01</span>
-                <h4>Invest Early</h4>
-                <p>Secure stakes in "Unicorns" and established leaders long before they hit the NSE or BSE.</p>
-            </div>
-            <div class="value-item">
-                <span class="value-number">02</span>
-                <h4>Diversify Beyond the Sensex</h4>
-                <p>Move beyond standard mutual funds and listed stocks into the high-potential private equity space.</p>
-            </div>
-            <div class="value-item">
-                <span class="value-number">03</span>
-                <h4>Trade with Confidence</h4>
-                <p>Benefit from a platform built on price transparency, verified data, and secure digital settlements.</p>
-            </div>
-        </div>
-
-        <div class="about-stats">
-            <div class="stat-box">
-                <span class="stat-num">500+</span>
-                <span class="stat-label">Companies Tracked</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-num">10k+</span>
-                <span class="stat-label">Happy Investors</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-num">&#8377;100Cr+</span>
-                <span class="stat-label">Transaction Volume</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="ug-partners-licenses">
-        <div class="partners-grid">
-            <div class="partner-card">
-                <h3>Bank/Payment Partner</h3>
-                <div class="logo-cluster bank-logos">
-                    <img src="{{ asset('assets/img/bandhan.jpeg') }}" alt="Bandhan Bank">
-                    <img src="{{ asset('assets/img/icici.png') }}" alt="ICICI Bank">
+                <div class="ab-stat">
+                    <strong>500+</strong>
+                    <span>Companies Tracked</span>
                 </div>
-            </div>
-
-            <div class="partner-card">
-                <h3>Registration Details</h3>
-                <div class="partner-details" style="text-align:left;">
-                    <p class="partner-name">Unlistedgain Advantage Solutions Pvt. Ltd.</p>
-                    <p style="margin-bottom:5px;"><strong>CIN :</strong> U66190DL2026PTC463467</p>
-                    <p style="margin-bottom:5px;"><strong>TAN :</strong> DELU10559D</p>
-                    <p style="margin-bottom:5px;"><strong>PAN :</strong> AAECU0789R</p>
+                <div class="ab-stat">
+                    <strong>&#8377;100Cr+</strong>
+                    <span>Transaction Volume</span>
                 </div>
             </div>
         </div>
     </section>
+
+    {{-- LEADERSHIP TEAM --}}
+    <section class="ab-team">
+        <div class="ab-container">
+            <div class="ab-section-head">
+                <span class="ab-tag">OUR LEADERSHIP</span>
+                <h2>The Team Behind <span>UnlistedGain</span></h2>
+            </div>
+
+            {{-- CEO Card --}}
+            <div class="ab-ceo-card">
+                <div class="ab-ceo-avatar">
+                    <div class="ab-avatar-placeholder ceo">VSR</div>
+                </div>
+                <div class="ab-ceo-info">
+                    <span class="ab-role-tag">Chief Executive Officer</span>
+                    <h3>Virendra Singh Rautela</h3>
+                    <p>Virendra Singh Rautela serves as the Chief Executive Officer of Unlistedgain, bringing an unparalleled depth of expertise to the private equity and unlisted share markets. With a career spanning over <strong>15 years</strong>, Mr. Rautela is a seasoned veteran in the financial services industry. His journey is defined by a profound understanding of the complexities, risks, and immense opportunities within the unlisted space — a sector that requires not just data, but the intuition that only decades of experience can provide.</p>
+                </div>
+            </div>
+
+            {{-- Directors Grid --}}
+            <div class="ab-directors-grid">
+                <div class="ab-director-card">
+                    <div class="ab-avatar-placeholder dir">MA</div>
+                    <div class="ab-director-info">
+                        <span class="ab-role-tag">Director</span>
+                        <h4>Manish Arora</h4>
+                        <p>A key leader at Dhanlabh Capital Services LLP, instrumental in delivering data-driven wealth strategies to over <strong>5,000 families</strong>. With deep expertise in Indian financial markets — from SIPs to high-growth opportunities — he ensures every client experience is rooted in transparency and our "Right Planning" philosophy.</p>
+                    </div>
+                </div>
+                <div class="ab-director-card">
+                    <div class="ab-avatar-placeholder dir">PKS</div>
+                    <div class="ab-director-info">
+                        <span class="ab-role-tag">Director</span>
+                        <h4>Pawan Kumar Singh</h4>
+                        <p>Leading our franchise network's strategic expansion with over <strong>12 years</strong> of experience. He excels in building high-value partnerships and specializing in Unlisted Shares and Pre-IPO placements, driving revenue growth and providing expert training support to business associates.</p>
+                    </div>
+                </div>
+                <div class="ab-director-card">
+                    <div class="ab-avatar-placeholder dir">ASD</div>
+                    <div class="ab-director-info">
+                        <span class="ab-role-tag">Director</span>
+                        <h4>Amrinder Singh Dhillon</h4>
+                        <p>Providing critical strategic oversight with a distinguished career spanning more than <strong>25 years</strong> in the financial and real estate sectors. His extensive background allows him to provide a holistic approach to portfolio building, ensuring every asset class works in synergy to achieve long-term financial goals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- WHAT WE DO --}}
+    <section class="ab-whatwedo">
+        <div class="ab-container">
+            <div class="ab-section-head">
+                <span class="ab-tag">WHAT WE DO</span>
+                <h2>Our <span>Core Services</span></h2>
+                <p>We facilitate the seamless buying and selling of unlisted shares, providing clients with early access to companies poised for future public listings.</p>
+            </div>
+            <div class="ab-services-grid">
+                <div class="ab-service-card">
+                    <div class="ab-service-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28"><path fill="#87b942" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <h4>Strategic Value</h4>
+                    <p>We don't just facilitate transactions; we provide the strategic insight necessary to navigate the complexities of the Pre-IPO market.</p>
+                </div>
+                <div class="ab-service-card">
+                    <div class="ab-service-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28"><path fill="#87b942" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+                    </div>
+                    <h4>Wealth Creation</h4>
+                    <p>Our primary goal is to help clients and associates unlock long-term value and build wealth through diversified investment portfolios.</p>
+                </div>
+                <div class="ab-service-card">
+                    <div class="ab-service-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28"><path fill="#87b942" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                    </div>
+                    <h4>Expansion &amp; Growth</h4>
+                    <p>Leveraging our extensive network, we focus on identifying private equity opportunities that offer significant growth potential.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- WHY CHOOSE US --}}
+    <section class="ab-why">
+        <div class="ab-container">
+            <div class="ab-why-inner">
+                <div class="ab-why-text">
+                    <span class="ab-tag light">WHY CHOOSE US</span>
+                    <h2>Our <span>Philosophy</span></h2>
+                    <p>At Unlistedgain, we believe that access to high-potential investments should be backed by transparency and expertise. We are committed to fostering a culture of strategic planning and excellence, ensuring that every associate we work with has the tools and opportunities to succeed in the dynamic financial landscape of India.</p>
+                    <p class="ab-why-tagline"><strong>Simple. Effective. Affordable.</strong><br>Empowering your portfolio with the high-growth potential of Pre-IPO shares through a streamlined, cost-efficient, and results-driven investment experience.</p>
+                </div>
+                <div class="ab-why-pills">
+                    <div class="ab-why-pill">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#87b942" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Wealth-Centric Philosophy
+                    </div>
+                    <div class="ab-why-pill">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#87b942" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Extensive Ecosystem
+                    </div>
+                    <div class="ab-why-pill">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#87b942" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Results-Driven Approach
+                    </div>
+                    <div class="ab-why-pill">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#87b942" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Strategic Transparency
+                    </div>
+                    <div class="ab-why-pill">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#87b942" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Experienced Team
+                    </div>
+                    <div class="ab-why-pill">
+                        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#87b942" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        Proven Network
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- OUR PROCESS --}}
+    <section class="ab-process">
+        <div class="ab-container">
+            <div class="ab-section-head">
+                <span class="ab-tag">OUR PROCESS</span>
+                <h2>From Interest to <span>Ownership</span></h2>
+                <p>Navigating the unlisted market requires precision. We've distilled 12+ years of expertise into a streamlined six-step workflow designed to move you from interest to ownership with total confidence.</p>
+            </div>
+            <div class="ab-process-grid">
+                <div class="ab-process-step">
+                    <div class="ab-step-num">01</div>
+                    <h4>Rigorous Pre-Vetting &amp; Due Diligence</h4>
+                    <p>Every asset is thoroughly vetted before it reaches you.</p>
+                </div>
+                <div class="ab-process-step">
+                    <div class="ab-step-num">02</div>
+                    <h4>Personalized Strategic Consultation</h4>
+                    <p>We align every opportunity with your unique wealth goals.</p>
+                </div>
+                <div class="ab-process-step">
+                    <div class="ab-step-num">03</div>
+                    <h4>Curated Opportunity Selection</h4>
+                    <p>Handpicked investments that match your risk profile.</p>
+                </div>
+                <div class="ab-process-step">
+                    <div class="ab-step-num">04</div>
+                    <h4>Secure &amp; Seamless Execution</h4>
+                    <p>Digital-first, secure share transfer with full documentation.</p>
+                </div>
+                <div class="ab-process-step">
+                    <div class="ab-step-num">05</div>
+                    <h4>Active Portfolio Diversification</h4>
+                    <p>Ongoing risk management across asset classes.</p>
+                </div>
+                <div class="ab-process-step">
+                    <div class="ab-step-num">06</div>
+                    <h4>Strategic Exit Intelligence</h4>
+                    <p>Expert guidance until your investment realizes its full potential.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- CTA --}}
+    <section class="ab-cta">
+        <div class="ab-container">
+            <div class="ab-cta-inner">
+                <h2>Ready to Take Your Portfolio to the Next Level?</h2>
+                <p>At Unlistedgain Advantage Solutions, we believe that the most significant wealth-building opportunities shouldn't be reserved for a select few.</p>
+                <div class="ab-cta-actions">
+                    <a href="/connect" class="ab-cta-btn primary">Get in Touch</a>
+                    <a href="/unlisted" class="ab-cta-btn outline">Browse Stocks</a>
+                </div>
+                <div class="ab-cta-contact">
+                    <span>+91 85068 94923</span>
+                    <span>www.Unlistedgain.com</span>
+                    <span>113/2, Meenakshi Garden, Tilak Nagar, New Delhi</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- PARTNERS & REGISTRATION --}}
+    <section class="ab-partners">
+        <div class="ab-container">
+            <div class="ab-partners-grid">
+                <div class="ab-partner-card">
+                    <h3>Bank / Payment Partners</h3>
+                    <div class="ab-bank-logos">
+                        <img src="{{ asset('assets/img/bandhan.jpeg') }}" alt="Bandhan Bank">
+                        <img src="{{ asset('assets/img/icici.png') }}" alt="ICICI Bank">
+                    </div>
+                </div>
+                <div class="ab-partner-card">
+                    <h3>Registration Details</h3>
+                    <div class="ab-reg-details">
+                        <p class="ab-reg-name">Unlistedgain Advantage Solutions Pvt. Ltd.</p>
+                        <p><strong>CIN :</strong> U66190DL2026PTC463467</p>
+                        <p><strong>TAN :</strong> DELU10559D</p>
+                        <p><strong>PAN :</strong> AAECU0789R</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>
 @endsection
