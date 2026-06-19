@@ -7,6 +7,15 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
+    <style>
+        .item-icon-fallback {
+            width: 40px; height: 40px; border-radius: 8px;
+            background: linear-gradient(135deg, #87b942, #5a8a1e);
+            color: #fff; font-weight: 700; font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -461,5 +470,9 @@
         </div>
         <div class="toast-progress"></div>
     </div>
+
+@push('scripts')
+<script src="{{ asset('assets/js/home-search.js') }}"></script>
+@endpush
 
 @endsection

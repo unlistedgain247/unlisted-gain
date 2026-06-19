@@ -240,6 +240,21 @@ class StocksController extends Controller
             ->header('Access-Control-Allow-Origin', '*');
     }
 
+    public function searchList()
+    {
+        $stocks = DB::table('unlisted_stocks')
+            ->where('UL_STOCKS_STATUS', '1')
+            ->orderBy('UL_STOCKS_COMPNAME', 'asc')
+            ->select(
+                'UL_STOCKS_COMPNAME as name',
+                'UL_STOCKS_SLUG     as slug',
+                'UL_STOCKS_LOGO_LINK as logo'
+            )
+            ->get();
+
+        return response()->json($stocks);
+    }
+
     public function company(string $slug)
     {
         $stock = UnlistedStock::query()

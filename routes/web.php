@@ -75,6 +75,8 @@ Route::prefix('unlisted')->group(function () {
     Route::get('/stocks', [StocksController::class, 'stocks'])->name('public.stocks');
 });
 
+Route::get('/stocks/search-list', [StocksController::class, 'searchList'])->name('public.stocks.search-list');
+
 Route::get('/pre-ipo-unlisted-shares',       [StocksController::class, 'preIpo'])->name('public.pre-ipo');
 Route::get('/pre-ipo-unlisted-shares/data',  [StocksController::class, 'preIpoData'])->name('public.pre-ipo.data');
 

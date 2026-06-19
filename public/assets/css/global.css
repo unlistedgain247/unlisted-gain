@@ -284,6 +284,18 @@ body {
     color: #fff;
 }
 
+/* Nav overlay backdrop */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1050;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+}
+.nav-overlay.active { display: block; }
+
 /* Hidden in mobile — shown inside nav panel instead */
 .main-header .nav-auth-mobile {
     display: none;
@@ -424,101 +436,118 @@ body {
         display: none;
     }
 
-    /* Mobile Nav Panel — slides in from right */
+    /* Mobile Nav Panel — slides in from LEFT */
     .main-header .nav-menu {
-        display: none;
         position: fixed;
         top: 0;
-        right: 0;
-        width: 280px;
+        left: 0;
+        width: 300px;
         height: 100vh;
-        background: #111;
+        background: #fff;
         flex-direction: column;
-        padding: 70px 0 30px;
+        padding: 0;
         z-index: 1100;
-        box-shadow: -5px 0 30px rgba(0,0,0,0.4);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.15);
         overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        display: flex;
     }
 
-    /* When active — show mobile nav */
+    /* Sidebar logo header */
+    .main-header .nav-menu::before {
+        content: '';
+        display: block;
+        height: 64px;
+        background: #0c3105;
+        flex-shrink: 0;
+    }
+
+    /* When active — slide in */
     .main-header .nav-menu.active {
-        display: flex;
+        transform: translateX(0);
     }
 
     /* Stack nav links vertically */
     .main-header .nav-menu ul {
         flex-direction: column;
         gap: 0;
-        padding: 0;
+        padding: 8px 0;
     }
 
     .main-header .nav-menu > ul > li {
-        border-bottom: 1px solid #222;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .main-header .nav-menu > ul > li:last-child {
+        border-bottom: none;
     }
 
     .main-header .nav-link {
-        padding: 14px 24px;
+        padding: 15px 20px;
         font-size: 15px;
-        color: #fff;
+        font-weight: 600;
+        color: #1a1a1a;
         justify-content: space-between;
     }
 
     .main-header .nav-link:hover,
     .main-header .nav-link.nav-current {
-        background: #1a1a1a;
+        background: #f0f9e0;
         color: #87b942;
     }
 
     /* Arrow rotates when dropdown is active */
+    .main-header .has-dropdown.active > .nav-link { color: #87b942; }
     .main-header .has-dropdown.active > .nav-link .arrow::after {
         transform: rotate(180deg);
         border-top-color: #87b942;
     }
 
-    /* Mobile Dropdown — slides down under parent */
+    /* Mobile Dropdown */
     .main-header .dropdown-menu {
         position: static;
         opacity: 1;
         visibility: visible;
         display: none;
-        background: #1a1a1a;
+        background: #f8fdf2;
         box-shadow: none;
         transform: none;
-        padding: 0;
+        padding: 4px 0;
         border: none;
         border-radius: 0;
+        border-top: 1px solid #eef5e0;
         min-width: 100%;
     }
 
-    .main-header .has-dropdown.active .dropdown-menu {
-        display: flex;
-    }
+    .main-header .has-dropdown.active .dropdown-menu { display: flex; }
 
     .main-header .dropdown-menu li a {
-        color: #ccc;
-        padding: 12px 24px 12px 40px;
+        color: #555;
+        padding: 11px 20px 11px 36px;
         font-size: 14px;
         margin: 0;
         border-radius: 0;
     }
 
     .main-header .dropdown-menu li a:hover {
-        background: #222;
+        background: #e8f5d0;
         color: #87b942;
     }
 
-    /* Mobile CTA Adjustments */
+    /* Mobile CTA */
     .main-header .nav-cta-item {
-        padding: 20px 24px;
-        border-top: 1px solid #333;
-        margin-top: 10px;
+        padding: 16px 20px;
+        border-top: 1px solid #eee;
+        margin-top: 8px;
     }
 
     .main-header .nav-cta-btn {
         width: 100%;
         text-align: center;
         padding: 12px;
-        font-size: 16px;
+        font-size: 15px;
+        border-radius: 8px;
     }
 
     /* On mobile show header-auth as icon-only next to hamburger */
@@ -527,7 +556,7 @@ body {
         align-items: center;
     }
 
-    /* Icon-only account button on mobile — show just the avatar circle */
+    /* Icon-only account button on mobile */
     .main-header .account-trigger {
         border: none;
         background: transparent;
@@ -539,59 +568,39 @@ body {
         gap: 0;
     }
 
-    .main-header .account-trigger:hover {
-        background: transparent;
-        color: inherit;
-    }
+    .main-header .account-trigger:hover { background: transparent; color: inherit; }
 
-    .main-header .account-trigger .account-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 15px;
-    }
-
+    .main-header .account-trigger .account-avatar { width: 36px; height: 36px; font-size: 15px; }
     .main-header .account-trigger .account-text,
-    .main-header .account-trigger .arrow {
-        display: none;
-    }
+    .main-header .account-trigger .arrow { display: none; }
 
-    /* Account dropdown on mobile — right-aligned so it doesn't clip off-screen */
+    /* Account dropdown on mobile — right-aligned */
     .main-header .account-wrapper .dropdown-menu {
-        right: 0;
-        left: auto;
-        min-width: 200px;
-        z-index: 1300;
+        right: 0; left: auto; min-width: 200px; z-index: 1300;
     }
 
-    /* Sign In / Sign Up remain hidden — shown inside mobile nav panel */
-    .main-header .header-auth .auth-btn {
-        display: none;
-    }
+    .main-header .header-auth .auth-btn { display: none; }
 
-    /* Show auth buttons inside the mobile nav panel */
+    /* Auth buttons inside mobile nav panel */
     .main-header .nav-auth-mobile {
         display: flex;
         gap: 10px;
-        padding: 20px 24px;
-        border-top: 1px solid #333;
+        padding: 16px 20px;
+        border-top: 1px solid #eee;
+        margin-top: auto;
     }
 
     .main-header .nav-auth-mobile .auth-btn {
-        flex: 1;
-        text-align: center;
-        padding: 10px 12px;
-        font-size: 15px;
-        display: inline-block;
+        flex: 1; text-align: center;
+        padding: 10px 12px; font-size: 14px;
+        display: inline-block; border-radius: 8px;
     }
 
     .main-header .nav-auth-mobile .auth-signin {
-        color: #87b942;
-        border-color: #87b942;
+        color: #87b942; border-color: #87b942;
     }
-
     .main-header .nav-auth-mobile .auth-signin:hover {
-        background: #87b942;
-        color: #fff;
+        background: #87b942; color: #fff;
     }
 }
 
