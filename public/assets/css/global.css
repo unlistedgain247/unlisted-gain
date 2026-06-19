@@ -436,118 +436,188 @@ body {
         display: none;
     }
 
-    /* Mobile Nav Panel — slides in from LEFT */
+    /* ── Mobile Sidebar Panel ── */
     .main-header .nav-menu {
         position: fixed;
         top: 0;
         left: 0;
-        width: 300px;
+        width: 280px;
         height: 100vh;
         background: #fff;
         flex-direction: column;
         padding: 0;
         z-index: 1100;
-        box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+        box-shadow: 6px 0 32px rgba(0,0,0,0.18);
         overflow-y: auto;
         transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
         display: flex;
     }
 
-    /* Sidebar logo header */
-    .main-header .nav-menu::before {
-        content: '';
-        display: block;
-        height: 64px;
-        background: #0c3105;
+    .main-header .nav-menu.active { transform: translateX(0); }
+
+    /* ── Sidebar top bar ── */
+    .main-header .nav-sidebar-head {
+        padding: 20px 16px 8px;
         flex-shrink: 0;
     }
 
-    /* When active — slide in */
-    .main-header .nav-menu.active {
-        transform: translateX(0);
+    .main-header .nav-sidebar-title {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.6px;
+        text-transform: uppercase;
+        color: #bbb;
     }
 
-    /* Stack nav links vertically */
+    /* ── Nav link list ── */
     .main-header .nav-menu ul {
         flex-direction: column;
-        gap: 0;
-        padding: 8px 0;
+        gap: 2px;
+        padding: 6px 12px;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: transparent;
     }
 
-    .main-header .nav-menu > ul > li {
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .main-header .nav-menu > ul > li:last-child {
-        border-bottom: none;
-    }
+    .main-header .nav-menu > ul > li { border-bottom: none; }
 
     .main-header .nav-link {
-        padding: 15px 20px;
-        font-size: 15px;
+        padding: 11px 14px;
+        font-size: 14px;
         font-weight: 600;
-        color: #1a1a1a;
-        justify-content: space-between;
+        color: #3a3a3a;
+        gap: 12px;
+        border-radius: 10px;
+        border-left: none;
+        transition: background 0.15s, color 0.15s;
+        align-items: center;
     }
 
-    .main-header .nav-link:hover,
-    .main-header .nav-link.nav-current {
-        background: #f0f9e0;
-        color: #87b942;
+    .main-header .nav-link .nav-icon {
+        width: 18px;
+        text-align: center;
+        font-size: 15px;
+        color: #888;
+        flex-shrink: 0;
+        transition: color 0.15s;
     }
 
-    /* Arrow rotates when dropdown is active */
-    .main-header .has-dropdown.active > .nav-link { color: #87b942; }
+    .main-header .nav-link span:not(.arrow):not(.nav-icon) {
+        flex: 1;
+    }
+
+    .main-header .nav-link .arrow { margin-left: auto; }
+
+    .main-header .nav-link:hover {
+        background: #f0f8e4;
+        color: #2d6a04;
+        border-left: none;
+    }
+
+    .main-header .nav-link:hover .nav-icon { color: #87b942; }
+
+    .main-header .nav-link.nav-current,
+    .main-header .has-dropdown.active > .nav-link {
+        background: #87b942;
+        color: #fff;
+        border-left: none;
+    }
+
+    .main-header .nav-link.nav-current .nav-icon,
+    .main-header .has-dropdown.active > .nav-link .nav-icon { color: #fff; }
+
     .main-header .has-dropdown.active > .nav-link .arrow::after {
         transform: rotate(180deg);
-        border-top-color: #87b942;
+        border-top-color: #fff;
     }
 
-    /* Mobile Dropdown */
-    .main-header .dropdown-menu {
+    /* ── Mobile nav-menu sub-dropdown (scoped to sidebar only) ── */
+    .main-header .nav-menu .dropdown-menu {
         position: static;
         opacity: 1;
         visibility: visible;
         display: none;
-        background: #f8fdf2;
+        background: transparent;
         box-shadow: none;
         transform: none;
-        padding: 4px 0;
+        padding: 2px 0 4px 30px;
         border: none;
         border-radius: 0;
-        border-top: 1px solid #eef5e0;
         min-width: 100%;
+        gap: 1px;
     }
 
-    .main-header .has-dropdown.active .dropdown-menu { display: flex; }
+    .main-header .nav-menu .has-dropdown.active .dropdown-menu { display: flex; }
 
-    .main-header .dropdown-menu li a {
+    .main-header .nav-menu .dropdown-menu li a {
         color: #555;
-        padding: 11px 20px 11px 36px;
-        font-size: 14px;
+        padding: 9px 12px;
+        font-size: 13.5px;
+        font-weight: 500;
         margin: 0;
-        border-radius: 0;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.12s, color 0.12s;
     }
 
-    .main-header .dropdown-menu li a:hover {
+    .main-header .nav-menu .dropdown-menu li a:hover {
         background: #e8f5d0;
-        color: #87b942;
+        color: #2d6a04;
     }
+
+    .main-header .nav-menu .dropdown-menu li a .sub-icon {
+        font-size: 12px;
+        color: #aaa;
+        width: 14px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .main-header .nav-menu .dropdown-menu li a:hover .sub-icon { color: #87b942; }
+
+    /* Account dropdown stays absolute-positioned on mobile */
+    .main-header .account-wrapper .dropdown-menu {
+        position: absolute;
+        display: none;
+        opacity: 1;
+        visibility: visible;
+        right: 0; left: auto; min-width: 210px; z-index: 1300;
+    }
+
+    .main-header .account-wrapper.active .dropdown-menu { display: flex; }
 
     /* Mobile CTA */
     .main-header .nav-cta-item {
-        padding: 16px 20px;
-        border-top: 1px solid #eee;
-        margin-top: 8px;
+        padding: 6px 12px 4px;
+        border: none;
+        margin-top: 0;
     }
 
     .main-header .nav-cta-btn {
         width: 100%;
         text-align: center;
-        padding: 12px;
-        font-size: 15px;
-        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 10px;
+        letter-spacing: 0.2px;
+        background: #25d366;
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .main-header .nav-cta-btn:hover {
+        background: #1ebe5d;
+        color: #fff;
     }
 
     /* On mobile show header-auth as icon-only next to hamburger */
@@ -584,23 +654,58 @@ body {
     /* Auth buttons inside mobile nav panel */
     .main-header .nav-auth-mobile {
         display: flex;
+        flex-direction: column;
         gap: 10px;
-        padding: 16px 20px;
-        border-top: 1px solid #eee;
+        padding: 20px 20px 28px;
         margin-top: auto;
+        border-top: 1px solid #f0f0f0;
     }
 
     .main-header .nav-auth-mobile .auth-btn {
-        flex: 1; text-align: center;
-        padding: 10px 12px; font-size: 14px;
-        display: inline-block; border-radius: 8px;
+        text-align: center;
+        padding: 13px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        display: block;
+        border-radius: 10px;
+        width: 100%;
     }
 
     .main-header .nav-auth-mobile .auth-signin {
-        color: #87b942; border-color: #87b942;
+        color: #0c3105;
+        border: 1.5px solid #87b942;
+        background: transparent;
     }
     .main-header .nav-auth-mobile .auth-signin:hover {
-        background: #87b942; color: #fff;
+        background: #87b942;
+        color: #fff;
+    }
+    .main-header .nav-auth-mobile .auth-signup {
+        background: #87b942;
+        color: #fff;
+        border: 1.5px solid #87b942;
+    }
+    .main-header .nav-auth-mobile .auth-signup:hover {
+        background: #6fa032;
+        border-color: #6fa032;
+    }
+
+    .main-header .nav-auth-mobile .auth-logout {
+        background: transparent;
+        border: 1.5px solid #e5e5e5;
+        color: #666;
+        border-radius: 10px;
+        padding: 13px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        text-align: center;
+    }
+    .main-header .nav-auth-mobile .auth-logout:hover {
+        border-color: #cc3333;
+        color: #cc3333;
+        background: #fff5f5;
     }
 }
 
@@ -651,6 +756,21 @@ body {
     justify-content: center;
     flex-shrink: 0;
     transition: background 0.2s;
+    overflow: hidden;
+    position: relative;
+}
+
+.main-header .account-avatar-dp {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.main-header .account-avatar-initial {
+    line-height: 1;
 }
 
 .main-header .account-wrapper .dropdown-menu {
@@ -691,7 +811,20 @@ body {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
 }
+
+.main-header .account-menu-dp {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.main-header .account-menu-initial { line-height: 1; }
 
 .main-header .account-menu-info {
     display: flex;
@@ -787,20 +920,6 @@ body {
 }
 
 /* =============================================
-   MOBILE OVERLAY (dims background)
-   ============================================= */
-.main-header .nav-menu.active::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.5);
-    z-index: -1;
-}
-
-/* =============================================
    FAQ SECTION (shared across public pages)
    ============================================= */
 .ug-faq-section {
@@ -882,18 +1001,11 @@ body {
 }
 
 .faq-answer {
-    padding: 0 25px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1), padding-bottom 0.38s ease;
+    display: none;
+    padding: 0 25px 20px;
     color: #666;
     line-height: 1.6;
     font-size: 15px;
-}
-
-.faq-item.active .faq-answer {
-    max-height: 600px;
-    padding-bottom: 20px;
 }
 
 .faq-answer ul {
@@ -936,8 +1048,7 @@ body {
 @media (max-width: 480px) {
     .faq-title { font-size: 22px; }
     .faq-question { font-size: 14px; padding: 15px 16px; }
-    .faq-answer { padding: 0 16px; font-size: 14px; }
-    .faq-item.active .faq-answer { padding-bottom: 16px; }
+    .faq-answer { padding: 0 16px 16px; font-size: 14px; }
 }
 
 /* =============================================

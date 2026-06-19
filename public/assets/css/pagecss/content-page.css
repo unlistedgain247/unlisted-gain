@@ -178,15 +178,8 @@
 }
 
 .ug-content-page .faq-answer {
-    padding: 0 20px;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-}
-
-.ug-content-page .faq-item.active .faq-answer {
+    display: none;
     padding: 0 20px 18px;
-    max-height: 500px;
 }
 
 .ug-content-page .faq-item.active .faq-toggle {
