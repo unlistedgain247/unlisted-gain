@@ -53,9 +53,13 @@ php artisan view:cache
 # ── [4] Sync public assets → public_html ──────────────────────────────────────
 echo "[4/6] Syncing public assets to public_html/..."
 
-rsync -a "$APP_DIR/public/assets/" "$PUBLIC_DIR/assets/"
-rsync -a "$APP_DIR/public/js/"     "$PUBLIC_DIR/js/"
-rsync -a "$APP_DIR/public/images/" "$PUBLIC_DIR/images/" 2>/dev/null || true
+mkdir -p "$PUBLIC_DIR/assets"
+mkdir -p "$PUBLIC_DIR/js"
+mkdir -p "$PUBLIC_DIR/images"
+
+rsync -a --checksum "$APP_DIR/public/assets/" "$PUBLIC_DIR/assets/"
+rsync -a --checksum "$APP_DIR/public/js/"     "$PUBLIC_DIR/js/"
+rsync -a --checksum "$APP_DIR/public/images/" "$PUBLIC_DIR/images/" 2>/dev/null || true
 
 cp "$APP_DIR/public/.htaccess" "$PUBLIC_DIR/.htaccess"
 [ -f "$APP_DIR/public/favicon.ico" ] && cp "$APP_DIR/public/favicon.ico" "$PUBLIC_DIR/favicon.ico"
