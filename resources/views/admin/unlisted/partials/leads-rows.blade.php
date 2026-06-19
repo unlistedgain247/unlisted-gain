@@ -11,13 +11,13 @@
 <table style="width:100%;border-collapse:collapse;">
     <thead>
         <tr style="background:#f8f9fa;border-bottom:2px solid #e9ecef;">
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:80px;">UID</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;">Name</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:130px;">Last Visited</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:170px;">Allocation</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:180px;">Disposition</th>
-            <th style="padding:10px 16px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:120px;">Callback</th>
-            <th style="padding:10px 16px;text-align:center;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:80px;">Call</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:60px;">UID</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:220px;">Name</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:120px;">Last Visited</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:160px;">Allocation</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:200px;">Disposition</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:120px;">Callback</th>
+            <th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:70px;">Call</th>
         </tr>
     </thead>
     <tbody>
@@ -38,12 +38,12 @@
     <tr style="border-bottom:1px solid #f1f3f5;transition:background 0.12s;" onmouseover="this.style.background='#fafbfc'" onmouseout="this.style.background=''"  >
 
         {{-- UID --}}
-        <td style="padding:14px 16px;vertical-align:middle;">
+        <td style="padding:12px 14px;vertical-align:middle;">
             <span style="font-weight:700;color:#3b82f6;font-size:13px;font-family:monospace;">{{ $lead->UL_LEAD_UID }}</span>
         </td>
 
         {{-- Name + contact + tags --}}
-        <td style="padding:14px 16px;vertical-align:middle;">
+        <td style="padding:12px 14px;vertical-align:middle;max-width:220px;overflow:hidden;">
             <div style="font-weight:600;font-size:13px;color:#111827;line-height:1.3;">{{ $lead->user_name ?: '—' }}</div>
             @if($lead->email || $lead->phone)
             <div style="font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.3;">
@@ -71,7 +71,7 @@
         </td>
 
         {{-- Last Visited --}}
-        <td style="padding:14px 16px;vertical-align:middle;">
+        <td style="padding:12px 14px;vertical-align:middle;">
             @if($lead->UL_LEAD_CUSTOMER_LAST_VISITED_TIME)
             <div style="font-size:12px;color:#374151;font-weight:500;">
                 {{ \Carbon\Carbon::parse($lead->UL_LEAD_CUSTOMER_LAST_VISITED_TIME)->format('d M Y') }}
@@ -85,7 +85,7 @@
         </td>
 
         {{-- Allocation --}}
-        <td style="padding:14px 16px;vertical-align:middle;">
+        <td style="padding:12px 14px;vertical-align:middle;">
             @if($canAllocate)
             <select class="lead-alloc-select" data-lead-id="{{ $lead->UL_LEAD_ID }}"
                 style="width:100%;padding:5px 8px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;color:#374151;background:#fff;cursor:pointer;outline:none;">
@@ -118,7 +118,7 @@
         </td>
 
         {{-- Disposition --}}
-        <td style="padding:14px 16px;vertical-align:middle;">
+        <td style="padding:12px 14px;vertical-align:middle;">
             <div style="display:flex;align-items:center;gap:5px;">
                 @if($lead->UL_LEAD_DISPOSITION)
                 <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:{{ $dc['bg'] }};color:{{ $dc['color'] }};border:1px solid {{ $dc['border'] }};">
@@ -144,20 +144,14 @@
             <div style="font-size:11px;color:#6b7280;margin-top:4px;">{{ $lead->UL_LEAD_SUB_DISPOSITION }}</div>
             @endif
             @if($lead->UL_LEAD_DISPOSITION_COMMENT)
-            <div style="font-size:11px;color:#9ca3af;margin-top:2px;font-style:italic;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $lead->UL_LEAD_DISPOSITION_COMMENT }}">
+            <div style="font-size:11px;color:#9ca3af;margin-top:2px;font-style:italic;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $lead->UL_LEAD_DISPOSITION_COMMENT }}">
                 {{ $lead->UL_LEAD_DISPOSITION_COMMENT }}
-            </div>
-            @endif
-            @if(!$noCallback)
-            <div style="font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px;color:{{ $isOverdue ? '#dc2626' : '#6b7280' }};">
-                <i class="fa-solid fa-clock" style="font-size:9px;flex-shrink:0;"></i>
-                <span>{{ \Carbon\Carbon::parse($lead->UL_LEAD_CALLBACK_TIME)->format('d M, g:i A') }}{{ $isOverdue ? ' · Overdue' : '' }}</span>
             </div>
             @endif
         </td>
 
         {{-- Callback --}}
-        <td style="padding:14px 16px;vertical-align:middle;white-space:nowrap;">
+        <td style="padding:12px 14px;vertical-align:middle;white-space:nowrap;">
             @if(!$noCallback)
             <div style="font-size:12px;font-weight:600;color:{{ $isOverdue ? '#dc2626' : '#1d4ed8' }};">
                 {{ \Carbon\Carbon::parse($lead->UL_LEAD_CALLBACK_TIME)->format('d M Y') }}
@@ -174,7 +168,7 @@
         </td>
 
         {{-- Req. Call --}}
-        <td style="padding:14px 16px;vertical-align:middle;text-align:center;" class="req-call-cell" data-lead-id="{{ $lead->UL_LEAD_ID }}">
+        <td style="padding:12px 14px;vertical-align:middle;text-align:center;" class="req-call-cell" data-lead-id="{{ $lead->UL_LEAD_ID }}">
             @if(strtolower($lead->UL_LEAD_REQUEST_FOR_CALL ?? '') === 'yes')
             <span class="req-call-badge" title="Click to mark as done"
                 style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#fef9c3;color:#a16207;border:1px solid #fde68a;cursor:pointer;transition:all 0.15s;"

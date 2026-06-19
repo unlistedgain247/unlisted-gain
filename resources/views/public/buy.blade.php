@@ -129,6 +129,10 @@
     </style>
 @endpush
 
+@section('subheader')
+@include('partials.breadcrumb', ['crumbs' => [['label' => 'Buy Unlisted Shares']]])
+@endsection
+
 @section('content')
 <main>
     <section class="ug-shares-page">

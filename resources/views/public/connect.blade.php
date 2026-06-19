@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/connect.css') }}">
 @endpush
 
+@section('subheader')
+@include('partials.breadcrumb', ['crumbs' => [['label' => 'Contact Us']]])
+@endsection
+
 @section('content')
 <main>
     {{-- Team Section --}}

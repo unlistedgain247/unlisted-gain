@@ -271,9 +271,8 @@ document.addEventListener("click", function (e) {
   if (e.target.id === "viewAllFaq") {
     const extraItems = document.querySelector(".faq-extra-items");
     if (extraItems) {
-      const isHidden = extraItems.style.display === "none";
-      extraItems.style.display = isHidden ? "block" : "none";
-      e.target.textContent = isHidden ? "Show Less" : "View All";
+      const isOpen = extraItems.classList.toggle("open");
+      e.target.textContent = isOpen ? "Show Less" : "View All";
     }
   }
 });

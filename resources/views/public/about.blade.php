@@ -8,6 +8,10 @@
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/about.css') }}">
 @endpush
 
+@section('subheader')
+@include('partials.breadcrumb', ['crumbs' => [['label' => 'About Us']]])
+@endsection
+
 @section('content')
 <main>
     <section class="ug-about-main">

@@ -60,11 +60,51 @@
             </div>
         </section>
 
-        {{-- Popular Unlisted Shares --}}
+        {{-- Stats Strip --}}
+        <section class="ug-stats-strip">
+            <div class="stats-strip-inner">
+                <div class="stat-pill">
+                    <div class="stat-pill-icon">📊</div>
+                    <div class="stat-pill-body">
+                        <span class="stat-pill-num">100+</span>
+                        <span class="stat-pill-label">Unlisted Companies</span>
+                    </div>
+                </div>
+                <div class="stat-pill">
+                    <div class="stat-pill-icon">💰</div>
+                    <div class="stat-pill-body">
+                        <span class="stat-pill-num">
+                            @if($totalMcap >= 1000)
+                                ₹{{ number_format($totalMcap / 1000, 1) }}K+ Cr
+                            @else
+                                ₹{{ number_format($totalMcap, 0) }}+ Cr
+                            @endif
+                        </span>
+                        <span class="stat-pill-label">Combined Market Cap</span>
+                    </div>
+                </div>
+                <div class="stat-pill">
+                    <div class="stat-pill-icon">🛡️</div>
+                    <div class="stat-pill-body">
+                        <span class="stat-pill-num">100%</span>
+                        <span class="stat-pill-label">Secure Transfers</span>
+                    </div>
+                </div>
+                <div class="stat-pill">
+                    <div class="stat-pill-icon">⭐</div>
+                    <div class="stat-pill-body">
+                        <span class="stat-pill-num">5,000+</span>
+                        <span class="stat-pill-label">Happy Investors</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- Popular Unlisted Shares (Dynamic) --}}
         <section class="popular-shares-section">
             <div class="slider-header">
                 <h2>Popular Unlisted <span>Shares In India</span>: High-Growth Opportunities</h2>
-                <p>Explore High-Demand Unlisted Companies & Pre-IPO Stocks</p>
+                <p>Explore High-Demand Unlisted Companies & Pre-IPO Stocks — Live Prices</p>
             </div>
 
             <div class="slider-container-wrapper">
@@ -72,77 +112,56 @@
 
                 <div class="cards-viewport" id="sharesViewport">
                     <div class="cards-track">
+                        @forelse($topStocks as $stock)
+                        <div class="share-card" onclick="location.href='/companies/{{ $stock->slug }}/'">
+                            <div class="logo-box">
+                                @if($stock->logo)
+                                    <img src="{{ url($stock->logo) }}" alt="{{ $stock->name }}" onerror="this.style.display='none'">
+                                @else
+                                    <div style="font-weight:700;font-size:22px;color:#87b942;">{{ strtoupper(substr($stock->name,0,2)) }}</div>
+                                @endif
+                            </div>
+                            <h3 class="card-title">{{ $stock->name }}</h3>
+                            <div class="card-meta">
+                                <span class="category">{{ $stock->industry ?: 'Unlisted' }}</span>
+                            </div>
+                            <div class="card-stats">
+                                <div class="cs-item">
+                                    <span class="cs-label">Price</span>
+                                    <span class="cs-val">₹{{ number_format($stock->price) }}</span>
+                                </div>
+                                <div class="cs-item">
+                                    <span class="cs-label">MCap</span>
+                                    <span class="cs-val">
+                                        @if($stock->mcap)
+                                            ₹{{ $stock->mcap >= 1000 ? number_format($stock->mcap/1000,1).'K' : $stock->mcap }}Cr
+                                        @else
+                                            <span class="no-data">—</span>
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="cs-item">
+                                    <span class="cs-label">P/E</span>
+                                    <span class="cs-val">
+                                        @if($stock->pe && $stock->pe > 0)
+                                            {{ $stock->pe }}x
+                                        @else
+                                            <span class="no-data">—</span>
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+                            <a href="/companies/{{ $stock->slug }}/" class="learn-more-btn" onclick="event.stopPropagation()">View Details</a>
+                        </div>
+                        @empty
+                        {{-- Fallback if no DB stocks yet --}}
                         <div class="share-card" onclick="location.href='/companies/nse-india-unlisted-shares/'">
                             <div class="logo-box"><img src="{{ asset('assets/img/national-stock-exchange-ltd-nse.webp') }}" alt="NSE India"></div>
                             <h3 class="card-title">NSE India Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">Stock Exchange</span>
-                            </div>
+                            <div class="card-meta"><span class="category">Financial Services</span></div>
+                            <a href="/companies/nse-india-unlisted-shares/" class="learn-more-btn" onclick="event.stopPropagation()">View Details</a>
                         </div>
-
-                        <div class="share-card" onclick="location.href='/companies/hdfc-securities-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/hdfc-securities-ltd.webp') }}" alt="HDFC Securities"></div>
-                            <h3 class="card-title">HDFC Securities Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">Brokerage</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/chennai-super-kings-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/chennai-super-kings.webp') }}" alt="CSK"></div>
-                            <h3 class="card-title">Chennai Super Kings Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Sports</span>
-                                <span class="sub-category">Entertainment</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/boat-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/boat.webp') }}" alt="Boat"></div>
-                            <h3 class="card-title">Boat Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Consumer Electronics</span>
-                                <span class="sub-category">Audio</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/sbi-fund-management-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/sbi-fund-management-limited.webp') }}" alt="SBI Fund"></div>
-                            <h3 class="card-title">SBI Fund Management Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">Asset Management</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/oravel-stays-ltd-oyo-rooms-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/oyo-rooms-oravel-stays-ltd.webp') }}" alt="OYO"></div>
-                            <h3 class="card-title">Oravel Stays (OYO) Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Hospitality</span>
-                                <span class="sub-category">Travel & Tourism</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/hero-fincorp-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/hero-fincorp-ltd.webp') }}" alt="Hero Fincorp"></div>
-                            <h3 class="card-title">Hero Fincorp Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">NBFC</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/zepto-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/zepto.webp') }}" alt="Zepto"></div>
-                            <h3 class="card-title">Zepto Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">E-Commerce</span>
-                                <span class="sub-category">Quick Commerce</span>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -150,186 +169,165 @@
             </div>
         </section>
 
-        {{-- Still In Pre-IPO Stage --}}
-        <section class="popular-shares-section">
-            <div class="slider-header">
-                <h2>Guess What? Investors Have Received Up To 25X Returns,<br> While
-                    <span>Still In Pre-IPO Stage!!!</span>
-                </h2>
-            </div>
+        {{-- Why UnlistedGain --}}
+        <section class="ug-why-section">
+            <div class="ug-why-inner">
+                <div class="ug-why-header">
+                    <span class="ug-section-tag">WHY UNLISTEDGAIN?</span>
+                    <h2>Invest <span>Smarter</span> in Unlisted Shares</h2>
+                    <p>India's most trusted platform for pre-IPO and unlisted share investments — transparent, research-backed and secure.</p>
+                </div>
 
-            <div class="slider-container-wrapper">
-                <button class="nav-btn prev" id="slidePrev2">&#8592;</button>
+                <div class="ug-why-bento">
+                    {{-- Large featured card --}}
+                    <div class="why-card why-card--hero">
+                        <div class="why-card-icon">🏆</div>
+                        <h3>Best Price<br>Guarantee</h3>
+                        <p>We offer the most competitive bid and ask prices in the unlisted market. No hidden markups, no last-minute surprises — what you see is what you pay.</p>
+                        <div class="why-hero-stat">
+                            <span class="whs-num">₹500 Cr+</span>
+                            <span class="whs-label">Deals Executed</span>
+                        </div>
+                    </div>
 
-                <div class="cards-viewport" id="sharesViewport2">
-                    <div class="cards-track">
-                        <div class="share-card" onclick="location.href='/companies/cochin-international-airport-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/cochin-international-airport-ltd-cial.webp') }}" alt="CIAL"></div>
-                            <h3 class="card-title">Cochin International Airport Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Infrastructure</span>
-                                <span class="sub-category">Aviation</span>
+                    {{-- 3 smaller cards stacked --}}
+                    <div class="why-card-stack">
+                        <div class="why-card why-card--sm">
+                            <div class="why-sm-left">
+                                <div class="why-card-icon why-card-icon--sm">📋</div>
+                                <div>
+                                    <h4>Research-Backed Picks</h4>
+                                    <p>In-depth financials, P&L, balance sheet and ratios for every company — so you invest with confidence, not guesswork.</p>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="share-card" onclick="location.href='/companies/ncdex-national-commodity-derivatives-exchange-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/national-commodity-derivatives-exchange-ltd.webp') }}" alt="NCDEX"></div>
-                            <h3 class="card-title">NCDEX Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">Commodity Exchange</span>
+                        <div class="why-card why-card--sm">
+                            <div class="why-sm-left">
+                                <div class="why-card-icon why-card-icon--sm">⚡</div>
+                                <div>
+                                    <h4>Same-Day Share Delivery</h4>
+                                    <p>Shares transferred directly to your demat account — fast, paperless and fully compliant with SEBI regulations.</p>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="share-card" onclick="location.href='/companies/metropolitan-stock-exchange-msei-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/metropolitan-stock-exchange-msei.webp') }}" alt="MSEI"></div>
-                            <h3 class="card-title">Metropolitan Stock Exchange Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">Stock Exchange</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/jupiter-international-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/jupiter-international-ltd.webp') }}" alt="Jupiter"></div>
-                            <h3 class="card-title">Jupiter International Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Manufacturing</span>
-                                <span class="sub-category">Industrial</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card">
-                            <div class="logo-box"><img src="{{ asset('assets/img/nsdl-ltd.webp') }}" alt="NSDL"></div>
-                            <h3 class="card-title">NSDL Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">Depository</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card">
-                            <div class="logo-box"><img src="{{ asset('assets/img/hdb-financial-services.webp') }}" alt="HDB Financial"></div>
-                            <h3 class="card-title">HDB Financial Services Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Financial Services</span>
-                                <span class="sub-category">NBFC</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card">
-                            <div class="logo-box"><img src="{{ asset('assets/img/vikram-solar-ltd.webp') }}" alt="Vikram Solar"></div>
-                            <h3 class="card-title">Vikram Solar Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Energy</span>
-                                <span class="sub-category">Solar</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/paymate-india-ltd-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/pinelabs.webp') }}" alt="Pine Labs"></div>
-                            <h3 class="card-title">Pine Labs Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Fintech</span>
-                                <span class="sub-category">Payments</span>
+                        <div class="why-card why-card--sm">
+                            <div class="why-sm-left">
+                                <div class="why-card-icon why-card-icon--sm">🛡️</div>
+                                <div>
+                                    <h4>100% Deal Guarantee</h4>
+                                    <p>Every transaction is secured end-to-end. No backouts, no fraud — your investment is protected at every step.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <button class="nav-btn next" id="slideNext2">&#8594;</button>
+                    {{-- Bottom wide card --}}
+                    <div class="why-card why-card--wide">
+                        <div class="why-card-icon">📈</div>
+                        <div>
+                            <h3>Early-Stage Access = Outsized Returns</h3>
+                            <p>Investors who bought NSE, Tata Technologies, Swiggy and Waaree Energies in the unlisted market saw <strong>up to 25X gains</strong> before they even listed. UnlistedGain gives you that edge — every day.</p>
+                        </div>
+                        <a href="{{ url('/unlisted-shares-price-list-india') }}" class="why-cta">Explore Companies</a>
+                    </div>
+                </div>
             </div>
         </section>
 
-        {{-- Now Listed --}}
-        <section class="popular-shares-section">
-            <div class="slider-header">
-                <h2>Success Stories From Past Unlisted Shares: <span>Now Listed</span></h2>
-            </div>
-
-            <div class="slider-container-wrapper">
-                <button class="nav-btn prev" id="slidePrev3">&#8592;</button>
-
-                <div class="cards-viewport" id="sharesViewport3">
-                    <div class="cards-track">
-                        <div class="share-card" onclick="location.href='/companies/tata-technologies-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/tata-technologies.webp') }}" alt="Tata Technologies"></div>
-                            <h3 class="card-title">Tata Technologies Listed Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">IT Services</span>
-                                <span class="sub-category">Technology</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/waaree-energies-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/waaree-energies-limited.webp') }}" alt="Waaree Energies"></div>
-                            <h3 class="card-title">Waaree Energies Listed Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Energy</span>
-                                <span class="sub-category">Solar</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/swiggy-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/swiggy.webp') }}" alt="Swiggy"></div>
-                            <h3 class="card-title">Swiggy Listed Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">E-Commerce</span>
-                                <span class="sub-category">Food Delivery</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/groww-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/groww.webp') }}" alt="Groww"></div>
-                            <h3 class="card-title">Groww Listed Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Fintech</span>
-                                <span class="sub-category">Investment Platform</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/studds-accessories-ltd-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/studds-accessories-ltd.webp') }}" alt="Studds"></div>
-                            <h3 class="card-title">Studds Accessories Listed Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Manufacturing</span>
-                                <span class="sub-category">Auto Accessories</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/sambhv-steel-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/sambhv-steel.webp') }}" alt="Sambhv Steel"></div>
-                            <h3 class="card-title">Sambhv Steel Listed Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Manufacturing</span>
-                                <span class="sub-category">Steel</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/sbi-general-insurance-ltd-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/sbi-fund-management-limited.webp') }}" alt="SBI General Insurance"></div>
-                            <h3 class="card-title">SBI General Insurance Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">Insurance</span>
-                                <span class="sub-category">General Insurance</span>
-                            </div>
-                        </div>
-
-                        <div class="share-card" onclick="location.href='/companies/capgemini-technology-services-india-limited-unlisted-shares/'">
-                            <div class="logo-box"><img src="{{ asset('assets/img/cochin-international-airport-ltd-cial.webp') }}" alt="Capgemini"></div>
-                            <h3 class="card-title">Capgemini Technology Unlisted Shares</h3>
-                            <div class="card-meta">
-                                <span class="category">IT Services</span>
-                                <span class="sub-category">Technology</span>
-                            </div>
-                        </div>
+        {{-- Testimonials --}}
+        <section class="ug-testimonials">
+            <div class="ug-testimonials-inner">
+                <div class="ug-why-header">
+                    <span class="ug-section-tag">TESTIMONIALS</span>
+                    <h2>What Our <span>Investors</span> Say</h2>
+                    <div class="testi-rating-badge">
+                        <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        <strong>4.8</strong>
+                        <span class="testi-stars">★★★★★</span>
+                        <span class="testi-count">Google Rating</span>
                     </div>
                 </div>
 
-                <button class="nav-btn next" id="slideNext3">&#8594;</button>
-            </div>
+                <div class="testi-grid">
+                    <div class="testi-card">
+                        <div class="testi-quote">"</div>
+                        <p class="testi-text">Bought NSE unlisted shares through UnlistedGain 2 years ago. The process was seamless — shares came to my demat the same day. Their research section really helped me understand the valuation before investing.</p>
+                        <div class="testi-footer">
+                            <div class="testi-avatar">RK</div>
+                            <div>
+                                <div class="testi-name">Rahul Khanna</div>
+                                <div class="testi-city">Mumbai • NSE Shares Investor</div>
+                            </div>
+                            <div class="testi-stars-sm">★★★★★</div>
+                        </div>
+                    </div>
 
-            <a href="{{ url('/unlisted-shares-price-list-india') }}" class="popular-cta">View More</a>
+                    <div class="testi-card testi-card--accent">
+                        <div class="testi-quote">"</div>
+                        <p class="testi-text">First time buying unlisted shares and I was nervous. The team was patient, explained every step and I never felt pressured. Got Swiggy shares before the IPO at a great price. Extremely happy with the returns!</p>
+                        <div class="testi-footer">
+                            <div class="testi-avatar">PS</div>
+                            <div>
+                                <div class="testi-name">Priya Sharma</div>
+                                <div class="testi-city">Delhi • Swiggy Pre-IPO Investor</div>
+                            </div>
+                            <div class="testi-stars-sm">★★★★★</div>
+                        </div>
+                    </div>
+
+                    <div class="testi-card">
+                        <div class="testi-quote">"</div>
+                        <p class="testi-text">What sets UnlistedGain apart is the data — actual financials, P/E, book value right on the company page. I compared 6 platforms and this one had the most transparent pricing and the best research.</p>
+                        <div class="testi-footer">
+                            <div class="testi-avatar">AM</div>
+                            <div>
+                                <div class="testi-name">Ankit Mehta</div>
+                                <div class="testi-city">Bangalore • HDB Financial Investor</div>
+                            </div>
+                            <div class="testi-stars-sm">★★★★★</div>
+                        </div>
+                    </div>
+
+                    <div class="testi-card">
+                        <div class="testi-quote">"</div>
+                        <p class="testi-text">Bought Tata Technologies unlisted shares, held them, and sold post-listing at 3X. The price discovery on this platform is genuinely better than what I've seen elsewhere. Will invest again for sure.</p>
+                        <div class="testi-footer">
+                            <div class="testi-avatar">VN</div>
+                            <div>
+                                <div class="testi-name">Vikram Nair</div>
+                                <div class="testi-city">Pune • Tata Tech Investor</div>
+                            </div>
+                            <div class="testi-stars-sm">★★★★★</div>
+                        </div>
+                    </div>
+
+                    <div class="testi-card">
+                        <div class="testi-quote">"</div>
+                        <p class="testi-text">The financial highlights section is incredibly detailed. YOY growth, quarterly data, ratios — everything in one place. As a value investor, this is exactly what I need to make informed decisions.</p>
+                        <div class="testi-footer">
+                            <div class="testi-avatar">SJ</div>
+                            <div>
+                                <div class="testi-name">Sneha Joshi</div>
+                                <div class="testi-city">Hyderabad • NSE & NSDL Investor</div>
+                            </div>
+                            <div class="testi-stars-sm">★★★★★</div>
+                        </div>
+                    </div>
+
+                    <div class="testi-card testi-card--accent">
+                        <div class="testi-quote">"</div>
+                        <p class="testi-text">Transferred shares to my demat in under 24 hours. No running around, no paperwork headaches. The support team answered every query instantly. This is how investing should feel.</p>
+                        <div class="testi-footer">
+                            <div class="testi-avatar">DG</div>
+                            <div>
+                                <div class="testi-name">Deepak Gupta</div>
+                                <div class="testi-city">Chennai • Waaree Energies Investor</div>
+                            </div>
+                            <div class="testi-stars-sm">★★★★★</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>

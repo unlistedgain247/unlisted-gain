@@ -1,7 +1,7 @@
-.ug-connect-section { 
-    max-width: 1200px;
-    margin: 80px auto;
-    padding: 0 20px;
+.ug-connect-section {
+    max-width: 1400px;
+    margin: 60px auto;
+    padding: 0 24px;
     font-family: 'Inter', sans-serif;
 }
 
@@ -326,4 +326,14 @@
 @media (max-width: 768px) {
     .contact-form .form-row { grid-template-columns: 1fr; gap: 15px; }
     .ug-connect-section .section-title { font-size: 28px; }
+    .ug-connect-section { margin: 40px auto; }
+    .contact-form-container { padding: 30px 24px; }
+}
+
+@media (max-width: 480px) {
+    .ug-connect-section { margin: 24px auto; padding: 0 14px; }
+    .contact-form-container { padding: 22px 16px; border-radius: 16px; }
+    .contact-box { padding: 28px 16px; margin: 28px auto 0; border-radius: 18px; }
+    .ug-connect-section .section-title { font-size: 22px; }
+    .form-header h3 { font-size: 20px; }
 }
