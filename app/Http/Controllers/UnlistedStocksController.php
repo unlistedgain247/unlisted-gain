@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use App\Models\UnlistedStock;
 use App\Models\UnlistedPriceData;
 use App\Models\UnlistedFinancials;
@@ -14,8 +15,8 @@ class UnlistedStocksController extends Controller
 {
     public function index()
     {
-        $isAdmin = !empty(user_privilege('admin')) || !empty(user_privilege('user_master'));
-        if (!$isAdmin && empty(user_privilege('unlisted.stockx'))) abort(403);
+        $isAdmin = !empty(Privilege::get('admin')) || !empty(Privilege::get('user_master'));
+        if (!$isAdmin && empty(Privilege::get('unlisted.stockx'))) abort(403);
 
         $stocks   = UnlistedStock::orderByDesc('UL_STOCKS_FINCODE')->paginate(20);
         $fincodes = $stocks->pluck('UL_STOCKS_FINCODE');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use App\Models\User;
 use App\Models\UnlistedLead;
 use App\Models\UnlistedLeadActivity;
@@ -13,9 +14,9 @@ class UnlistedLeadsController extends Controller
 {
     public function leads()
     {
-        $isAdmin     = !empty(user_privilege('admin')) || !empty(user_privilege('user_master'));
-        $canAllocate = $isAdmin || !empty(user_privilege('unlisted.leads_allocation'));
-        $canSeeOwn   = !empty(user_privilege('unlisted.leads'));
+        $isAdmin     = !empty(Privilege::get('admin')) || !empty(Privilege::get('user_master'));
+        $canAllocate = $isAdmin || !empty(Privilege::get('unlisted.leads_allocation'));
+        $canSeeOwn   = !empty(Privilege::get('unlisted.leads'));
 
         if (!$canAllocate && !$canSeeOwn) abort(403);
 
@@ -26,9 +27,9 @@ class UnlistedLeadsController extends Controller
 
     public function leadsData(Request $request)
     {
-        $isAdmin     = !empty(user_privilege('admin')) || !empty(user_privilege('user_master'));
-        $canAllocate = $isAdmin || !empty(user_privilege('unlisted.leads_allocation'));
-        $canSeeOwn   = !empty(user_privilege('unlisted.leads'));
+        $isAdmin     = !empty(Privilege::get('admin')) || !empty(Privilege::get('user_master'));
+        $canAllocate = $isAdmin || !empty(Privilege::get('unlisted.leads_allocation'));
+        $canSeeOwn   = !empty(Privilege::get('unlisted.leads'));
 
         if (!$canAllocate && !$canSeeOwn) abort(403);
 
@@ -109,9 +110,9 @@ class UnlistedLeadsController extends Controller
 
     public function allocateLead(Request $request, int $leadId)
     {
-        $canAllocate = !empty(user_privilege('admin'))
-                    || !empty(user_privilege('user_master'))
-                    || !empty(user_privilege('unlisted.leads_allocation'));
+        $canAllocate = !empty(Privilege::get('admin'))
+                    || !empty(Privilege::get('user_master'))
+                    || !empty(Privilege::get('unlisted.leads_allocation'));
 
         if (!$canAllocate) return response()->json(['success' => false], 403);
 
@@ -310,10 +311,10 @@ class UnlistedLeadsController extends Controller
 
     private function canAccessLeads(): bool
     {
-        return !empty(user_privilege('admin'))
-            || !empty(user_privilege('user_master'))
-            || !empty(user_privilege('unlisted.leads_allocation'))
-            || !empty(user_privilege('unlisted.leads'));
+        return !empty(Privilege::get('admin'))
+            || !empty(Privilege::get('user_master'))
+            || !empty(Privilege::get('unlisted.leads_allocation'))
+            || !empty(Privilege::get('unlisted.leads'));
     }
 
     private function getLeadAgents()
