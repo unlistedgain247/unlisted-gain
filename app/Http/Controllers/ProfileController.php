@@ -250,9 +250,9 @@ class ProfileController extends Controller
         return response()->json(['success' => true, 'message' => 'Profile photo updated.']);
     }
 
-    public function serveAvatar()
+    public function serveAvatar(int $uid)
     {
-        $user = $this->authUser();
+        $user = User::whereKey($uid)->first();
         if (!$user || !$user->avatar_path || !Storage::exists($user->avatar_path)) {
             abort(404);
         }
