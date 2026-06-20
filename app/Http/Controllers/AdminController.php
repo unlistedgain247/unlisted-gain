@@ -8,26 +8,22 @@ class AdminController extends Controller
 {
     public function redirectToDashboard()
     {
-        $privilege = session('privilege', []);
-        $ul        = $privilege['unlisted'] ?? [];
-
-        if (!empty($privilege['admin'])) {
+        if (!empty(user_privilege('admin'))) {
             return redirect()->route('admin.dashboard');
         }
-        if (!empty($privilege['user_master'])) {
+        if (!empty(user_privilege('user_master'))) {
             return redirect()->route('admin.users');
         }
-        if (!empty($ul['stockx'])) {
+        if (!empty(user_privilege('unlisted.stockx'))) {
             return redirect()->route('admin.unlisted');
         }
-        if (!empty($ul['leads']) || !empty($ul['leads_allocation'])) {
+        if (!empty(user_privilege('unlisted.leads')) || !empty(user_privilege('unlisted.leads_allocation'))) {
             return redirect()->route('admin.unlisted.leads');
         }
-        $pg = $privilege['pg'] ?? [];
-        if (!empty($pg['margin'])) {
+        if (!empty(user_privilege('pg.margin'))) {
             return redirect()->route('admin.pg.margin');
         }
-        if (!empty($pg['margin_error'])) {
+        if (!empty(user_privilege('pg.margin_error'))) {
             return redirect()->route('admin.pg.margin-error');
         }
 

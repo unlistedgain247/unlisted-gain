@@ -108,10 +108,6 @@ class UsersController extends Controller
 
         $user->update(['privilege' => $privilege]);
 
-        if (session('uid') === $user->uid) {
-            session(['privilege' => $privilege]);
-        }
-
         return response()->json(['success' => true, 'message' => 'Privileges saved.']);
     }
 }

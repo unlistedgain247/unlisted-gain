@@ -515,13 +515,11 @@ class PgController extends Controller
 
     private function canAccessMargin(): bool
     {
-        $pg = session('privilege.pg', []);
-        return !empty(session('privilege.admin')) || !empty($pg['margin']);
+        return !empty(user_privilege('admin')) || !empty(user_privilege('pg.margin'));
     }
 
     private function canAccessMarginError(): bool
     {
-        $pg = session('privilege.pg', []);
-        return !empty(session('privilege.admin')) || !empty($pg['margin_error']);
+        return !empty(user_privilege('admin')) || !empty(user_privilege('pg.margin_error'));
     }
 }
