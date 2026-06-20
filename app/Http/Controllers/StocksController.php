@@ -311,7 +311,6 @@ class StocksController extends Controller
         }
 
         $currentPrice = $priceData?->UL_PD_BID_PRICE;
-        $askPrice     = $priceData?->UL_PD_ASK_PRICE;
         $unit         = (float) ($latestFin?->UL_FIN_Unit ?? 1);
         $numShares    = $latestFin?->UL_FIN_NUM_SHARES;
 
@@ -340,7 +339,7 @@ class StocksController extends Controller
 
         return view('public.company', compact(
             'stock', 'priceData', 'latestFin', 'financials', 'quarterlyFin', 'thesis', 'thesisHtml',
-            'currentPrice', 'askPrice', 'marketCap', 'peRatio', 'eps', 'bookValue'
+            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue'
         ));
     }
 }

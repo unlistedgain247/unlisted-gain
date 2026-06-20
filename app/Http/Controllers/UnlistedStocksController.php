@@ -32,7 +32,7 @@ class UnlistedStocksController extends Controller
                 fn($j) => $j->on('pd.UL_PD_FINCODE', '=', 'latest.UL_PD_FINCODE')
                              ->on('pd.UL_PD_DATE', '=', 'latest.max_date')
             )
-            ->select('pd.UL_PD_FINCODE', 'pd.UL_PD_DATE', 'pd.UL_PD_BID_PRICE', 'pd.UL_PD_ASK_PRICE')
+            ->select('pd.UL_PD_FINCODE', 'pd.UL_PD_DATE', 'pd.UL_PD_BID_PRICE')
             ->get()
             ->keyBy('UL_PD_FINCODE');
 
@@ -156,7 +156,7 @@ class UnlistedStocksController extends Controller
 
         $prices = UnlistedPriceData::where('UL_PD_FINCODE', $fincode)
                     ->orderByDesc('UL_PD_DATE')
-                    ->select('UL_PD_DATE', 'UL_PD_BID_PRICE', 'UL_PD_ASK_PRICE', 'UL_PD_INVALID_FLAG')
+                    ->select('UL_PD_DATE', 'UL_PD_BID_PRICE', 'UL_PD_INVALID_FLAG')
                     ->paginate(10, ['*'], 'page', $request->input('page', 1));
 
         return view('admin.unlisted.price-list-modal', compact('stock', 'prices'));
@@ -168,14 +168,12 @@ class UnlistedStocksController extends Controller
 
         $request->validate([
             'UL_PD_BID_PRICE' => 'required|numeric|min:0',
-            'UL_PD_ASK_PRICE' => 'nullable|numeric|min:0',
         ]);
 
         $updated = UnlistedPriceData::where('UL_PD_FINCODE', $fincode)
                     ->where('UL_PD_DATE', $date)
                     ->update([
                         'UL_PD_BID_PRICE' => $request->input('UL_PD_BID_PRICE'),
-                        'UL_PD_ASK_PRICE' => $request->input('UL_PD_ASK_PRICE'),
                         'UL_PD_UPDTIME'   => now(),
                     ]);
 
@@ -432,8 +430,6 @@ class UnlistedStocksController extends Controller
             'UL_STOCKS_STATUS'            => $request->input('UL_STOCKS_STATUS'),
             'UL_STOCKS_COMP_RATING'       => $request->input('UL_STOCKS_COMP_RATING'),
             'UL_STOCKS_VALUATION_RATING'  => $request->input('UL_STOCKS_VALUATION_RATING'),
-            'UL_STOCKS_INSTA_BUY_FLAG'    => $request->input('UL_STOCKS_INSTA_BUY_FLAG'),
-            'UL_STOCKS_INSTA_SELL_FLAG'   => $request->input('UL_STOCKS_INSTA_SELL_FLAG'),
             'UL_STOCKS_BUY_SELL_FLAG'     => $request->input('UL_STOCKS_BUY_SELL_FLAG'),
             'UL_STOCKS_LOT_SIZE'          => $request->input('UL_STOCKS_LOT_SIZE'),
             'UL_STOCKS_ROFR_FLAG'         => $request->input('UL_STOCKS_ROFR_FLAG'),

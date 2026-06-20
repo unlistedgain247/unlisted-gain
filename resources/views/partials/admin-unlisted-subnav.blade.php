@@ -81,7 +81,7 @@
         </a>
         @endif
 
-        @if($_stockx)
+        @if($_stockx && request()->routeIs('admin.unlisted'))
         <button type="button" class="admin-sub-subnav-tab" id="stocksNavBtn">
             + Add Stocks
         </button>

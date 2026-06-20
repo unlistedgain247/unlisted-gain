@@ -83,14 +83,6 @@
                     </div>
                     <div class="cp-price-main">
                         <div class="cp-bid-price">&#8377;{{ number_format((float)$currentPrice, 2) }}</div>
-                        @if($askPrice)
-                        <div class="cp-ask-row">
-                            <span class="cp-price-type">Bid</span>
-                            <span class="cp-price-divider">|</span>
-                            <span class="cp-price-type">Ask</span>
-                            <span class="cp-ask-val">&#8377;{{ number_format((float)$askPrice, 2) }}</span>
-                        </div>
-                        @endif
                     </div>
                     @if($stock->UL_STOCKS_BUY_SELL_FLAG)
                     <div class="cp-cta-row">

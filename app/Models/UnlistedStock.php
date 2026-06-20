@@ -28,8 +28,6 @@ class UnlistedStock extends Model
         'UL_STOCKS_COMPNAME_TYPE',
         'UL_STOCKS_COMP_RATING',
         'UL_STOCKS_VALUATION_RATING',
-        'UL_STOCKS_INSTA_BUY_FLAG',
-        'UL_STOCKS_INSTA_SELL_FLAG',
         'UL_STOCKS_BUY_SELL_FLAG',
         'UL_STOCKS_LOT_SIZE',
         'UL_STOCKS_ROFR_FLAG',

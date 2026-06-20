@@ -103,6 +103,14 @@
 }
 .ov-field textarea { resize:vertical; min-height:120px; }
 
+#overviewForm {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
 /* radio row */
 .ov-radios { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
 .ov-radios label {
@@ -246,8 +254,8 @@
                 </div>
             </div>
 
-            {{-- Row: Company Rating | Valuation Rating | InstaBuy | InstaSell | Buy-Sell | Lot Size --}}
-            <div class="ov-row ov-cols-6">
+            {{-- Row: Company Rating | Valuation Rating | Buy-Sell | Lot Size --}}
+            <div class="ov-row ov-cols-4">
                 <div class="ov-field">
                     <label>Company Rating</label>
                     <select name="UL_STOCKS_COMP_RATING">
@@ -263,24 +271,6 @@
                         <option value="">Select</option>
                         @foreach($ratings as $r)
                             <option value="{{ $r }}" {{ $sel($stock->UL_STOCKS_VALUATION_RATING, $r) }}>{{ $r }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="ov-field">
-                    <label>InstaBuy Flag</label>
-                    <select name="UL_STOCKS_INSTA_BUY_FLAG">
-                        <option value="">Select</option>
-                        @foreach($yesNo as $v => $l)
-                            <option value="{{ $v }}" {{ $sel($stock->UL_STOCKS_INSTA_BUY_FLAG, $v) }}>{{ $l }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="ov-field">
-                    <label>InstaSell Flag</label>
-                    <select name="UL_STOCKS_INSTA_SELL_FLAG">
-                        <option value="">Select</option>
-                        @foreach($yesNo as $v => $l)
-                            <option value="{{ $v }}" {{ $sel($stock->UL_STOCKS_INSTA_SELL_FLAG, $v) }}>{{ $l }}</option>
                         @endforeach
                     </select>
                 </div>

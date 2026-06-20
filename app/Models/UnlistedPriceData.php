@@ -15,7 +15,6 @@ class UnlistedPriceData extends Model
         'UL_PD_FINCODE',
         'UL_PD_DATE',
         'UL_PD_BID_PRICE',
-        'UL_PD_ASK_PRICE',
         'UL_PD_INVALID_FLAG',
         'UL_PD_UPDTIME',
     ];

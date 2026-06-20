@@ -108,7 +108,13 @@
                     @forelse($stocks as $stock)
                     <tr>
                         <td>{{ $stock->UL_STOCKS_FINCODE }}</td>
-                        <td>{{ $stock->UL_STOCKS_COMPNAME }}</td>
+                        <td>
+                            <a href="{{ url('/companies/' . $stock->UL_STOCKS_SLUG) }}/" target="_blank" rel="noopener"
+                               style="color:inherit;text-decoration:none;font-weight:inherit;">
+                                {{ $stock->UL_STOCKS_COMPNAME }}
+                                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;color:#94a3b8;margin-left:4px;"></i>
+                            </a>
+                        </td>
                         <td style="white-space:nowrap;font-size:13px;font-weight:600;color:#1a1a1a">
                             @php $lp = $latestPrices->get($stock->UL_STOCKS_FINCODE); @endphp
                             @if($lp)
