@@ -71,7 +71,7 @@
                                         <div class="auth-error" id="errPhone">Please enter a valid 10-digit phone number.</div>
                                     </div>
                                     <div class="col-12">
-                                        <label for="inputUnlistedUserType" class="form-label">I am a</label>
+                                        <label for="inputUnlistedUserType" class="form-label">I am interested in</label>
                                         <select class="form-select rounded-5" id="inputUnlistedUserType">
                                             <option value="">-- Select --</option>
                                             <option value="unlisted">Unlisted</option>
