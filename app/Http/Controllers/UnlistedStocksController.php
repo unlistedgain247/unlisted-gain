@@ -36,7 +36,7 @@ class UnlistedStocksController extends Controller
             ->get()
             ->keyBy('UL_PD_FINCODE');
 
-        return view('admin.unlisted.index', compact('unlistedPriv', 'stocks', 'latestPrices'));
+        return view('admin.unlisted.index', compact('stocks', 'latestPrices'));
     }
 
     public function storeStock(Request $request)
