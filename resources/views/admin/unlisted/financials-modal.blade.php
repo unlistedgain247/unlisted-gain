@@ -264,8 +264,19 @@
                             <label>Unit</label>
                             <select name="UL_FIN_Unit">
                                 <option value="">Select</option>
-                                @foreach ([1, 100, 1000, 10000, 100000, 1000000, 10000000] as $u)
-                                    <option value="{{ $u }}" @selected($isEdit && (int)($financial->UL_FIN_Unit ?? -1) === $u)>{{ $u }}</option>
+                                @php
+                                    $unitLabels = [
+                                        1        => '1 (One)',
+                                        100      => '100 (1 Hundred)',
+                                        1000     => '1000 (1 Thousand)',
+                                        10000    => '10000 (10 Thousands)',
+                                        100000   => '100000 (1 Lac)',
+                                        1000000  => '1000000 (10 Lacs)',
+                                        10000000 => '10000000 (1 Crore)',
+                                    ];
+                                @endphp
+                                @foreach ($unitLabels as $u => $label)
+                                    <option value="{{ $u }}" @selected($isEdit && (int)($financial->UL_FIN_Unit ?? -1) === $u)>{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
