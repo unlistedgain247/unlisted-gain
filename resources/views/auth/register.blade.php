@@ -193,7 +193,7 @@
                 valid = false;
             }
             if (!userType) {
-                showError('inputUserType', 'errUserType', 'Please select a user type.');
+                showError('inputUnlistedUserType', 'errUserType', 'Please select a user type.');
                 valid = false;
             }
             // if (!terms) {
