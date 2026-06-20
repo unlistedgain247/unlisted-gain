@@ -110,6 +110,10 @@ class ProfileController extends Controller
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         }
 
+        if ($user->bank_verified) {
+            return response()->json(['success' => false, 'message' => 'Bank account is already verified and cannot be changed.'], 403);
+        }
+
         $data = [
             'bank_holder_name' => $request->bank_holder_name,
             'bank_name'        => $request->bank_name,
@@ -152,6 +156,10 @@ class ProfileController extends Controller
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         }
 
+        if ($user->demat_verified) {
+            return response()->json(['success' => false, 'message' => 'Demat account is already verified and cannot be changed.'], 403);
+        }
+
         $data = [
             'demat_dp_id'    => $request->demat_dp_id,
             'demat_dp_name'  => $request->demat_dp_name,
@@ -190,6 +198,10 @@ class ProfileController extends Controller
             ]);
         } catch (ValidationException $e) {
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        if ($user->user_pan_verified) {
+            return response()->json(['success' => false, 'message' => 'PAN card is already verified and cannot be changed.'], 403);
         }
 
         $data = [

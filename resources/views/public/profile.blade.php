@@ -159,10 +159,12 @@
                     {{ $statusLabel[$bankStatus] }}
                 </span>
             </div>
+            @if(!$user->bank_verified)
             <button class="kyc-upload-btn" onclick="openKycModal('kycBankModal')">
                 <i class="fa-solid fa-pen-to-square" style="margin-right:6px"></i>
                 {{ $user->bank_account_no ? 'Update Details' : 'Add Bank Details' }}
             </button>
+            @endif
         </div>
 
         {{-- Demat --}}
@@ -192,10 +194,12 @@
                     {{ $statusLabel[$dematStatus] }}
                 </span>
             </div>
+            @if(!$user->demat_verified)
             <button class="kyc-upload-btn" onclick="openKycModal('kycDematModal')">
                 <i class="fa-solid fa-pen-to-square" style="margin-right:6px"></i>
                 {{ $user->demat_dp_id ? 'Update Details' : 'Add Demat Details' }}
             </button>
+            @endif
         </div>
 
         {{-- PAN --}}
@@ -224,10 +228,12 @@
                     {{ $statusLabel[$panStatus] }}
                 </span>
             </div>
+            @if(!$user->user_pan_verified)
             <button class="kyc-upload-btn" onclick="openKycModal('kycPanModal')">
                 <i class="fa-solid fa-pen-to-square" style="margin-right:6px"></i>
                 {{ $user->user_pan_no ? 'Update Details' : 'Add PAN Details' }}
             </button>
+            @endif
         </div>
 
     </div>

@@ -3,7 +3,7 @@
     background-color: #ffffff;
     color: #000000;
     font-family: 'Inter', sans-serif;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid #e2e8f0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -38,6 +38,13 @@
 .main-header .nav-menu {
     display: flex;
     align-items: center;
+    flex: 1;
+    justify-content: center;
+}
+
+/* Hide icons from desktop nav — kept in HTML for mobile sidebar */
+.main-header .nav-link .nav-icon {
+    display: none;
 }
 
 .main-header .nav-menu > ul {
@@ -104,7 +111,7 @@
     height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 4px solid #fff;
+    border-top: 4px solid #666;
     transition: transform 0.3s ease;
 }
 
@@ -163,7 +170,6 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-left: auto;
     flex-shrink: 0;
 }
 
