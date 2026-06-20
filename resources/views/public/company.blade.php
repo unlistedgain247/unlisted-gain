@@ -162,12 +162,6 @@
                     <span class="cp-stat-value">{{ number_format((float)$currentPrice / $bookValue, 2) }}x</span>
                 </div>
                 @endif
-                @if($latestFin && $latestFin->UL_FIN_PROMOTERS_HOLDING !== null)
-                <div class="cp-stat">
-                    <span class="cp-stat-label">Promoter Hold.</span>
-                    <span class="cp-stat-value">{{ number_format((float)$latestFin->UL_FIN_PROMOTERS_HOLDING, 2) }}%</span>
-                </div>
-                @endif
                 @if($stock->UL_STOCKS_LOT_SIZE)
                 <div class="cp-stat">
                     <span class="cp-stat-label">Min Lot</span>
