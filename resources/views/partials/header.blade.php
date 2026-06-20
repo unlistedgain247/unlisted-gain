@@ -8,12 +8,15 @@
 
         <nav id="mainNav" class="nav-menu">
             <div class="nav-sidebar-head">
-                <span class="nav-sidebar-title">Navigation</span>
+                <a href="{{ url('/') }}" class="nav-sidebar-logo">
+                    <img src="{{ asset('assets/img/unlisted-head.jpeg') }}" alt="UnlistedGain">
+                </a>
             </div>
+
             <ul>
                 <li class="has-dropdown">
                     <a href="#" class="nav-link {{ request()->is('about') || request()->is('connect') ? 'nav-current' : '' }}">
-                        <i class="fa-solid fa-circle-info nav-icon"></i>
+                        <span class="nav-icon-wrap"><i class="fa-solid fa-circle-info nav-icon"></i></span>
                         <span>About Us</span>
                         <span class="arrow"></span>
                     </a>
@@ -24,7 +27,7 @@
                 </li>
                 <li class="has-dropdown">
                     <a href="#" class="nav-link {{ request()->is('pre-ipo*') ? 'nav-current' : '' }}">
-                        <i class="fa-solid fa-layer-group nav-icon"></i>
+                        <span class="nav-icon-wrap"><i class="fa-solid fa-layer-group nav-icon"></i></span>
                         <span>Services</span>
                         <span class="arrow"></span>
                     </a>
@@ -34,18 +37,18 @@
                 </li>
                 <li class="has-dropdown">
                     <a href="#" class="nav-link {{ request()->is('unlisted') || request()->is('unlisted/*') || request()->is('buy') || request()->is('sell') ? 'nav-current' : '' }}">
-                        <i class="fa-solid fa-chart-line nav-icon"></i>
+                        <span class="nav-icon-wrap"><i class="fa-solid fa-chart-line nav-icon"></i></span>
                         <span>Buy / Sell</span>
                         <span class="arrow"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('unlisted') || request()->is('unlisted/*') ? 'nav-current' : '' }}"><i class="fa-solid fa-cart-shopping sub-icon"></i>Buy</a></li>
-                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('sell') ? 'nav-current' : '' }}"><i class="fa-solid fa-hand-holding-dollar sub-icon"></i>Sell</a></li>
+                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('unlisted') || request()->is('unlisted/*') ? 'nav-current' : '' }}"><i class="fa-solid fa-cart-shopping sub-icon"></i>Buy Shares</a></li>
+                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('sell') ? 'nav-current' : '' }}"><i class="fa-solid fa-hand-holding-dollar sub-icon"></i>Sell Shares</a></li>
                     </ul>
                 </li>
                 <li>
                     <a href="{{ url('/unlisted-shares-price-list-india') }}" class="nav-link {{ request()->is('unlisted-shares-price-list-india') ? 'nav-current' : '' }}">
-                        <i class="fa-solid fa-tags nav-icon"></i>
+                        <span class="nav-icon-wrap"><i class="fa-solid fa-tags nav-icon"></i></span>
                         <span>Share Price List</span>
                     </a>
                 </li>
@@ -58,16 +61,33 @@
 
             <div class="nav-auth-mobile">
                 @if(session('uid'))
-                    @if(!empty(session('privilege')))
-                        <a href="{{ url('/admin') }}" class="auth-btn auth-signin" style="width:100%;text-align:center">Admin</a>
-                    @endif
-                    <form action="{{ route('logout') }}" method="POST" style="width:100%">
-                        @csrf
-                        <button type="submit" class="auth-btn auth-logout">Logout</button>
-                    </form>
+                    @php
+                        $mobName = session('name', session('email', 'User'));
+                        $mobInitial = strtoupper(mb_substr($mobName, 0, 1));
+                    @endphp
+                    <div class="mob-user-info">
+                        <span class="mob-user-avatar">{{ $mobInitial }}</span>
+                        <div>
+                            <span class="mob-user-name">{{ explode(' ', trim($mobName))[0] }}</span>
+                            <span class="mob-user-email">{{ session('email') }}</span>
+                        </div>
+                    </div>
+                    <div class="mob-action-row">
+                        @if(!empty(session('privilege')))
+                            <a href="{{ url('/admin') }}" class="mob-auth-btn mob-btn-admin">
+                                <i class="fa-solid fa-gauge-high"></i> Admin Panel
+                            </a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST" style="margin:0;flex:1">
+                            @csrf
+                            <button type="submit" class="mob-auth-btn mob-btn-logout">
+                                <i class="fa-solid fa-right-from-bracket"></i> Logout
+                            </button>
+                        </form>
+                    </div>
                 @else
-                    <a href="{{ url('/login') }}" class="auth-btn auth-signin">Sign In</a>
-                    <a href="{{ url('/register') }}" class="auth-btn auth-signup">Sign Up</a>
+                    <a href="{{ url('/login') }}" class="mob-auth-btn mob-btn-signin">Sign In</a>
+                    <a href="{{ url('/register') }}" class="mob-auth-btn mob-btn-signup">Create Account</a>
                 @endif
             </div>
         </nav>
@@ -131,7 +151,14 @@
             @endif
         </div>
 
-        <button id="mobileToggle" class="mobile-hamburger">
+        <button
+            id="mobileToggle"
+            class="mobile-hamburger"
+            type="button"
+            aria-label="Open menu"
+            aria-controls="mainNav"
+            aria-expanded="false"
+        >
             <span></span>
             <span></span>
             <span></span>
@@ -140,36 +167,3 @@
 </header>
 
 <div class="nav-overlay" id="navOverlay"></div>
-
-<script>
-$(function () {
-    // Remove green bg from avatar circle when DP loads successfully
-    function applyDp($img) {
-        if ($img[0].complete && $img[0].naturalWidth > 0) {
-            $img.show().closest('.account-avatar, .account-menu-avatar')
-                .css('background', 'transparent')
-                .find('.account-avatar-initial, .account-menu-initial').hide();
-        }
-    }
-    $('.account-avatar-dp, .account-menu-dp').each(function () {
-        var $img = $(this);
-        $img.on('load', function () { applyDp($img); })
-            .on('error', function () { $img.hide(); });
-        applyDp($img);
-    });
-
-    var $overlay = $('#navOverlay');
-    var $nav     = $('#mainNav');
-    var $toggle  = $('#mobileToggle');
-
-    function openSidebar()  { $nav.addClass('active'); $toggle.addClass('open'); $overlay.addClass('active'); }
-    function closeSidebar() { $nav.removeClass('active'); $toggle.removeClass('open'); $overlay.removeClass('active'); }
-
-    $(document).on('click', '#mobileToggle', function () {
-        $nav.hasClass('active') ? closeSidebar() : openSidebar();
-    });
-
-    $(document).on('click', '#sidebarClose', function () { closeSidebar(); });
-    $overlay.on('click', function () { closeSidebar(); });
-});
-</script>
