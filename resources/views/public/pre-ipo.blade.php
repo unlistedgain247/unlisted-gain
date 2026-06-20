@@ -1,12 +1,12 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'What is Pre-IPO Investment? Benefits & How to Buy | UnlistedGain')
 @section('meta_description', 'Learn everything about Pre-IPO investing. Discover how it works, the potential for multifold returns, and the best way to buy pre-IPO shares before they hit the stock exchange.')
 @section('meta_keywords', 'what is pre-ipo, benefits of pre-ipo investing, pre-ipo investment guide, invest before ipo, pre-ipo shares India')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/pre-ipo.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/pre-ipo.css') }}?v={{ filemtime(public_path('assets/css/pagecss/pre-ipo.css')) }}">
+<link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
 <style>
     .pi-listing-section { padding: 40px 24px 20px; max-width: 1400px; margin: 0 auto; }
     .pi-listing-section .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: #1a1a1a; }

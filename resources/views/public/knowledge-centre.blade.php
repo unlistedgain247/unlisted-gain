@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Knowledge Centre - Learn About Unlisted Shares | UnlistedGain')
 @section('meta_description', 'Your comprehensive resource hub for understanding unlisted shares, pre-IPO investments, and building wealth before companies go public. Learn how to invest safely.')
 @section('meta_keywords', 'unlisted share knowledge, pre-ipo education, learn unlisted investing, share market guide India, startup equity guide')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')

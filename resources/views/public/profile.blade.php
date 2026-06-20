@@ -1,10 +1,10 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'My Profile | UnlistedGain')
 @section('meta_description', 'Manage your UnlistedGain account — update personal details and change your password.')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/profile.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/profile.css') }}?v={{ filemtime(public_path('assets/css/pagecss/profile.css')) }}">
 @endpush
 
 @php

@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'About UnlistedGain | Our Mission & Expertise in Unlisted Market')
 @section('meta_description', 'Learn about UnlistedGain Advantage Solutions Pvt. Ltd., India\'s premier gateway to Pre-IPO and Unlisted Shares. Meet our leadership team.')
 @section('meta_keywords', 'about unlistedgain, unlisted share experts, pre-ipo marketplace India, unlisted investment platform')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/about.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/about.css') }}?v={{ filemtime(public_path('assets/css/pagecss/about.css')) }}">
 @endpush
 
 @section('subheader')

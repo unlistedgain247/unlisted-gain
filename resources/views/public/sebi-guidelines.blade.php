@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'SEBI Guidelines for Unlisted Share Trading | UnlistedGain')
 @section('meta_description', 'A comprehensive overview of the regulatory framework governing unlisted shares and pre-IPO investments in India. Learn about SEBI regulations and ICDR guidelines.')
 @section('meta_keywords', 'sebi guidelines unlisted shares, unlisted share regulations, ICDR guidelines, DRHP SEBI, insider trading unlisted, investor protection India')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')

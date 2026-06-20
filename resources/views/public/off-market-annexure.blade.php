@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Off Market Annexure - Share Transfer Guide | UnlistedGain')
 @section('meta_description', 'Understanding the off-market share transfer process and associated documentation for unlisted share transactions in India. Learn about DIS, CML, and transfer steps.')
 @section('meta_keywords', 'off market share transfer, delivery instruction slip, DIS, client master list, CML, unlisted share settlement, off-market deal India')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')

@@ -1,12 +1,12 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Unlisted Share Price List 2026 | Daily Updated Prices India')
 @section('meta_description', 'Get the latest, daily updated prices for all major unlisted and pre-IPO shares in India. Check face value, book value, and market cap of top unlisted companies.')
 @section('meta_keywords', 'unlisted share price list, pre-ipo share prices India, unlisted stock market price, latest unlisted price, nse unlisted share price')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/unlisted.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/unlisted.css') }}?v={{ filemtime(public_path('assets/css/pagecss/unlisted.css')) }}">
+<link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
 <style>
     .ug-price-section .company-info img {
         width: 35px; height: 35px; object-fit: contain;

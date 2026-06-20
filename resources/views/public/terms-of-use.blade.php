@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Terms of Use | UnlistedGain')
 @section('meta_description', 'Review the Terms of Use for UnlistedGain. Understand our service eligibility, user responsibilities, and the legal framework for trading unlisted shares on our platform.')
 @section('meta_keywords', 'terms of use, user agreement, legal terms, unlistedgain terms, service eligibility')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')

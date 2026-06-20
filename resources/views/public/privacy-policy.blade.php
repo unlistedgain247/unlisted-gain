@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Privacy Policy | UnlistedGain')
 @section('meta_description', 'Read our Privacy Policy to understand how UnlistedGain collects, uses, and protects your personal and financial information while using our unlisted share marketplace.')
 @section('meta_keywords', 'privacy policy, data protection, unlistedgain privacy, secure trading, investor data safety')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')
