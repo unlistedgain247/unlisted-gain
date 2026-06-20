@@ -11,6 +11,7 @@ class PublicController extends Controller
         $topStocks = collect(DB::select("
             SELECT
                 s.UL_STOCKS_COMPNAME  AS name,
+                s.UL_STOCKS_S_NAME    AS s_name,
                 s.UL_STOCKS_SLUG      AS slug,
                 s.UL_STOCKS_LOGO_LINK AS logo,
                 s.UL_STOCKS_INDUSTRY  AS industry,

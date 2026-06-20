@@ -131,7 +131,7 @@
                                     <div style="font-weight:700;font-size:22px;color:#87b942;">{{ strtoupper(substr($stock->name,0,2)) }}</div>
                                 @endif
                             </div>
-                            <h3 class="card-title">{{ $stock->name }}</h3>
+                            <h3 class="card-title">{{ $stock->s_name ?: $stock->name }}</h3>
                             <div class="card-meta">
                                 <span class="category">{{ $stock->industry ?: 'Unlisted' }}</span>
                             </div>
