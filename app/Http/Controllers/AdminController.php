@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use App\Models\User;
 
 class AdminController extends Controller
 {
     public function redirectToDashboard()
     {
-        if (!empty(user_privilege('admin'))) {
+        if (!empty(Privilege::get('admin'))) {
             return redirect()->route('admin.dashboard');
         }
-        if (!empty(user_privilege('user_master'))) {
+        if (!empty(Privilege::get('user_master'))) {
             return redirect()->route('admin.users');
         }
-        if (!empty(user_privilege('unlisted.stockx'))) {
+        if (!empty(Privilege::get('unlisted.stockx'))) {
             return redirect()->route('admin.unlisted');
         }
-        if (!empty(user_privilege('unlisted.leads')) || !empty(user_privilege('unlisted.leads_allocation'))) {
+        if (!empty(Privilege::get('unlisted.leads')) || !empty(Privilege::get('unlisted.leads_allocation'))) {
             return redirect()->route('admin.unlisted.leads');
         }
-        if (!empty(user_privilege('pg.margin'))) {
+        if (!empty(Privilege::get('pg.margin'))) {
             return redirect()->route('admin.pg.margin');
         }
-        if (!empty(user_privilege('pg.margin_error'))) {
+        if (!empty(Privilege::get('pg.margin_error'))) {
             return redirect()->route('admin.pg.margin-error');
         }
 

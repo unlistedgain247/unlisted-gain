@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -119,8 +120,8 @@ class UnlistedOrdersController extends Controller
 
     private function canAccess(): bool
     {
-        return !empty(user_privilege('admin'))
-            || !empty(user_privilege('user_master'))
-            || !empty(user_privilege('unlisted.orders'));
+        return !empty(Privilege::get('admin'))
+            || !empty(Privilege::get('user_master'))
+            || !empty(Privilege::get('unlisted.orders'));
     }
 }

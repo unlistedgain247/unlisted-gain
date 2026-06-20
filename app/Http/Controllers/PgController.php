@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -515,11 +516,11 @@ class PgController extends Controller
 
     private function canAccessMargin(): bool
     {
-        return !empty(user_privilege('admin')) || !empty(user_privilege('pg.margin'));
+        return !empty(Privilege::get('admin')) || !empty(Privilege::get('pg.margin'));
     }
 
     private function canAccessMarginError(): bool
     {
-        return !empty(user_privilege('admin')) || !empty(user_privilege('pg.margin_error'));
+        return !empty(Privilege::get('admin')) || !empty(Privilege::get('pg.margin_error'));
     }
 }

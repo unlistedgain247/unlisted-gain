@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\Privilege;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,7 @@ class RequirePrivilege
             return redirect()->route('login');
         }
 
-        $privilege = user_privilege();
+        $privilege = Privilege::get();
 
         foreach ($keys as $key) {
             if ($key === 'unlisted') {
