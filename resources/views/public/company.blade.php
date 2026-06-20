@@ -243,6 +243,17 @@
                 };
                 $fmtCr  = fn($v) => $v===null ? '<span class="fd">—</span>' : $fmtN($v);
                 $fmtEps = fn($v) => ($v===null||$v==='') ? '<span class="fd">—</span>' : '&#8377;'.number_format((float)$v,2);
+                $epsVal = function($f) {
+                    if ($f->UL_FIN_ADJUSTED_EPS !== null && $f->UL_FIN_ADJUSTED_EPS !== '') {
+                        return (float) $f->UL_FIN_ADJUSTED_EPS;
+                    }
+                    $pat   = (float) ($f->UL_FIN_PAT ?? 0);
+                    $unit  = (float) ($f->UL_FIN_Unit ?? 1);
+                    $shares = (float) ($f->UL_FIN_NUM_SHARES ?? 0);
+                    if ($pat == 0 || $shares == 0) return null;
+                    $computed = ($pat * $unit) / $shares;
+                    return (abs($computed) <= 99999) ? round($computed, 2) : null;
+                };
                 $fmtPct = fn($v) => ($v===null||$v==='') ? '<span class="fd">—</span>' : number_format((float)$v,1).'%';
                 // Yearly: always FY{YY} — take first 4 chars as year regardless of YYYYMM vs YYYY
                 $yearLabel = function($p) {
@@ -342,8 +353,8 @@
                             @foreach([['Net Sales','UL_FIN_NET_SALES'],['Other Income','UL_FIN_OTHER_INCOME'],['Total Income','UL_FIN_TOTAL_INCOME'],['Operating Profit','UL_FIN_OPERATING_PROFIT'],['Interest','UL_FIN_INTEREST'],['Depreciation','UL_FIN_DEPRECIATION'],['Total Expenditure','UL_FIN_TOTAL_EXPENDITURE'],['Exceptional Income','UL_FIN_EXCEPTIONAL_INCOME'],['PBT','UL_FIN_PBT'],['TAX','UL_FIN_TAX'],['PAT','UL_FIN_PAT']] as [$lbl,$key])
                             <tr><td class="fin-td-label">{{ $lbl }}</td>@foreach($yFin as $f)<td>{!! $fmtCr($toCr($f->$key??null,$f->UL_FIN_Unit??1)) !!}</td>@endforeach<td>{!! $fmtChg($yoyF($key)) !!}</td><td>{!! $fmtChg($cagrF($key)) !!}</td></tr>
                             @endforeach
-                            @php $eL=(float)($yLatest?->UL_FIN_ADJUSTED_EPS??0);$eP=(float)($yPrev?->UL_FIN_ADJUSTED_EPS??0);$eO=(float)($yOldest?->UL_FIN_ADJUSTED_EPS??0); @endphp
-                            <tr class="fin-tr-eps"><td class="fin-td-label">EPS (&#8377;)</td>@foreach($yFin as $f)<td>{!! $fmtEps($f->UL_FIN_ADJUSTED_EPS??null) !!}</td>@endforeach<td>{!! $fmtChg($calcYoy($eL,$eP)) !!}</td><td>{!! $fmtChg($calcCagr($eL,$eO,$yPer)) !!}</td></tr>
+                            @php $eL=$yLatest?$epsVal($yLatest):null;$eP=$yPrev?$epsVal($yPrev):null;$eO=$yOldest?$epsVal($yOldest):null; @endphp
+                            <tr class="fin-tr-eps"><td class="fin-td-label">EPS (&#8377;)</td>@foreach($yFin as $f)<td>{!! $fmtEps($epsVal($f)) !!}</td>@endforeach<td>{!! $fmtChg($calcYoy($eL,$eP)) !!}</td><td>{!! $fmtChg($calcCagr($eL,$eO,$yPer)) !!}</td></tr>
                             </tbody>
                         </table></div>
                     </div>
@@ -405,8 +416,8 @@
                             @foreach([['Net Sales','UL_FIN_NET_SALES'],['Other Income','UL_FIN_OTHER_INCOME'],['Total Income','UL_FIN_TOTAL_INCOME'],['Operating Profit','UL_FIN_OPERATING_PROFIT'],['Interest','UL_FIN_INTEREST'],['Depreciation','UL_FIN_DEPRECIATION'],['PBT','UL_FIN_PBT'],['TAX','UL_FIN_TAX'],['PAT','UL_FIN_PAT']] as [$lbl,$key])
                             <tr><td class="fin-td-label">{{ $lbl }}</td>@foreach($qFin as $f)<td>{!! $fmtCr($toCr($f->$key??null,$f->UL_FIN_Unit??1)) !!}</td>@endforeach<td>{!! $fmtChg($qoyF($key)) !!}</td><td>{!! $fmtChg($qYoyF($key)) !!}</td></tr>
                             @endforeach
-                            @php $qeL=(float)($qLatest?->UL_FIN_ADJUSTED_EPS??0);$qeP=(float)($qPrev?->UL_FIN_ADJUSTED_EPS??0);$qeSq=(float)($qSameQly?->UL_FIN_ADJUSTED_EPS??0); @endphp
-                            <tr class="fin-tr-eps"><td class="fin-td-label">EPS (&#8377;)</td>@foreach($qFin as $f)<td>{!! $fmtEps($f->UL_FIN_ADJUSTED_EPS??null) !!}</td>@endforeach<td>{!! $fmtChg($calcYoy($qeL,$qeP)) !!}</td><td>{!! $fmtChg($calcYoy($qeL,$qeSq)) !!}</td></tr>
+                            @php $qeL=$qLatest?$epsVal($qLatest):null;$qeP=$qPrev?$epsVal($qPrev):null;$qeSq=$qSameQly?$epsVal($qSameQly):null; @endphp
+                            <tr class="fin-tr-eps"><td class="fin-td-label">EPS (&#8377;)</td>@foreach($qFin as $f)<td>{!! $fmtEps($epsVal($f)) !!}</td>@endforeach<td>{!! $fmtChg($calcYoy($qeL,$qeP)) !!}</td><td>{!! $fmtChg($calcYoy($qeL,$qeSq)) !!}</td></tr>
                             </tbody>
                         </table></div>
                     </div>
