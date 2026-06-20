@@ -159,6 +159,7 @@
                 <label>Allocated To</label>
                 <select id="fAllocated">
                     <option value="">Anyone</option>
+                    <option value="unallocated">— Unallocated —</option>
                     @foreach($leadAgents as $agent)
                         <option value="{{ $agent->uid }}">{{ $agent->name }}</option>
                     @endforeach
