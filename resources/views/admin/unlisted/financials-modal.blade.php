@@ -293,17 +293,6 @@
                                    value="{{ $financial?->UL_FIN_NUM_SHARES ?? '' }}">
                         </div>
 
-                        <div class="fm-field">
-                            <label>Promoters Holding</label>
-                            <input type="number" step="0.01" name="UL_FIN_PROMOTERS_HOLDING"
-                                   value="{{ $financial?->UL_FIN_PROMOTERS_HOLDING ?? '' }}">
-                        </div>
-
-                        <div class="fm-field">
-                            <label>Annual Dividend Per Share</label>
-                            <input type="number" step="0.01" name="UL_FIN_ANNUAL_DIVIDEND_PER_SHARE"
-                                   value="{{ $financial?->UL_FIN_ANNUAL_DIVIDEND_PER_SHARE ?? '' }}">
-                        </div>
 
                     </div>
                 </div>

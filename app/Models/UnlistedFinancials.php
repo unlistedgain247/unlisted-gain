@@ -19,8 +19,6 @@ class UnlistedFinancials extends Model
         'UL_FIN_Unit',
         'UL_FIN_FV',
         'UL_FIN_NUM_SHARES',
-        'UL_FIN_PROMOTERS_HOLDING',
-        'UL_FIN_ANNUAL_DIVIDEND_PER_SHARE',
         'UL_FIN_NET_SALES',
         'UL_FIN_OTHER_INCOME',
         'UL_FIN_TOTAL_INCOME',
