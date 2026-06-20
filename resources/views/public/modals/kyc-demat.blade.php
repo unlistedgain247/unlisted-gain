@@ -19,7 +19,7 @@
 
                 <div class="kyc-field-row">
                     <div class="pf-group">
-                        <label class="pf-label" for="dm_dp_id">DP ID</label>
+                        <label class="pf-label" for="dm_dp_id">BO ID</label>
                         <input id="dm_dp_id" name="demat_dp_id" type="text" class="pf-input"
                                value="{{ $user->demat_dp_id ?? '' }}" placeholder="e.g. IN301234">
                         <p class="pf-error" id="err_dm_dp_id"></p>
