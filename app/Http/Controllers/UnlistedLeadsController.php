@@ -72,7 +72,14 @@ class UnlistedLeadsController extends Controller
         }
 
         if ($allocated = $request->input('allocated_to', '')) {
-            $query->where('unlisted_leads.UL_LEAD_ALLOCATED_TO', $allocated);
+            if ($allocated === 'unallocated') {
+                $query->where(function ($q) {
+                    $q->whereNull('unlisted_leads.UL_LEAD_ALLOCATED_TO')
+                      ->orWhere('unlisted_leads.UL_LEAD_ALLOCATED_TO', 0);
+                });
+            } else {
+                $query->where('unlisted_leads.UL_LEAD_ALLOCATED_TO', $allocated);
+            }
         }
 
         if ($cb = $request->input('callback', '')) {
