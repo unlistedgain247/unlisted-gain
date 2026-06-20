@@ -84,12 +84,12 @@
                     <div class="stat-pill-body">
                         <span class="stat-pill-num">
                             @if($totalMcap >= 1000)
-                                ₹{{ number_format($totalMcap / 1000, 1) }}K+ Cr
+                                ₹{{ number_format($totalMcap / 1000, 1) }}K+
                             @else
-                                ₹{{ number_format($totalMcap, 0) }}+ Cr
+                                ₹{{ number_format($totalMcap, 0) }}+
                             @endif
                         </span>
-                        <span class="stat-pill-label">Combined Market Cap</span>
+                        <span class="stat-pill-label">Cr Combined Market Cap</span>
                     </div>
                 </div>
                 <div class="stat-pill">
