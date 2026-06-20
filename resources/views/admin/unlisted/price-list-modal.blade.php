@@ -124,7 +124,6 @@
                     <tr>
                         <th>Date</th>
                         <th>Bid Price</th>
-                        <th>Ask Price</th>
                         <th>Is Invalid</th>
                         <th>Action</th>
                     </tr>
@@ -134,7 +133,6 @@
                     <tr @class(['pl-row-alt'=> $loop->even]) data-date="{{ $row->UL_PD_DATE }}">
                         <td>{{ \Carbon\Carbon::parse($row->UL_PD_DATE)->format('d-M-Y') }}</td>
                         <td class="pl-bid">{{ $row->UL_PD_BID_PRICE ?? '—' }}</td>
-                        <td class="pl-ask">{{ $row->UL_PD_ASK_PRICE ?? '—' }}</td>
                         <td>
                             @if ($row->UL_PD_INVALID_FLAG)
                             <span style="color:#e53935;font-weight:500">Invalid</span>
@@ -146,7 +144,6 @@
                             <i class="fa-solid fa-pen pl-edit-btn"
                                 data-date="{{ $row->UL_PD_DATE }}"
                                 data-bid="{{ $row->UL_PD_BID_PRICE ?? '' }}"
-                                data-ask="{{ $row->UL_PD_ASK_PRICE ?? '' }}"
                                 style="color:#2196f3;cursor:pointer;margin-right:10px"
                                 title="Edit"></i>
                             <i class="fa-solid fa-trash pl-delete-btn"
@@ -157,7 +154,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" style="text-align:center;padding:32px;color:#aaa">
+                        <td colspan="4" style="text-align:center;padding:32px;color:#aaa">
                             <i class="fa-regular fa-folder-open" style="font-size:22px;display:block;margin-bottom:8px"></i>
                             No price data found.
                         </td>
@@ -187,12 +184,10 @@
         var $row = $(this).closest('tr');
         var date = $(this).data('date');
         var bid  = $(this).data('bid');
-        var ask  = $(this).data('ask');
         $row.find('.pl-bid').html('<input type="number" step="0.01" min="0" value="' + bid + '" id="plEditBid" style="width:80px;padding:4px 6px;border:1.5px solid #87b942;border-radius:6px;font-size:13px">');
-        $row.find('.pl-ask').html('<input type="number" step="0.01" min="0" value="' + ask + '" id="plEditAsk" style="width:80px;padding:4px 6px;border:1.5px solid #87b942;border-radius:6px;font-size:13px">');
         $row.find('td:last').html(
             '<i class="fa-solid fa-check pl-save-btn" data-date="' + date + '" style="color:#4a7c20;cursor:pointer;margin-right:10px;font-size:13px" title="Save"></i>' +
-            '<i class="fa-solid fa-xmark pl-cancel-btn" data-date="' + date + '" data-bid="' + bid + '" data-ask="' + ask + '" style="color:#e53935;cursor:pointer;font-size:13px" title="Cancel"></i>'
+            '<i class="fa-solid fa-xmark pl-cancel-btn" data-date="' + date + '" data-bid="' + bid + '" style="color:#e53935;cursor:pointer;font-size:13px" title="Cancel"></i>'
         );
     });
 
@@ -200,11 +195,9 @@
         var $row = $(this).closest('tr');
         var date = $(this).data('date');
         var bid  = $(this).data('bid');
-        var ask  = $(this).data('ask');
         $row.find('.pl-bid').html(bid || '—');
-        $row.find('.pl-ask').html(ask || '—');
         $row.find('td:last').html(
-            '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + bid + '" data-ask="' + ask + '" style="color:#2196f3;cursor:pointer;margin-right:10px" title="Edit"></i>' +
+            '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + bid + '" style="color:#2196f3;cursor:pointer;margin-right:10px" title="Edit"></i>' +
             '<i class="fa-solid fa-trash pl-delete-btn" data-date="' + date + '" style="color:#e53935;cursor:pointer" title="Delete"></i>'
         );
     });
@@ -213,20 +206,18 @@
         var $row   = $(this).closest('tr');
         var date   = $(this).data('date');
         var newBid = $('#plEditBid').val();
-        var newAsk = $('#plEditAsk').val();
         $.ajax({
             url:         STOCKS_BASE + '/' + window.plFincode + '/price/' + date,
             method:      'PATCH',
             headers:     { 'X-CSRF-TOKEN': CSRF },
             contentType: 'application/json',
-            data:        JSON.stringify({ UL_PD_BID_PRICE: newBid, UL_PD_ASK_PRICE: newAsk }),
+            data:        JSON.stringify({ UL_PD_BID_PRICE: newBid }),
         })
         .done(function (res) {
             if (!res.success) return;
             $row.find('.pl-bid').html(newBid || '—');
-            $row.find('.pl-ask').html(newAsk || '—');
             $row.find('td:last').html(
-                '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + newBid + '" data-ask="' + newAsk + '" style="color:#2196f3;cursor:pointer;margin-right:10px" title="Edit"></i>' +
+                '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + newBid + '" style="color:#2196f3;cursor:pointer;margin-right:10px" title="Edit"></i>' +
                 '<i class="fa-solid fa-trash pl-delete-btn" data-date="' + date + '" style="color:#e53935;cursor:pointer" title="Delete"></i>'
             );
         })

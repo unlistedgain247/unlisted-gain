@@ -379,6 +379,12 @@
                                    value="{{ $financial?->UL_FIN_PAT ?? '' }}">
                         </div>
 
+                        <div class="fm-field">
+                            <label>EPS (₹)</label>
+                            <input type="number" step="0.01" name="UL_FIN_ADJUSTED_EPS"
+                                   value="{{ $financial?->UL_FIN_ADJUSTED_EPS ?? '' }}">
+                        </div>
+
                     </div>
                 </div>
 
