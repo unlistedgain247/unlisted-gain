@@ -125,7 +125,6 @@ class AuthController extends Controller
             'phone'              => $user->phone,
             'user_type'          => $user->user_type,
             'unlisted_user_type' => $user->unlisted_user_type,
-            'privilege'          => $user->privilege ?? [],
         ]);
 
         $returnTo = session()->pull('invest_return_to', '/');

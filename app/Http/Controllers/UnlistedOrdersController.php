@@ -119,9 +119,8 @@ class UnlistedOrdersController extends Controller
 
     private function canAccess(): bool
     {
-        $priv = session('privilege.unlisted', []);
-        return !empty(session('privilege.admin'))
-            || !empty(session('privilege.user_master'))
-            || !empty($priv['orders']);
+        return !empty(user_privilege('admin'))
+            || !empty(user_privilege('user_master'))
+            || !empty(user_privilege('unlisted.orders'));
     }
 }

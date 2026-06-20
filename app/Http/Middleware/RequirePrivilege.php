@@ -25,7 +25,7 @@ class RequirePrivilege
             return redirect()->route('login');
         }
 
-        $privilege = session('privilege', []);
+        $privilege = user_privilege();
 
         foreach ($keys as $key) {
             if ($key === 'unlisted') {

@@ -13,10 +13,9 @@ class UnlistedLeadsController extends Controller
 {
     public function leads()
     {
-        $priv        = session('privilege.unlisted', []);
-        $isAdmin     = !empty(session('privilege.admin')) || !empty(session('privilege.user_master'));
-        $canAllocate = $isAdmin || !empty($priv['leads_allocation']);
-        $canSeeOwn   = !empty($priv['leads']);
+        $isAdmin     = !empty(user_privilege('admin')) || !empty(user_privilege('user_master'));
+        $canAllocate = $isAdmin || !empty(user_privilege('unlisted.leads_allocation'));
+        $canSeeOwn   = !empty(user_privilege('unlisted.leads'));
 
         if (!$canAllocate && !$canSeeOwn) abort(403);
 
@@ -27,10 +26,9 @@ class UnlistedLeadsController extends Controller
 
     public function leadsData(Request $request)
     {
-        $priv        = session('privilege.unlisted', []);
-        $isAdmin     = !empty(session('privilege.admin')) || !empty(session('privilege.user_master'));
-        $canAllocate = $isAdmin || !empty($priv['leads_allocation']);
-        $canSeeOwn   = !empty($priv['leads']);
+        $isAdmin     = !empty(user_privilege('admin')) || !empty(user_privilege('user_master'));
+        $canAllocate = $isAdmin || !empty(user_privilege('unlisted.leads_allocation'));
+        $canSeeOwn   = !empty(user_privilege('unlisted.leads'));
 
         if (!$canAllocate && !$canSeeOwn) abort(403);
 
@@ -111,10 +109,9 @@ class UnlistedLeadsController extends Controller
 
     public function allocateLead(Request $request, int $leadId)
     {
-        $priv        = session('privilege.unlisted', []);
-        $canAllocate = !empty(session('privilege.admin'))
-                    || !empty(session('privilege.user_master'))
-                    || !empty($priv['leads_allocation']);
+        $canAllocate = !empty(user_privilege('admin'))
+                    || !empty(user_privilege('user_master'))
+                    || !empty(user_privilege('unlisted.leads_allocation'));
 
         if (!$canAllocate) return response()->json(['success' => false], 403);
 
@@ -313,11 +310,10 @@ class UnlistedLeadsController extends Controller
 
     private function canAccessLeads(): bool
     {
-        $priv = session('privilege.unlisted', []);
-        return !empty(session('privilege.admin'))
-            || !empty(session('privilege.user_master'))
-            || !empty($priv['leads_allocation'])
-            || !empty($priv['leads']);
+        return !empty(user_privilege('admin'))
+            || !empty(user_privilege('user_master'))
+            || !empty(user_privilege('unlisted.leads_allocation'))
+            || !empty(user_privilege('unlisted.leads'));
     }
 
     private function getLeadAgents()
