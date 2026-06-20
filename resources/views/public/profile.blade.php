@@ -27,7 +27,7 @@
     <div class="profile-hero-inner">
         <div class="profile-avatar-wrap">
             @if($user->avatar_path)
-                <img src="{{ route('profile.avatar') }}" alt="{{ $user->name }}" class="profile-avatar-img">
+                <img src="{{ route('profile.avatar', $user->uid) }}" alt="{{ $user->name }}" class="profile-avatar-img">
             @else
                 <div class="profile-avatar">{{ $initial }}</div>
             @endif

@@ -81,7 +81,7 @@
                 <div class="account-wrapper has-dropdown">
                     <button class="account-trigger" type="button">
                         <span class="account-avatar">
-                            <img src="{{ route('profile.avatar') }}" alt="" class="account-avatar-dp" onerror="this.style.display='none'">
+                            <img src="{{ route('profile.avatar', session('uid')) }}" alt="" class="account-avatar-dp" onerror="this.style.display='none'">
                             <span class="account-avatar-initial">{{ $initial }}</span>
                         </span>
                         <span class="account-text">My Account</span>
@@ -90,7 +90,7 @@
                     <ul class="dropdown-menu account-menu">
                         <li class="account-menu-header">
                             <span class="account-menu-avatar">
-                                <img src="{{ route('profile.avatar') }}" alt="" class="account-menu-dp" onerror="this.style.display='none'">
+                                <img src="{{ route('profile.avatar', session('uid')) }}" alt="" class="account-menu-dp" onerror="this.style.display='none'">
                                 <span class="account-menu-initial">{{ $initial }}</span>
                             </span>
                             <div class="account-menu-info">
