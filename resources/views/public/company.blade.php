@@ -395,7 +395,7 @@
                             <thead><tr><th class="fin-th-label"></th>@foreach($yRatio as $r)<th>{{ $yearLabel($r['p']) }}</th>@endforeach<th class="fin-th-chg">YOY %</th></tr></thead>
                             <tbody>
                             @foreach([['ROE(%)','roe'],['ROCE(%)','roce'],['ROA(%)','roa'],['Current Ratio(x)','cr'],['Debt / Equity(x)','de']] as [$rl,$rk])
-                            <tr><td class="fin-td-label">{{ $rl }}</td>@foreach($yRatio as $r)<td>{{ $r[$rk]!==null?number_format($r[$rk],2):'—' }}</td>@endforeach@php $chg=($yrL[$rk]!==null&&$yrP&&$yrP[$rk]!==null)?round($yrL[$rk]-$yrP[$rk],2):null; @endphp<td>{!! $fmtChg($chg) !!}</td></tr>
+                            <tr><td class="fin-td-label">{{ $rl }}</td>@foreach($yRatio as $r)<td>{{ $r[$rk]!==null?number_format($r[$rk],2):'—' }}</td>@endforeach@php $chg=$calcYoy($yrL[$rk]??null,$yrP[$rk]??null); @endphp<td>{!! $fmtChg($chg) !!}</td></tr>
                             @endforeach
                             </tbody>
                         </table></div>
