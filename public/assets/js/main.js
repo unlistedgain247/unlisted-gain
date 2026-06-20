@@ -1,16 +1,70 @@
 // =============================================
-// MOBILE MENU
+// HEADER
 // =============================================
 
-function closeMobileMenu() {
+function applyAccountDisplayPicture(img) {
+    if (!img || !img.complete) {
+        return;
+    }
+
+    if (img.naturalWidth > 0) {
+        img.style.display = '';
+        const avatar = img.closest('.account-avatar, .account-menu-avatar');
+        if (!avatar) {
+            return;
+        }
+
+        avatar.style.background = 'transparent';
+        avatar.querySelectorAll('.account-avatar-initial, .account-menu-initial').forEach(function (initial) {
+            initial.style.display = 'none';
+        });
+        return;
+    }
+
+    img.style.display = 'none';
+}
+
+function initAccountDisplayPictures() {
+    document.querySelectorAll('.account-avatar-dp, .account-menu-dp').forEach(function (img) {
+        img.addEventListener('load', function () {
+            applyAccountDisplayPicture(img);
+        });
+
+        img.addEventListener('error', function () {
+            img.style.display = 'none';
+        });
+
+        applyAccountDisplayPicture(img);
+    });
+}
+
+function setMobileMenuState(isOpen) {
     const nav = document.getElementById('mainNav');
     const toggleBtn = document.getElementById('mobileToggle');
-    if (nav) nav.classList.remove('active');
-    if (toggleBtn) toggleBtn.classList.remove('open');
+
+    if (nav) nav.classList.toggle('active', isOpen);
+    if (toggleBtn) {
+        toggleBtn.classList.toggle('open', isOpen);
+        toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        toggleBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+    }
+}
+
+function closeMobileMenu() {
+    setMobileMenuState(false);
     document.querySelectorAll('.main-header .has-dropdown.active').forEach(function (el) {
         el.classList.remove('active');
     });
 }
+
+function openMobileMenu() {
+    setMobileMenuState(true);
+    document.querySelectorAll('.main-header .account-wrapper.open').forEach(function (el) {
+        el.classList.remove('open');
+    });
+}
+
+initAccountDisplayPictures();
 
 document.addEventListener('click', function (e) {
     const isMobile = window.innerWidth <= 1024;
@@ -18,24 +72,28 @@ document.addEventListener('click', function (e) {
     // 1. Hamburger toggle
     const toggleBtn = e.target.closest('#mobileToggle');
     if (toggleBtn) {
+        e.preventDefault();
         const nav = document.getElementById('mainNav');
-        if (nav) {
-            nav.classList.toggle('active');
-            toggleBtn.classList.toggle('open');
+        if (nav && nav.classList.contains('active')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
         }
-        // Close account dropdown when opening hamburger nav
-        document.querySelectorAll('.main-header .account-wrapper.open').forEach(function (el) {
-            el.classList.remove('open');
-        });
         return;
     }
 
-    // 1b. Account trigger — click-to-toggle on all screen sizes
+    // 1a. Sidebar close affordances
+    if (e.target.closest('#sidebarClose')) {
+        closeMobileMenu();
+        return;
+    }
+
+    // 1b. Account trigger - click-to-toggle on all screen sizes
     const accountTrigger = e.target.closest('.account-trigger');
     if (accountTrigger) {
         e.stopPropagation();
         const wrapper = accountTrigger.closest('.account-wrapper');
-        const isOpen  = wrapper.classList.contains('open');
+        const isOpen = wrapper.classList.contains('open');
         document.querySelectorAll('.main-header .account-wrapper.open').forEach(function (el) {
             el.classList.remove('open');
         });
@@ -50,7 +108,7 @@ document.addEventListener('click', function (e) {
         });
     }
 
-    // 2. FAQ accordion — handled by jQuery below
+    // 2. FAQ accordion - handled by jQuery below
 
     // 3. Close mobile menu when clicking outside nav panel
     if (isMobile) {
@@ -81,6 +139,18 @@ document.addEventListener('click', function (e) {
     }
 });
 
+window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        closeMobileMenu();
+    }
+});
+
+window.addEventListener('resize', function () {
+    if (window.innerWidth > 1024) {
+        closeMobileMenu();
+    }
+});
+
 // =============================================
 // VIEW ALL FAQ
 // =============================================
@@ -96,7 +166,7 @@ document.addEventListener('click', function (e) {
 });
 
 // =============================================
-// FAQ ACCORDION — jQuery slideDown/slideUp
+// FAQ ACCORDION - jQuery slideDown/slideUp
 // =============================================
 
 $(function () {
