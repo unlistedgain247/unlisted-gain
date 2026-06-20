@@ -456,21 +456,31 @@
         align-items: center;
     }
 
-    /* Icon-only account button on mobile */
+    /* Mobile: avatar-only circle button */
     .main-header .account-trigger {
-        border: none;
-        background: #f2f2f2;
+        border: 2px solid #87b942;
+        background: transparent;
         border-radius: 50%;
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
         padding: 0;
         justify-content: center;
         gap: 0;
+        box-shadow: none;
     }
 
     .main-header .account-trigger:hover {
-        background: #87b942;
-        color: #fff;
+        background: #f5fbe8;
+        box-shadow: none;
+    }
+
+    .main-header .account-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .main-header .account-avatar-initial {
+        font-size: 13px;
     }
 
     .main-header .account-trigger .account-text,
@@ -478,11 +488,11 @@
         display: none;
     }
 
-    /* Account dropdown on mobile — right-aligned so it doesn't clip off-screen */
+    /* Account dropdown on mobile — right-aligned */
     .main-header .account-wrapper .dropdown-menu {
         right: 0;
         left: auto;
-        min-width: 200px;
+        min-width: 220px;
         z-index: 1300;
     }
 
@@ -525,69 +535,213 @@
     position: relative;
 }
 
+/* Desktop trigger: avatar chip */
 .main-header .account-trigger {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: transparent;
-    border: 2px solid #87b942;
-    color: #333;
+    gap: 9px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #111;
     font-size: 14px;
     font-weight: 600;
-    padding: 7px 14px;
-    border-radius: 25px;
+    padding: 4px 12px 4px 5px;
+    border-radius: 50px;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
 .main-header .account-trigger:hover {
-    background: #87b942;
-    color: #fff;
+    border-color: #87b942;
+    background: #f9fef2;
+    box-shadow: 0 2px 8px rgba(135,185,66,0.15);
+    color: #111;
 }
 
-.main-header .account-trigger svg {
+/* Avatar circle */
+.main-header .account-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #87b942 0%, #4d7a1f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
 }
 
+.main-header .account-avatar-dp {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.main-header .account-avatar-initial {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.3px;
+    font-family: 'Inter', sans-serif;
+}
+
+.main-header .account-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+}
+
+/* Arrow — overrides nav arrow colour */
+.main-header .account-trigger .arrow::after {
+    border-top-color: #888;
+}
+.main-header .account-wrapper.open .arrow::after {
+    border-top-color: #87b942;
+    transform: rotate(180deg);
+}
+
+/* Dropdown panel */
 .main-header .account-wrapper .dropdown-menu {
     right: 0;
     left: auto;
-    min-width: 200px;
+    min-width: 230px;
+    border-radius: 14px;
+    border-top: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    padding: 6px 0 8px;
 }
 
-.main-header .account-menu-name {
-    padding: 10px 16px 8px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #111;
-    border-bottom: 1px solid #eee;
+/* Dropdown header — avatar + name + email */
+.main-header .account-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 14px 16px 12px;
     pointer-events: none;
 }
 
+.main-header .account-menu-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #87b942 0%, #4d7a1f 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.main-header .account-menu-dp {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.main-header .account-menu-initial {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+.main-header .account-menu-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.main-header .account-menu-name {
+    display: block;
+    padding: 0;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.main-header .account-menu-email {
+    display: block;
+    font-size: 11.5px;
+    color: #888;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Menu items */
+.main-header .account-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+}
+
+.main-header .account-menu-item:hover {
+    background: #f5fbe8;
+    color: #87b942;
+}
+
+.main-header .account-menu-item svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+.main-header .account-menu-item:hover svg {
+    opacity: 1;
+}
+
+/* Divider */
 .main-header .account-menu-divider {
     height: 1px;
-    background: #eee;
-    margin: 4px 0;
+    background: #f0f0f0;
+    margin: 5px 0;
     padding: 0;
 }
 
+/* Logout */
 .main-header .account-menu-logout {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
     text-align: left;
-    padding: 7px 16px;
+    padding: 8px 16px;
     background: none;
     border: none;
     font-size: 13px;
     font-weight: 500;
     color: #e53935;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.15s;
+    font-family: 'Inter', sans-serif;
 }
 
 .main-header .account-menu-logout:hover {
     background: #fff5f5;
+}
+
+.main-header .account-menu-logout svg {
+    flex-shrink: 0;
+    opacity: 0.7;
 }
 
 /* Very small phones — nav panel takes full width */
