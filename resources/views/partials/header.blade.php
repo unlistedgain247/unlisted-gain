@@ -84,7 +84,7 @@
                             <img src="{{ route('profile.avatar', session('uid')) }}" alt="" class="account-avatar-dp" onerror="this.style.display='none'">
                             <span class="account-avatar-initial">{{ $initial }}</span>
                         </span>
-                        <span class="account-text">My Account</span>
+                        <span class="account-text">{{ explode(' ', trim($displayName))[0] }}</span>
                         <span class="arrow"></span>
                     </button>
                     <ul class="dropdown-menu account-menu">
