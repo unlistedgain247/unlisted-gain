@@ -1,12 +1,12 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', $stock->UL_STOCKS_COMPNAME . ' Unlisted Share Price, Financials & Analysis | UnlistedGain')
 @section('meta_description', 'Buy ' . $stock->UL_STOCKS_COMPNAME . ' unlisted shares at the best price. View current share price, market cap, P/E ratio, financials and investment thesis on UnlistedGain.')
 @section('meta_keywords', strtolower($stock->UL_STOCKS_COMPNAME) . ' unlisted shares, ' . strtolower($stock->UL_STOCKS_COMPNAME) . ' share price, ' . strtolower($stock->UL_STOCKS_COMPNAME) . ' pre-ipo, buy ' . strtolower($stock->UL_STOCKS_COMPNAME) . ' shares')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/company.css') }}">
-<link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/company.css') }}?v={{ filemtime(public_path('assets/css/pagecss/company.css')) }}">
+<link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
 @endpush
 
 @section('subheader')

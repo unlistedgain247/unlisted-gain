@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Contact UnlistedGain | Reach Our Experts via Call, Email or WhatsApp')
 @section('meta_description', 'Have questions about unlisted shares? Connect with our dedicated team of experts. We are available via Phone, Email, and WhatsApp to assist you with your investments.')
 @section('meta_keywords', 'contact unlistedgain, unlisted share support, pre-ipo investment help, unlisted share advisors India')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/connect.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/connect.css') }}?v={{ filemtime(public_path('assets/css/pagecss/connect.css')) }}">
 @endpush
 
 @section('subheader')

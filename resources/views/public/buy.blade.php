@@ -1,12 +1,12 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Buy Unlisted Shares & Pre-IPO Stocks | UnlistedGain')
 @section('meta_description', 'Browse and invest in top unlisted and pre-IPO shares in India. Real-time price discovery and secure transactions.')
 @section('meta_keywords', 'buy unlisted shares, pre-ipo invest, trending unlisted stocks, purchase pre-ipo India, buy nse unlisted, buy csk shares')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/buy.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/buy.css') }}?v={{ filemtime(public_path('assets/css/pagecss/buy.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
     <style>
         .shares-table-wrapper { overflow-x: auto; }
 

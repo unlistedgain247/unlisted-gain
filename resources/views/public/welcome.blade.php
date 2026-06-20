@@ -1,12 +1,12 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'UnlistedGain | India\'s #1 Marketplace to Buy & Sell Unlisted Shares')
 @section('meta_description', 'UnlistedGain is the most trusted platform to buy and sell unlisted, pre-IPO, and ESOP shares in India at the best prices. Invest in high-growth companies early with real-time price discovery.')
 @section('meta_keywords', 'unlisted shares, pre-IPO shares, buy unlisted shares India, sell unlisted shares, NSE unlisted price, HDFC Securities unlisted, invest in startups India, ESOP liquidation')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ filemtime(public_path('assets/css/styles.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
     <style>
         .item-icon-fallback {
             width: 40px; height: 40px; border-radius: 8px;

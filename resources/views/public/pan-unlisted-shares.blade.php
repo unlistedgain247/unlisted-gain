@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'PAN Requirements for Unlisted Shares | UnlistedGain')
 @section('meta_description', 'Everything you need to know about PAN requirements and tax implications when investing in unlisted shares in India. Understand STCG and LTCG for unlisted stocks.')
 @section('meta_keywords', 'pan card for unlisted shares, unlisted share tax India, STCG unlisted shares, LTCG unlisted shares, indexation benefit unlisted')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')

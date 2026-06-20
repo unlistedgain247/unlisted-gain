@@ -1,11 +1,11 @@
-@extends('layout.app')
+﻿@extends('layout.app')
 
 @section('title', 'Frequently Asked Questions (FAQ) | UnlistedGain')
 @section('meta_description', 'Find answers to commonly asked questions about unlisted shares, pre-IPO investing, buying/selling process, taxes, and security on UnlistedGain.')
 @section('meta_keywords', 'unlisted shares faq, pre-ipo questions, buy unlisted shares help, tax on unlisted shares India, unlistedgain support')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/content-page.css') }}?v={{ filemtime(public_path('assets/css/pagecss/content-page.css')) }}">
 @endpush
 
 @section('subheader')
