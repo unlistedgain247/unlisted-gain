@@ -95,6 +95,7 @@
                             </span>
                             <div class="account-menu-info">
                                 <span class="account-menu-name">{{ $displayName }}</span>
+                                <span class="account-menu-email">{{ session('email') }}</span>
                             </div>
                         </li>
                         <li class="account-menu-divider"></li>
