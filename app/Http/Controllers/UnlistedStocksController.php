@@ -441,7 +441,11 @@ class UnlistedStocksController extends Controller
             $ext  = ['jfif' => 'jpg', 'jpeg' => 'jpg'][$ext] ?? $ext;
             $slug = $stock->UL_STOCKS_SLUG;
             $filename = $slug . '.' . $ext;
-            $destDir  = public_path('images/company-logo');
+            // On Hostinger, public_html/ sits next to the app dir (unlisted-gain/../public_html)
+            // public_path() returns unlisted-gain/public/ which is NOT web-accessible there
+            $parentPublicHtml = dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html';
+            $webRoot  = is_dir($parentPublicHtml) ? $parentPublicHtml : public_path();
+            $destDir  = $webRoot . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'company-logo';
 
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0755, true);
