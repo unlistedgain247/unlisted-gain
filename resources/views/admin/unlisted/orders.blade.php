@@ -289,7 +289,8 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="eom-field">
+                {{-- Direct Flag hidden for now --}}
+                {{-- <div class="eom-field">
                     <label>Direct Flag</label>
                     <div class="eom-toggle-wrap">
                         <label class="eom-switch">
@@ -298,7 +299,7 @@
                         </label>
                         <span class="eom-toggle-label" id="eomDirectFlagLabel">Off</span>
                     </div>
-                </div>
+                </div> --}}
             </div>
             @endif
 
@@ -434,9 +435,9 @@ function calcPriceLp() {
 
 $('#eomPrice, #eomLp').on('input', calcPriceLp);
 
-$('#eomDirectFlag').on('change', function () {
-    $('#eomDirectFlagLabel').text(this.checked ? 'On' : 'Off');
-});
+// $('#eomDirectFlag').on('change', function () {
+//     $('#eomDirectFlagLabel').text(this.checked ? 'On' : 'Off');
+// });
 
 $('#eomStatus').on('change', function () {
     if ($(this).val() === 'Cancelled') {
@@ -502,10 +503,10 @@ $(document).on('click', '.open-edit-ord', function () {
     // Order Added By
     $('#eomAddedBy').val(ord.UL_ORD_ADDED_BY || '');
 
-    // Direct Flag
-    var isDirect = !!parseInt(ord.UL_ORD_DIRECT_FLAG || 0);
-    $('#eomDirectFlag').prop('checked', isDirect);
-    $('#eomDirectFlagLabel').text(isDirect ? 'On' : 'Off');
+    // Direct Flag (hidden)
+    // var isDirect = !!parseInt(ord.UL_ORD_DIRECT_FLAG || 0);
+    // $('#eomDirectFlag').prop('checked', isDirect);
+    // $('#eomDirectFlagLabel').text(isDirect ? 'On' : 'Off');
 
     // Calc price - LP
     calcPriceLp();
@@ -546,7 +547,7 @@ $('#eomSubmitBtn').on('click', function () {
             lp:               $('#eomLp').val(),
             mlp:              $('#eomMlp').val(),
             added_by:         $('#eomAddedBy').val(),
-            direct_flag:      $('#eomDirectFlag').is(':checked') ? 1 : 0,
+            // direct_flag:      $('#eomDirectFlag').is(':checked') ? 1 : 0,
         },
     })
     .done(function (res) {
