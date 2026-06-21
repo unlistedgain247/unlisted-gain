@@ -617,7 +617,7 @@
                         <div class="cp-detail-icon"><i class="fas fa-tag"></i></div>
                         <div class="cp-detail-body">
                             <span class="cp-detail-label">Category</span>
-                            <span class="cp-detail-value">{{ $stock->UL_STOCKS_CATEGORY }}</span>
+                            <span class="cp-detail-value">{{ ['startup_funding' => 'Startup Funding', 'pre_ipo' => 'Pre IPO', 'delisted' => 'Delisted'][$stock->UL_STOCKS_CATEGORY] ?? ucwords(str_replace('_', ' ', $stock->UL_STOCKS_CATEGORY)) }}</span>
                         </div>
                     </div>
                     @endif
