@@ -8,15 +8,15 @@
     <div style="font-size:12px;color:#ccc;margin-top:4px;">Try adjusting your filters</div>
 </div>
 @else
-<table style="width:100%;border-collapse:collapse;">
+<table style="width:100%;min-width:820px;border-collapse:collapse;">
     <thead>
         <tr style="background:#f8f9fa;border-bottom:2px solid #e9ecef;">
             <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:60px;">UID</th>
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:220px;">Name</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;">Name</th>
             <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:120px;">Last Visited</th>
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:160px;">Allocation</th>
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:200px;">Disposition</th>
-            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:120px;">Callback</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:150px;">Allocation</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:190px;">Disposition</th>
+            <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:110px;">Callback</th>
             <th style="padding:10px 14px;text-align:center;font-size:11px;font-weight:700;color:#6c757d;text-transform:uppercase;letter-spacing:0.06em;width:70px;">Call</th>
         </tr>
     </thead>
