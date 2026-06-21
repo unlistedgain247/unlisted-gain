@@ -361,8 +361,9 @@
             var color = res.success ? '#4a7c20' : '#e53935';
             $('#ovSaveMsg').css('color', color).text(res.message || (res.success ? 'Saved.' : 'Error.'));
             if (res.success) {
-                $('[data-fincode="' + fincode + '"]').closest('tr')
-                    .find('td:nth-child(2)').text(fd.get('UL_STOCKS_COMPNAME'));
+                var $a = $('[data-fincode="' + fincode + '"]').closest('tr').find('td:nth-child(2) a');
+                $a.contents().filter(function () { return this.nodeType === 3; }).first()
+                  .replaceWith(document.createTextNode(fd.get('UL_STOCKS_COMPNAME')));
             }
         })
         .fail(function (xhr) {
