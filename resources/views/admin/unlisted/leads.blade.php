@@ -47,7 +47,7 @@
         vertical-align: middle; transition: color 0.15s, background 0.15s;
     }
     .disp-edit-btn:hover { color: #87b942; background: #f0f8e8; }
-    #leadsTableWrap { min-height: 200px; }
+    #leadsTableWrap { min-height: 200px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .leads-loading { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
     .leads-pagination {
         display: flex; align-items: center; justify-content: space-between;
@@ -110,6 +110,20 @@
     #dmSubmitBtn { background: #87b942; color: #fff; }
     #dmSubmitBtn:hover { background: #6fa030; }
     #dmCancelBtn { background: #f5f5f5; color: #555; border: 1px solid #e0e0e0 !important; }
+
+    @media (max-width: 640px) {
+        .leads-filters { padding: 12px; gap: 8px; }
+        .leads-filters .filter-group { width: 100%; }
+        .leads-filters input, .leads-filters select { min-width: unset; width: 100%; box-sizing: border-box; }
+        .leads-filters .filter-btn { flex: 1; }
+        #dispModal { margin: 12px; max-width: calc(100vw - 24px); }
+        #dispModal .dm-row { grid-template-columns: 1fr; gap: 12px; }
+        #dispModal .dm-body { padding: 16px; }
+        #dispModal .dm-footer { padding: 12px 16px; }
+        #dispModal .cb-row { flex-wrap: wrap; }
+        #dispModal .cb-row input[type="date"] { width: 100%; }
+        #dispModal .cb-row select { width: calc(50% - 4px); }
+    }
 </style>
 @endpush
 
