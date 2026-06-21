@@ -83,10 +83,7 @@ require '${APP_DIR}/vendor/autoload.php';
 
 \$app = require_once '${APP_DIR}/bootstrap/app.php';
 
-// public_path() → public_html/ taaki uploaded images seedha yahan store hon
-// Must use instance() to override the pre-stored singleton set by Application::bindPathsInContainer()
-// bind() is ignored when an instance is already registered for the same key
-\$app->instance('path.public', __DIR__);
+// Note: public_path() is NOT overridden here — upload path is handled in the controller
 
 \$app->handleRequest(Request::capture());
 ENDOFFILE
