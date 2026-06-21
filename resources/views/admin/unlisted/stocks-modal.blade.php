@@ -287,7 +287,7 @@ $(function () {
         const color = type === 'success' ? '#4a7c20' : '#e53935';
         $('#stocksMsg').html(
             '<p style="margin:0;font-size:13px;font-weight:500;color:' + color + '">' +
-            $('<span>').text(text).html() +
+            text +
             '</p>'
         );
     }

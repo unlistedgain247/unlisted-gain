@@ -473,6 +473,9 @@
 
 @push('scripts')
 <script src="{{ asset('assets/js/home-search.js') }}"></script>
+<script src="{{ asset('assets/js/slider.js') }}?v={{ filemtime(public_path('assets/js/slider.js')) }}"></script>
+<script src="{{ asset('assets/js/shares-icon-slider.js') }}?v={{ filemtime(public_path('assets/js/shares-icon-slider.js')) }}"></script>
+<script src="{{ asset('assets/js/trending-stocks.js') }}?v={{ filemtime(public_path('assets/js/trending-stocks.js')) }}"></script>
 @endpush
 
 @endsection

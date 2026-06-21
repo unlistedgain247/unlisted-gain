@@ -9,170 +9,20 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
     <!-- Pace loader -->
-    <link href="{{ asset('assets/admin-theme/css/pace.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('assets/admin-theme/js/pace.min.js') }}"></script>
+    <link href="{{ asset('assets/admin-theme/css/pace.min.css') }}?v={{ filemtime(public_path('assets/admin-theme/css/pace.min.css')) }}" rel="stylesheet">
+    <script src="{{ asset('assets/admin-theme/js/pace.min.js') }}?v={{ filemtime(public_path('assets/admin-theme/js/pace.min.js')) }}" defer></script>
 
     <!-- Bootstrap + Theme -->
-    <link href="{{ asset('assets/admin-theme/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/admin-theme/css/bootstrap-extended.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/admin-theme/css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin-theme/css/bootstrap.min.css') }}?v={{ filemtime(public_path('assets/admin-theme/css/bootstrap.min.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin-theme/css/bootstrap-extended.css') }}?v={{ filemtime(public_path('assets/admin-theme/css/bootstrap-extended.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/admin-theme/css/app.css') }}?v={{ filemtime(public_path('assets/admin-theme/css/app.css')) }}" rel="stylesheet">
 
-    <!-- Icons — CDN for reliability -->
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <!-- Admin custom styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}?v={{ filemtime(public_path('assets/css/admin.css')) }}">
-
-    <style>
-        /* ── Topbar overrides ── */
-        .topbar { border-bottom: 1px solid #e4e4e4; }
-
-        .ug-admin-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 24px 0 0;
-            border-right: 1px solid #ebebeb;
-            height: 60px;
-            min-width: 200px;
-            text-decoration: none;
-        }
-        .ug-admin-brand img { height: 32px; }
-        .ug-admin-brand span { font-size: 14px; font-weight: 600; color: #444; }
-
-        /* Topbar icon buttons */
-        .topbar-icon-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            text-decoration: none;
-            transition: background 0.15s, color 0.15s;
-            font-size: 18px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-        .topbar-icon-btn:hover { background: #f5f5f5; color: #333; }
-
-        /* User trigger in topbar */
-        .ug-user-trigger {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 8px 5px 5px;
-            border-radius: 25px;
-            border: 1.5px solid #e4e4e4;
-            cursor: pointer;
-            background: none;
-            transition: border-color 0.15s, background 0.15s;
-            text-decoration: none;
-            color: #333;
-        }
-        .ug-user-trigger:hover { border-color: #87b942; background: #f8fff0; color: #333; }
-        .ug-user-trigger .user-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #87b942;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .ug-user-trigger .user-name { font-size: 13px; font-weight: 500; }
-        .ug-user-trigger .bx-chevron-down { font-size: 16px; color: #999; }
-
-        /* ── Horizontal Nav overrides ── */
-        .nav-container.primary-menu .navbar-nav a.nav-link.ug-active,
-        .nav-container.primary-menu .navbar-nav a.nav-link:hover {
-            color: #fff !important;
-            background-color: #87b942 !important;
-            border-radius: 6px;
-        }
-
-        /* ── Page wrapper — full width, no excessive side padding ── */
-        .page-wrapper {
-            margin-top: 120px !important;
-        }
-        @media screen and (min-width: 1400px) {
-            .page-wrapper {
-                padding-left: 20px !important;
-                padding-right: 20px !important;
-            }
-        }
-
-        /* ── Mobile nav sidebar ── */
-        @media screen and (max-width: 1199px) {
-            .page-wrapper {
-                margin-top: 60px !important;
-            }
-            .nav-container {
-                position: fixed !important;
-                top: 0 !important;
-                left: -280px !important;
-                width: 260px !important;
-                height: 100% !important;
-                z-index: 1051 !important;
-                background: #fff !important;
-                box-shadow: 2px 0 12px rgba(0,0,0,0.15) !important;
-                transition: left 0.25s ease !important;
-                overflow-y: auto !important;
-                padding: 70px 10px 20px !important;
-                border-bottom: none !important;
-            }
-            .wrapper.toggled .nav-container {
-                left: 0 !important;
-            }
-            .nav-container .navbar {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                padding: 0 !important;
-            }
-            .nav-container .navbar-nav {
-                flex-direction: column !important;
-                width: 100% !important;
-                gap: 2px !important;
-            }
-            .nav-container .nav-item {
-                width: 100% !important;
-            }
-            .nav-container .nav-link {
-                width: 100% !important;
-                padding: 10px 14px !important;
-                border-radius: 8px !important;
-            }
-            /* Overlay backdrop */
-            .mobile-nav-overlay {
-                display: none;
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.45);
-                z-index: 1050;
-            }
-            .wrapper.toggled .mobile-nav-overlay {
-                display: block;
-            }
-        }
-        @media screen and (min-width: 1200px) {
-            .mobile-toggle-menu { display: none !important; }
-            .mobile-nav-overlay { display: none !important; }
-        }
-
-        /* ── Admin content full width ── */
-        .admin-main {
-            max-width: 100% !important;
-            padding: 24px 20px !important;
-        }
-    </style>
 
     @stack('styles')
 </head>
@@ -198,7 +48,7 @@
 
                     {{-- Mobile hamburger (visible only on mobile via theme CSS) --}}
                     <a href="javascript:;" class="mobile-toggle-menu me-2" style="font-size:22px;color:#555;text-decoration:none;">
-                        <i class='bx bx-menu'></i>
+                        <i class="fa-solid fa-bars"></i>
                     </a>
 
                     {{-- Brand / Logo --}}
@@ -213,12 +63,12 @@
                         {{-- View public site --}}
                         <a href="{{ url('/') }}" target="_blank"
                            class="topbar-icon-btn" title="View Public Site">
-                            <i class='bx bx-globe'></i>
+                            <i class="fa-solid fa-globe"></i>
                         </a>
 
                         {{-- Fullscreen toggle --}}
                         <button class="topbar-icon-btn" id="btnFullscreen" title="Fullscreen">
-                            <i class='bx bx-fullscreen' id="iconFullscreen"></i>
+                            <i class="fa-solid fa-expand" id="iconFullscreen"></i>
                         </button>
 
                         {{-- Divider --}}
@@ -230,7 +80,7 @@
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="user-avatar">{{ $adminInitial }}</div>
                                 <span class="user-name d-none d-md-inline">{{ $adminName }}</span>
-                                <i class='bx bx-chevron-down'></i>
+                                <i class="fa-solid fa-chevron-down"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end mt-1" style="min-width:210px;">
                                 {{-- Header --}}
@@ -285,7 +135,7 @@
                         <li class="nav-item">
                             <a href="{{ url('/admin/dashboard') }}"
                                class="nav-link {{ request()->is('admin/dashboard') ? 'ug-active' : '' }}">
-                                <div class="parent-icon"><i class='bx bx-home-circle'></i></div>
+                                <div class="parent-icon"><i class="fa-solid fa-house"></i></div>
                                 <div class="menu-title">Dashboard</div>
                             </a>
                         </li>
@@ -303,7 +153,7 @@
                         <li class="nav-item">
                             <a href="{{ $_navUrl }}"
                                class="nav-link {{ request()->is('admin/unlisted*') ? 'ug-active' : '' }}">
-                                <div class="parent-icon"><i class='bx bx-bar-chart-alt-2'></i></div>
+                                <div class="parent-icon"><i class="fa-solid fa-chart-bar"></i></div>
                                 <div class="menu-title">Unlisted Stocks</div>
                             </a>
                         </li>
@@ -313,7 +163,7 @@
                         <li class="nav-item">
                             <a href="{{ url('/admin/users') }}"
                                class="nav-link {{ request()->is('admin/users*') ? 'ug-active' : '' }}">
-                                <div class="parent-icon"><i class='bx bx-group'></i></div>
+                                <div class="parent-icon"><i class="fa-solid fa-users"></i></div>
                                 <div class="menu-title">Users</div>
                             </a>
                         </li>
@@ -330,7 +180,7 @@
                         <li class="nav-item">
                             <a href="{{ $_navPgUrl }}"
                                class="nav-link {{ request()->is('admin/pg*') ? 'ug-active' : '' }}">
-                                <div class="parent-icon"><i class='bx bx-credit-card'></i></div>
+                                <div class="parent-icon"><i class="fa-solid fa-credit-card"></i></div>
                                 <div class="menu-title">PG</div>
                             </a>
                         </li>
@@ -378,15 +228,15 @@
         var icon = document.getElementById('iconFullscreen');
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
-            icon.className = 'bx bx-exit-fullscreen';
+            icon.className = 'fa-solid fa-compress';
         } else {
             document.exitFullscreen();
-            icon.className = 'bx bx-fullscreen';
+            icon.className = 'fa-solid fa-expand';
         }
     });
     document.addEventListener('fullscreenchange', function () {
         var icon = document.getElementById('iconFullscreen');
-        icon.className = document.fullscreenElement ? 'bx bx-exit-fullscreen' : 'bx bx-fullscreen';
+        icon.className = document.fullscreenElement ? 'fa-solid fa-compress' : 'fa-solid fa-expand';
     });
 </script>
 
