@@ -442,13 +442,24 @@ class UnlistedStocksController extends Controller
             $filename = $slug . '.' . $ext;
             $destDir  = public_path('images/company-logo');
 
-            foreach (['png','jpg','jpeg','svg','webp'] as $oldExt) {
-                $old = $destDir . DIRECTORY_SEPARATOR . $slug . '.' . $oldExt;
-                if ($oldExt !== $ext && file_exists($old)) @unlink($old);
+            if (!is_dir($destDir) && !mkdir($destDir, 0755, true)) {
+                return response()->json(['success' => false, 'message' => 'Could not create upload directory: ' . $destDir]);
             }
 
-            $request->file('logo')->move($destDir, $filename);
+            foreach (['png','jpg','jpeg','svg','webp'] as $oldExt) {
+                $old = $destDir . DIRECTORY_SEPARATOR . $slug . '.' . $oldExt;
+                if (file_exists($old)) @unlink($old);
+            }
+
+            try {
+                $request->file('logo')->move($destDir, $filename);
+            } catch (\Exception $e) {
+                return response()->json(['success' => false, 'message' => 'Upload failed: ' . $e->getMessage()]);
+            }
+
             $data['UL_STOCKS_LOGO_LINK'] = 'images/company-logo/' . $filename;
+        } elseif ($request->hasFile('logo')) {
+            return response()->json(['success' => false, 'message' => 'Uploaded file is invalid.']);
         }
 
         $stock->update($data);
