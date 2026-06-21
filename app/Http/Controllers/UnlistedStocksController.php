@@ -8,7 +8,6 @@ use App\Models\UnlistedPriceData;
 use App\Models\UnlistedFinancials;
 use App\Models\UnlistedThesis;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -437,8 +436,6 @@ class UnlistedStocksController extends Controller
             'UL_STOCKS_ABOUT'             => $request->input('UL_STOCKS_ABOUT'),
         ];
 
-        Log::info('[Logo Upload] hasFile=' . ($request->hasFile('logo') ? 'yes' : 'no'));
-
         if ($request->hasFile('logo') && $request->file('logo')->isValid()) {
             $ext  = strtolower($request->file('logo')->getClientOriginalExtension());
             $ext  = ['jfif' => 'jpg', 'jpeg' => 'jpg'][$ext] ?? $ext;
@@ -446,11 +443,8 @@ class UnlistedStocksController extends Controller
             $filename = $slug . '.' . $ext;
             $destDir  = public_path('images/company-logo');
 
-            Log::info('[Logo Upload] destDir=' . $destDir . ' | exists=' . (is_dir($destDir) ? 'yes' : 'no') . ' | writable=' . (is_writable($destDir) ? 'yes' : 'no') . ' | filename=' . $filename);
-
-            if (!is_dir($destDir) && !mkdir($destDir, 0755, true)) {
-                Log::error('[Logo Upload] Failed to create directory: ' . $destDir);
-                return response()->json(['success' => false, 'message' => 'Could not create upload directory: ' . $destDir]);
+            if (!is_dir($destDir)) {
+                mkdir($destDir, 0755, true);
             }
 
             foreach (['png','jpg','jpeg','svg','webp'] as $oldExt) {
@@ -460,15 +454,12 @@ class UnlistedStocksController extends Controller
 
             try {
                 $request->file('logo')->move($destDir, $filename);
-                Log::info('[Logo Upload] SUCCESS: ' . $destDir . '/' . $filename);
             } catch (\Exception $e) {
-                Log::error('[Logo Upload] move() failed: ' . $e->getMessage());
                 return response()->json(['success' => false, 'message' => 'Upload failed: ' . $e->getMessage()]);
             }
 
             $data['UL_STOCKS_LOGO_LINK'] = 'images/company-logo/' . $filename;
         } elseif ($request->hasFile('logo')) {
-            Log::warning('[Logo Upload] File present but isValid() returned false');
             return response()->json(['success' => false, 'message' => 'Uploaded file is invalid.']);
         }
 
