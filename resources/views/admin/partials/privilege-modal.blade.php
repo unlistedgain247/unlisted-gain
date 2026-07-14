@@ -126,8 +126,10 @@
                 <div class="priv-pill-grid">
                     @php
                         $pgItems = [
+                            'pg_dashboard'    => ['label' => 'Dashboard',    'key' => 'dashboard'],
                             'pg_margin'       => ['label' => 'Margin',       'key' => 'margin'],
                             'pg_margin_error' => ['label' => 'Margin Error', 'key' => 'margin_error'],
+                            'pg_transactions' => ['label' => 'Transactions', 'key' => 'transactions'],
                         ];
                     @endphp
 

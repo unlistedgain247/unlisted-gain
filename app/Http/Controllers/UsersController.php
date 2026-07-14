@@ -100,8 +100,10 @@ class UsersController extends Controller
                 'order_backend'    => $request->boolean('unlisted_order_backend'),
             ],
             'pg' => [
+                'dashboard'    => $request->boolean('pg_dashboard'),
                 'margin'       => $request->boolean('pg_margin'),
                 'margin_error' => $request->boolean('pg_margin_error'),
+                'transactions' => $request->boolean('pg_transactions'),
             ],
         ];
 

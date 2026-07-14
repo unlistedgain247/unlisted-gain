@@ -234,84 +234,104 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // ── PG ───────────────────────────────────────────────────────────────────
     Route::get('/pg/dashboard', [PgController::class, 'pgDashboard'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard');
 
+    Route::get('/pg/accounting-report', [PgController::class, 'accountingReport'])
+        ->middleware('privilege:pg.dashboard')
+        ->name('pg.accounting-report');
+
     Route::get('/pg/dashboard/export-user-balance', [PgController::class, 'exportUserBalance'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard.export-user-balance');
 
     Route::get('/pg/dashboard/export-order-report', [PgController::class, 'exportOrderReport'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard.export-order-report');
 
+    Route::get('/pg/dashboard/export-demat-user-balance', [PgController::class, 'exportDematUserBalance'])
+        ->middleware('privilege:pg.dashboard')
+        ->name('pg.dashboard.export-demat-user-balance');
+
     Route::post('/pg/dashboard/tds-tcs', [PgController::class, 'pgDashboardTdsTcs'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard.tds-tcs');
 
     Route::post('/pg/dashboard/commission', [PgController::class, 'pgDashboardCommission'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard.commission');
 
     Route::post('/pg/dashboard/add-transaction', [PgController::class, 'pgAddTransaction'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard.add-transaction');
 
     Route::post('/pg/dashboard/add-demat-transaction', [PgController::class, 'pgAddDematTransaction'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.dashboard.add-demat-transaction');
 
     Route::post('/pg/dashboard/map-transaction', [PgController::class, 'pgMapTransaction'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard,pg.transactions')
         ->name('pg.dashboard.map-transaction');
 
     Route::get('/pg/search-users', [PgController::class, 'pgSearchUsers'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard,pg.transactions')
         ->name('pg.search-users');
 
     Route::get('/pg/search-stocks', [PgController::class, 'pgSearchStocks'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard,pg.transactions')
         ->name('pg.search-stocks');
 
     Route::get('/pg/request-dashboard', [PgController::class, 'requestDashboard'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.request-dashboard');
 
     Route::post('/pg/request-dashboard/data', [PgController::class, 'requestDashboardData'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.request-dashboard.data');
 
     Route::get('/pg/request-dashboard/{requestId}', [PgController::class, 'getWithdrawalRequest'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.request-dashboard.get');
 
     Route::post('/pg/request-dashboard/{requestId}/update', [PgController::class, 'updateWithdrawalRequest'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.dashboard')
         ->name('pg.request-dashboard.update');
 
     Route::get('/pg/margin', [PgController::class, 'margin'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.margin')
         ->name('pg.margin');
 
     Route::get('/pg/margin/data', [PgController::class, 'marginData'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.margin')
         ->name('pg.margin.data');
 
     Route::post('/pg/margin/modal', [PgController::class, 'marginModal'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.margin')
         ->name('pg.margin.modal');
 
     Route::get('/pg/margin-error', [PgController::class, 'marginError'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.margin_error')
         ->name('pg.margin-error');
 
     Route::get('/pg/margin-error/data', [PgController::class, 'marginErrorData'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.margin_error')
         ->name('pg.margin-error.data');
 
     Route::post('/pg/margin-error/modal', [PgController::class, 'marginErrorModal'])
-        ->middleware('privilege:pg')
+        ->middleware('privilege:pg.margin_error')
         ->name('pg.margin-error.modal');
+
+    Route::get('/pg/transactions', [PgController::class, 'transactions'])
+        ->middleware('privilege:pg.transactions')
+        ->name('pg.transactions');
+
+    Route::get('/pg/transactions/data', [PgController::class, 'transactionsData'])
+        ->middleware('privilege:pg.transactions')
+        ->name('pg.transactions.data');
+
+    Route::get('/pg/transactions/export', [PgController::class, 'exportTransactions'])
+        ->middleware('privilege:pg.transactions')
+        ->name('pg.transactions.export');
 
     // ── User Dashboard Modal ─────────────────────────────────────────────────
     Route::prefix('/users/{uid}/dashboard')->middleware('privilege:admin,user_master,unlisted,pg')->group(function () {
