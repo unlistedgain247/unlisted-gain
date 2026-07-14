@@ -17,14 +17,14 @@ class UsersController extends Controller
 
     public function getKycDocsModal(string $uid)
     {
-        $user = User::where('uid', $uid)->firstOrFail();
+        $user = User::query()->where('uid', $uid)->firstOrFail();
 
         return view('admin.users.kyc-docs-modal', compact('user'));
     }
 
     public function verifyKyc(Request $request, string $uid, string $type)
     {
-        $user   = User::where('uid', $uid)->firstOrFail();
+        $user   = User::query()->where('uid', $uid)->firstOrFail();
         $newVal = $request->input('verified', 1) ? 1 : 0;
 
         $column = match ($type) {
@@ -46,7 +46,7 @@ class UsersController extends Controller
 
     public function serveKycFile(string $uid, string $type)
     {
-        $user = User::where('uid', $uid)->firstOrFail();
+        $user = User::query()->where('uid', $uid)->firstOrFail();
 
         $path = match ($type) {
             'bank'  => $user->bank_cancelled_check,
@@ -69,7 +69,7 @@ class UsersController extends Controller
 
     public function resetLockout(string $uid)
     {
-        User::where('uid', $uid)->firstOrFail()->update([
+        User::query()->where('uid', $uid)->firstOrFail()->update([
             'failed_login_attempts' => 0,
             'login_locked_until'    => null,
         ]);
@@ -79,14 +79,14 @@ class UsersController extends Controller
 
     public function getPrivilegeModal(string $uid)
     {
-        $user = User::where('uid', $uid)->firstOrFail();
+        $user = User::query()->where('uid', $uid)->firstOrFail();
 
         return view('admin.partials.privilege-modal', compact('user'));
     }
 
     public function savePrivilege(Request $request, string $uid)
     {
-        $user = User::where('uid', $uid)->firstOrFail();
+        $user = User::query()->where('uid', $uid)->firstOrFail();
 
         $privilege = [
             'admin'       => $request->boolean('admin'),
@@ -97,7 +97,6 @@ class UsersController extends Controller
                 'leads_allocation' => $request->boolean('unlisted_leads_allocation'),
                 'orders'           => $request->boolean('unlisted_orders'),
                 'unlisted_reports' => $request->boolean('unlisted_unlisted_reports'),
-                'bidding_backend'  => $request->boolean('unlisted_bidding_backend'),
                 'order_backend'    => $request->boolean('unlisted_order_backend'),
             ],
             'pg' => [
@@ -107,6 +106,10 @@ class UsersController extends Controller
         ];
 
         $user->update(['privilege' => $privilege]);
+
+        if (session('uid') == $uid) {
+            session(['privilege' => $privilege]);
+        }
 
         return response()->json(['success' => true, 'message' => 'Privileges saved.']);
     }

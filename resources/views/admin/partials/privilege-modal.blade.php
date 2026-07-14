@@ -96,7 +96,6 @@
                             'unlisted_leads_allocation'  => ['label' => 'Leads Allocation', 'key' => 'leads_allocation'],
                             'unlisted_orders'            => ['label' => 'Orders',           'key' => 'orders'],
                             'unlisted_unlisted_reports'  => ['label' => 'Unlisted Reports', 'key' => 'unlisted_reports'],
-                            'unlisted_bidding_backend'   => ['label' => 'Bidding Backend',  'key' => 'bidding_backend'],
                             'unlisted_order_backend'     => ['label' => 'Order Backend',    'key' => 'order_backend'],
                         ];
                     @endphp

@@ -56,6 +56,7 @@
     $_stockx  = $_isAdmin || !empty($_ul['stockx']);
     $_leads   = $_isAdmin || !empty($_ul['leads']) || !empty($_ul['leads_allocation']);
     $_orders  = $_isAdmin || !empty($_ul['orders']);
+    $_reports = !empty($_ul['unlisted_reports']);
 @endphp
 
 <div class="admin-sub-subnav">
@@ -78,6 +79,13 @@
         <a href="{{ url('/admin/unlisted/orders') }}"
             class="admin-sub-subnav-tab {{ request()->routeIs('admin.unlisted.orders') ? 'active' : '' }}">
             Orders
+        </a>
+        @endif
+
+        @if($_reports)
+        <a href="{{ url('/admin/unlisted/reports') }}"
+            class="admin-sub-subnav-tab {{ request()->routeIs('admin.unlisted.reports') ? 'active' : '' }}">
+            Reports
         </a>
         @endif
 

@@ -173,8 +173,8 @@ class AuthController extends Controller
 
         // Single query — fetch user and check lockout on the same row
         $user = $loginType === 'phone'
-            ? User::where('phone', $request->phone)->first()
-            : User::where('email', $request->email)->first();
+            ? User::query()->where('phone', $request->phone)->first()
+            : User::query()->where('email', $request->email)->first();
 
         // Unknown identifier — don't leak whether account exists
         if (!$user) {
@@ -244,7 +244,7 @@ class AuthController extends Controller
         $uid = session('uid');
 
         if ($uid) {
-            User::where('uid', $uid)->update(['session_token' => null]);
+            User::query()->where('uid', $uid)->update(['session_token' => null]);
         }
 
         $request->session()->flush();

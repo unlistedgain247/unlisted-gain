@@ -44,7 +44,16 @@
 
         {{-- Name + contact + tags --}}
         <td style="padding:12px 14px;vertical-align:middle;max-width:220px;overflow:hidden;">
+            @if($lead->UL_LEAD_UID)
+            <a href="javascript:void(0)"
+               onclick="openUserDashboard({{ $lead->UL_LEAD_UID }}, '{{ addslashes($lead->user_name ?? '') }}')"
+               style="font-weight:600;font-size:13px;color:#2b80b9;line-height:1.3;text-decoration:none;"
+               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+               {{ $lead->user_name ?: '—' }}
+            </a>
+            @else
             <div style="font-weight:600;font-size:13px;color:#111827;line-height:1.3;">{{ $lead->user_name ?: '—' }}</div>
+            @endif
             @if($lead->email || $lead->phone)
             <div style="font-size:11px;color:#9ca3af;margin-top:2px;line-height:1.3;">
                 @if($lead->email)<span>{{ $lead->email }}</span>@endif
