@@ -11,6 +11,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\UnlistedOrdersController;
 use App\Http\Controllers\PgController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\UnlistedReportController;
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -231,6 +233,62 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->name('unlisted.leads.activity');
 
     // ── PG ───────────────────────────────────────────────────────────────────
+    Route::get('/pg/dashboard', [PgController::class, 'pgDashboard'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard');
+
+    Route::get('/pg/dashboard/export-user-balance', [PgController::class, 'exportUserBalance'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.export-user-balance');
+
+    Route::get('/pg/dashboard/export-order-report', [PgController::class, 'exportOrderReport'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.export-order-report');
+
+    Route::post('/pg/dashboard/tds-tcs', [PgController::class, 'pgDashboardTdsTcs'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.tds-tcs');
+
+    Route::post('/pg/dashboard/commission', [PgController::class, 'pgDashboardCommission'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.commission');
+
+    Route::post('/pg/dashboard/add-transaction', [PgController::class, 'pgAddTransaction'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.add-transaction');
+
+    Route::post('/pg/dashboard/add-demat-transaction', [PgController::class, 'pgAddDematTransaction'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.add-demat-transaction');
+
+    Route::post('/pg/dashboard/map-transaction', [PgController::class, 'pgMapTransaction'])
+        ->middleware('privilege:pg')
+        ->name('pg.dashboard.map-transaction');
+
+    Route::get('/pg/search-users', [PgController::class, 'pgSearchUsers'])
+        ->middleware('privilege:pg')
+        ->name('pg.search-users');
+
+    Route::get('/pg/search-stocks', [PgController::class, 'pgSearchStocks'])
+        ->middleware('privilege:pg')
+        ->name('pg.search-stocks');
+
+    Route::get('/pg/request-dashboard', [PgController::class, 'requestDashboard'])
+        ->middleware('privilege:pg')
+        ->name('pg.request-dashboard');
+
+    Route::post('/pg/request-dashboard/data', [PgController::class, 'requestDashboardData'])
+        ->middleware('privilege:pg')
+        ->name('pg.request-dashboard.data');
+
+    Route::get('/pg/request-dashboard/{requestId}', [PgController::class, 'getWithdrawalRequest'])
+        ->middleware('privilege:pg')
+        ->name('pg.request-dashboard.get');
+
+    Route::post('/pg/request-dashboard/{requestId}/update', [PgController::class, 'updateWithdrawalRequest'])
+        ->middleware('privilege:pg')
+        ->name('pg.request-dashboard.update');
+
     Route::get('/pg/margin', [PgController::class, 'margin'])
         ->middleware('privilege:pg')
         ->name('pg.margin');
@@ -255,6 +313,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->middleware('privilege:pg')
         ->name('pg.margin-error.modal');
 
+    // ── User Dashboard Modal ─────────────────────────────────────────────────
+    Route::prefix('/users/{uid}/dashboard')->middleware('privilege:admin,user_master,unlisted,pg')->group(function () {
+        Route::get('/',                [UserDashboardController::class, 'profile']);
+        Route::get('/orders',          [UserDashboardController::class, 'orders']);
+        Route::get('/demat',           [UserDashboardController::class, 'demat']);
+        Route::get('/portfolio',       [UserDashboardController::class, 'portfolio']);
+        Route::get('/transactions',    [UserDashboardController::class, 'transactions']);
+        Route::get('/request-history',                          [UserDashboardController::class, 'requestHistory']);
+        Route::post('/request-history/{requestId}/cancel',      [UserDashboardController::class, 'cancelRequest']);
+        Route::get('/bank-demat',      [UserDashboardController::class, 'bankDemat']);
+        Route::get('/communication',   [UserDashboardController::class, 'getCommunication']);
+        Route::post('/communication',  [UserDashboardController::class, 'saveCommunication']);
+        Route::get('/withdraw',        [UserDashboardController::class, 'withdrawForm']);
+        Route::post('/withdraw',       [UserDashboardController::class, 'saveWithdraw']);
+    });
+
     // ── Unlisted Orders ──────────────────────────────────────────────────────
     Route::get('/unlisted/orders', [UnlistedOrdersController::class, 'orders'])
         ->middleware('privilege:unlisted')
@@ -267,4 +341,29 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/unlisted/orders/{orderId}/update', [UnlistedOrdersController::class, 'updateOrder'])
         ->middleware('privilege:unlisted')
         ->name('unlisted.orders.update');
+
+    // ── Unlisted Reports ─────────────────────────────────────────────────────
+    Route::get('/unlisted/reports', [UnlistedReportController::class, 'index'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.reports');
+
+    Route::post('/unlisted/reports/orders', [UnlistedReportController::class, 'ordersReport'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.reports.orders');
+
+    Route::post('/unlisted/reports/customers', [UnlistedReportController::class, 'customerOrders'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.reports.customers');
+
+    Route::post('/unlisted/reports/companies', [UnlistedReportController::class, 'companyOrders'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.reports.companies');
+
+    Route::post('/unlisted/reports/combined', [UnlistedReportController::class, 'combinedFinancial'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.reports.combined');
+
+    Route::post('/unlisted/reports/last-insert', [UnlistedReportController::class, 'lastInsert'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.reports.last-insert');
 });

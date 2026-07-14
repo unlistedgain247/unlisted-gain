@@ -172,9 +172,11 @@
                         @php
                             $_navPg     = session('privilege.pg', []);
                             $_navPgAny  = !empty(session('privilege.admin')) || !empty(array_filter($_navPg));
-                            $_navPgUrl  = !empty($_navPg['margin']) || !empty(session('privilege.admin'))
-                                ? url('/admin/pg/margin')
-                                : url('/admin/pg/margin-error');
+                            $_navPgUrl  = (!empty(session('privilege.admin')) || !empty($_navPg['dashboard']))
+                                ? url('/admin/pg/dashboard')
+                                : ((!empty($_navPg['margin']))
+                                    ? url('/admin/pg/margin')
+                                    : url('/admin/pg/margin-error'));
                         @endphp
                         @if($_navPgAny)
                         <li class="nav-item">

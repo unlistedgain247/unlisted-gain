@@ -521,4 +521,6 @@ $(function () { loadLeads(1); });
 </script>
 @endpush
 
+@include('admin.partials.user-dashboard-modal')
+
 @endsection

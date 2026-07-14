@@ -38,15 +38,27 @@
 @endonce
 
 @php
-    $_pg      = session('privilege.pg', []);
-    $_isAdmin = !empty(session('privilege.admin'));
-    $_margin  = $_isAdmin || !empty($_pg['margin']);
-    $_merr    = $_isAdmin || !empty($_pg['margin_error']);
+    $_pg    = session('privilege.pg', []);
+    $_isAdm = !empty(session('privilege.admin'));
+    $_dash  = $_isAdm || !empty($_pg['dashboard']);
+    $_marg  = $_isAdm || !empty($_pg['margin']);
+    $_merr  = $_isAdm || !empty($_pg['margin_error']);
 @endphp
 
 <div class="admin-sub-subnav">
     <div class="admin-sub-subnav-inner">
-        @if($_margin)
+        @if($_dash)
+        <a href="{{ url('/admin/pg/dashboard') }}"
+           class="admin-sub-subnav-tab {{ request()->routeIs('admin.pg.dashboard') ? 'active' : '' }}">
+            PG Dashboard
+        </a>
+        <a href="{{ url('/admin/pg/request-dashboard') }}"
+           class="admin-sub-subnav-tab {{ request()->routeIs('admin.pg.request-dashboard') ? 'active' : '' }}">
+            Request Dashboard
+        </a>
+        @endif
+
+        @if($_marg)
         <a href="{{ url('/admin/pg/margin') }}"
            class="admin-sub-subnav-tab {{ request()->routeIs('admin.pg.margin') ? 'active' : '' }}">
             Margin Dashboard
