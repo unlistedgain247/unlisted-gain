@@ -423,6 +423,10 @@
                         <span class="pgd-accent-bar"></span>
                         <i class='bx bx-user'></i>Demat – User Wise Balance
                     </div>
+                    <a href="{{ route('admin.pg.dashboard.export-demat-user-balance', array_filter(['from_date' => $fromDate, 'to_date' => $toDate])) }}"
+                       title="Export to CSV" style="color:#87b942;font-size:13px;">
+                        <i class='bx bx-download'></i>
+                    </a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -706,46 +710,7 @@
     </div>
 </div>
 
-{{-- ══ Transaction Mapping Modal ══════════════════════════════════════════ --}}
-<div class="pgd-overlay" id="pgdMappingOverlay" style="align-items:center;">
-<div class="pgd-modal" style="max-width:480px;width:100%;">
-    <div class="pgd-modal-hdr">
-        <h5>Add Transaction Mapping</h5>
-        <button class="pgd-modal-close" onclick="closeOverlay('pgdMappingOverlay')">&times;</button>
-    </div>
-    <div class="pgd-modal-body">
-        {{-- Transaction summary row --}}
-        <table class="table table-sm table-bordered mb-3" style="font-size:12px;">
-            <thead><tr style="background:#fdebeb;">
-                <th>TID</th><th>Amount</th><th>Ref ID</th>
-            </tr></thead>
-            <tbody>
-            <tr>
-                <td id="pgdMapTidCell" style="font-weight:600;"></td>
-                <td id="pgdMapAmtCell"></td>
-                <td id="pgdMapRefCell" style="word-break:break-all;"></td>
-            </tr>
-            </tbody>
-        </table>
-        {{-- User search --}}
-        <div class="mb-3">
-            <label class="form-label" style="font-size:12px;font-weight:600;">Customer Name / UID <span class="text-danger">*</span></label>
-            <div style="position:relative;">
-                <input type="text" class="form-control form-control-sm" id="pgdMapUserSearch" placeholder="Type name or UID…" autocomplete="off">
-                <input type="hidden" id="pgdMapUserId">
-                <div id="pgdMapUserDropdown" style="position:absolute;z-index:9999;width:100%;background:#fff;border:1px solid #ddd;border-radius:4px;display:none;max-height:160px;overflow-y:auto;font-size:12px;"></div>
-            </div>
-        </div>
-        <input type="hidden" id="pgdMapTid">
-        <div id="pgdMapMsg" class="mb-2" style="font-size:12px;display:none;"></div>
-        <div class="text-end">
-            <button type="button" class="btn btn-primary btn-sm" onclick="saveMappingTransaction()">
-                <span id="pgdMapSpinner" class="spinner-border spinner-border-sm d-none"></span> Save
-            </button>
-        </div>
-    </div>
-</div>
-</div>
+@include('admin.pg.partials.map-transaction-modal')
 
 {{-- ══ Add Transaction Modal ══════════════════════════════════════════════ --}}
 <div class="pgd-overlay" id="pgdAddTxnOverlay" style="align-items:center;">
@@ -1150,48 +1115,6 @@ function pgdMakeDropdown(inputId, dropdownId, hiddenId, searchUrl, labelField, v
 
 pgdMakeDropdown('pgdDematUserSearch','pgdDematUserDropdown','pgdDematUserId', PGD_SEARCH_USERS_URL, 'label', 'uid', 1);
 pgdMakeDropdown('pgdDematStockSearch','pgdDematStockDropdown','pgdDematFincode', PGD_SEARCH_STOCKS_URL, 'label', 'fincode');
-pgdMakeDropdown('pgdMapUserSearch','pgdMapUserDropdown','pgdMapUserId', PGD_SEARCH_USERS_URL, 'label', 'uid', 1);
-
-/* ══ Transaction Mapping ══════════════════════════════════════════════════ */
-var PGD_MAP_TXN_URL = '{{ url("/admin/pg/dashboard/map-transaction") }}';
-
-function openMappingModal(tid, amount, refNo, txnType) {
-    $('#pgdMapTid').val(tid);
-    $('#pgdMapUserId').val('');
-    $('#pgdMapUserSearch').val('');
-    $('#pgdMapUserDropdown').hide();
-    $('#pgdMapMsg').hide().text('');
-    var typeIcon = txnType === 'Flow In'
-        ? '<i class="fa fa-arrow-down" style="color:green"></i>'
-        : '<i class="fa fa-arrow-up" style="color:red"></i>';
-    $('#pgdMapTidCell').html(tid + ' ' + typeIcon);
-    $('#pgdMapAmtCell').text(amount);
-    $('#pgdMapRefCell').text(refNo || '—');
-    document.getElementById('pgdMappingOverlay').classList.add('open');
-}
-
-function saveMappingTransaction() {
-    var tid    = $('#pgdMapTid').val();
-    var userId = $('#pgdMapUserId').val();
-    if (!userId || userId == '0') { alert('Please select a customer'); return; }
-    if (!confirm('Map transaction #' + tid + ' to this user?')) return;
-    $('#pgdMapSpinner').removeClass('d-none');
-    $.ajax({
-        type: 'POST', url: PGD_MAP_TXN_URL,
-        headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
-        data: { pgt_tid: tid, map_user_id: userId },
-        dataType: 'json',
-        success: function(r) {
-            $('#pgdMapSpinner').addClass('d-none');
-            var msg = $('#pgdMapMsg').show();
-            if (r.success) {
-                msg.css('color','green').text(r.message);
-                setTimeout(function(){ closeOverlay('pgdMappingOverlay'); location.reload(); }, 1200);
-            } else { msg.css('color','red').text(r.message); }
-        },
-        error: function() { $('#pgdMapSpinner').addClass('d-none'); alert('Server error'); }
-    });
-}
 </script>
 @endpush
 

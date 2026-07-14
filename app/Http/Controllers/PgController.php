@@ -924,6 +924,94 @@ class PgController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function exportDematUserBalance(Request $request)
+    {
+        if (!$this->canAccessPgDashboard()) abort(403);
+
+        $fromDate = $request->input('from_date', '');
+        $toDate   = $request->input('to_date', '');
+        $hasDates = $fromDate && $toDate;
+
+        $ordDate  = $hasDates ? 'AND UL_ORD_DATE >= ? AND UL_ORD_DATE <= ?' : '';
+        $dmatDate = $hasDates ? 'AND DEMAT_DATE >= ? AND DEMAT_DATE <= ?' : '';
+        $ordP     = $hasDates ? [$fromDate . ' 00:00:01', $toDate . ' 23:59:59'] : [];
+        $dmatP    = $hasDates ? [$fromDate . ' 00:00:01', $toDate . ' 23:59:59'] : [];
+
+        $rows = DB::select(
+            "SELECT masterTbl.*, UL_STOCKS_S_NAME, UL_STOCKS_COMPNAME, users.name,
+                REQUEST_QTY, users.demat_dp_id AS DP_ID,
+                users.bank_holder_name AS beneficiary_name,
+                users.bank_name, users.bank_account_no, users.user_pan_no AS PAN_number
+            FROM (
+                SELECT user_id, company_id,
+                    SUM(debit_qty) AS debits, SUM(credit_qty) AS credits,
+                    SUM(credit_qty) - SUM(debit_qty) AS balance,
+                    MAX(share_price_per_quantity) AS share_price_per_quantity
+                FROM (
+                    SELECT UL_ORD_USER_ID AS user_id, UL_ORD_FINCODE AS company_id,
+                        UL_ORD_PRICE_PER_SHARE AS share_price_per_quantity,
+                        CASE WHEN UL_ORD_TYPE='Buy'  THEN UL_ORD_QUANTITY ELSE 0 END AS credit_qty,
+                        CASE WHEN UL_ORD_TYPE='Sell' THEN UL_ORD_QUANTITY ELSE 0 END AS debit_qty,
+                        UL_ORD_UPDATE_TIME AS date_time
+                    FROM unlisted_orders WHERE UL_ORD_STATUS='Completed' {$ordDate}
+                    UNION ALL
+                    SELECT DEMAT_USER_ID AS user_id, DEMAT_FINCODE AS company_id,
+                        DEMAT_QTY AS share_price_per_quantity,
+                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow Out' THEN DEMAT_QTY ELSE 0 END AS credit_qty,
+                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow In'  THEN DEMAT_QTY ELSE 0 END AS debit_qty,
+                        DEMAT_DATE AS date_time
+                    FROM demat_transactions WHERE 1 {$dmatDate}
+                ) AS all_demat
+                GROUP BY user_id, company_id HAVING (SUM(credit_qty) - SUM(debit_qty)) != 0 ORDER BY user_id ASC
+            ) AS masterTbl
+            LEFT JOIN unlisted_stocks ON unlisted_stocks.UL_STOCKS_FINCODE = masterTbl.company_id
+            LEFT JOIN users ON users.uid = masterTbl.user_id
+            LEFT JOIN (
+                SELECT REQUEST_USER_ID, REQUEST_FINCODE, REQUEST_QTY FROM withdrawal_request
+                WHERE REQUEST_TYPE='Shares' AND (REQUEST_STATUS IS NULL OR REQUEST_STATUS='' OR REQUEST_STATUS='Pending')
+            ) AS wdraw ON masterTbl.company_id = wdraw.REQUEST_FINCODE AND masterTbl.user_id = wdraw.REQUEST_USER_ID",
+            array_merge($ordP, $dmatP)
+        );
+
+        $filename = 'demat_user_balance_' . now()->format('Ymd_His') . '.csv';
+        $headers  = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $columns = [
+            'User ID', 'Name', 'Company', 'Debits', 'Credits', 'Balance', 'Qty Requested',
+            'DP ID', 'Beneficiary Name', 'Bank Name', 'Bank Account No', 'PAN Number',
+        ];
+
+        $callback = function () use ($rows, $columns) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, $columns);
+            foreach ($rows as $r) {
+                fputcsv($out, [
+                    $r->user_id,
+                    $r->name ?? '',
+                    $r->UL_STOCKS_S_NAME ?? $r->UL_STOCKS_COMPNAME ?? $r->company_id,
+                    $r->debits,
+                    $r->credits,
+                    $r->balance,
+                    $r->REQUEST_QTY ?? '',
+                    $r->DP_ID ?? '',
+                    $r->beneficiary_name ?? '',
+                    $r->bank_name ?? '',
+                    $r->bank_account_no ?? '',
+                    $r->PAN_number ?? '',
+                ]);
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     // ─── AJAX: TDS / TCS data ─────────────────────────────────────────────────
 
     public function pgDashboardTdsTcs(Request $request)
@@ -1070,7 +1158,7 @@ class PgController extends Controller
 
     public function pgSearchUsers(Request $request)
     {
-        if (!$this->canAccessPgDashboard()) abort(403);
+        if (!$this->canAccessPgDashboard() && !$this->canAccessTransactions()) abort(403);
         $q = trim($request->input('q', ''));
         if (strlen($q) < 1) return response()->json([]);
 
@@ -1090,7 +1178,7 @@ class PgController extends Controller
 
     public function pgSearchStocks(Request $request)
     {
-        if (!$this->canAccessPgDashboard()) abort(403);
+        if (!$this->canAccessPgDashboard() && !$this->canAccessTransactions()) abort(403);
         $q = trim($request->input('q', ''));
         if (strlen($q) < 2) return response()->json([]);
 
@@ -1177,7 +1265,7 @@ class PgController extends Controller
 
     public function pgMapTransaction(Request $request)
     {
-        if (!$this->canAccessPgDashboard()) abort(403);
+        if (!$this->canAccessPgDashboard() && !$this->canAccessTransactions()) abort(403);
 
         $tid    = (int)$request->input('pgt_tid', 0);
         $userId = (int)$request->input('map_user_id', 0);
@@ -1244,6 +1332,274 @@ class PgController extends Controller
         return response()->json(['success' => true, 'message' => 'Demat transaction saved successfully.']);
     }
 
+    // ─── Accounting Report ──────────────────────────────────────────────────────
+
+    public function accountingReport(Request $request)
+    {
+        if (!$this->canAccessPgDashboard()) abort(403);
+
+        $fromDate = $request->input('from_date', '');
+        $toDate   = $request->input('to_date', '');
+        $hasDates = $fromDate && $toDate;
+
+        $periodCond = $hasDates ? 'AND UL_ORD_DATE >= ? AND UL_ORD_DATE <= ?' : '';
+        $periodP    = $hasDates ? [$fromDate . ' 00:00:00', $toDate . ' 23:59:59'] : [];
+
+        $summary = DB::select(
+            "SELECT
+                ROUND(SUM(CASE WHEN UL_ORD_TYPE='Buy'  AND UL_ORD_DIRECT_FLAG=1 THEN UL_ORD_AMOUNT ELSE 0 END), 2) AS direct_sale_amount,
+                ROUND(SUM(CASE WHEN UL_ORD_TYPE='Buy'  AND UL_ORD_DIRECT_FLAG=0 THEN UL_ORD_AMOUNT ELSE 0 END), 2) AS non_direct_sale_amount,
+                ROUND(SUM(CASE WHEN UL_ORD_TYPE='Buy'  THEN UL_ORD_AMOUNT ELSE 0 END), 2) AS total_sale_amount,
+                ROUND(SUM(CASE WHEN UL_ORD_TYPE='Sell' AND UL_ORD_DIRECT_FLAG=1 THEN UL_ORD_AMOUNT ELSE 0 END), 2) AS direct_purchase_amount,
+                ROUND(SUM(CASE WHEN UL_ORD_TYPE='Sell' AND UL_ORD_DIRECT_FLAG=0 THEN UL_ORD_AMOUNT ELSE 0 END), 2) AS non_direct_purchase_amount,
+                ROUND(SUM(CASE WHEN UL_ORD_TYPE='Sell' THEN UL_ORD_AMOUNT ELSE 0 END), 2) AS total_purchase_amount,
+                ROUND(SUM(CASE WHEN UL_ORD_DIRECT_FLAG=1 THEN UL_ORD_INTERMEDIARY_COMMISSION ELSE 0 END), 2) AS direct_commission_paid,
+                ROUND(SUM(CASE WHEN UL_ORD_DIRECT_FLAG=0 THEN UL_ORD_INTERMEDIARY_COMMISSION ELSE 0 END), 2) AS non_direct_commission_paid,
+                ROUND(SUM(UL_ORD_INTERMEDIARY_COMMISSION), 2) AS total_commission_paid
+            FROM unlisted_orders
+            WHERE UL_ORD_STATUS='Completed' {$periodCond}",
+            $periodP
+        )[0];
+
+        // Opening holdings — cumulative balance as of the day before the period starts.
+        $openingRows = $this->holdingsAsOfDate($fromDate ? date('Y-m-d', strtotime($fromDate . ' -1 day')) : null);
+
+        // Closing holdings — cumulative balance as of the period's end date.
+        $closingRows = $this->holdingsAsOfDate($toDate ?: null);
+
+        return view('admin.pg.accounting-report', compact('fromDate', 'toDate', 'summary', 'openingRows', 'closingRows'));
+    }
+
+    /**
+     * Company-wise net share holdings (qty + market value), cumulative up to $cutoff
+     * (inclusive). Null $cutoff means all-time. Same shape as pgDashboard()'s
+     * "Company Holdings" query, parameterized by a single cutoff date instead of
+     * a from/to range, so it can be reused for opening/closing balance snapshots.
+     */
+    private function holdingsAsOfDate(?string $cutoff): array
+    {
+        $cond = $cutoff ? 'AND UL_ORD_DATE <= ?' : '';
+        $p    = $cutoff ? [$cutoff . ' 23:59:59'] : [];
+
+        return DB::select(
+            "SELECT masterTbl.*, ULP.last_traded_price, unlisted_stocks.UL_STOCKS_S_NAME
+            FROM (
+                SELECT company_id,
+                    SUM(debit_qty) AS debits, SUM(credit_qty) AS credits,
+                    SUM(credit_qty) - SUM(debit_qty) AS balance
+                FROM (
+                    SELECT UL_ORD_FINCODE AS company_id,
+                        CASE WHEN UL_ORD_TYPE='Buy'  THEN UL_ORD_QUANTITY ELSE 0 END AS credit_qty,
+                        CASE WHEN UL_ORD_TYPE='Sell' THEN UL_ORD_QUANTITY ELSE 0 END AS debit_qty
+                    FROM unlisted_orders WHERE UL_ORD_STATUS='Completed' {$cond}
+                ) AS d GROUP BY company_id HAVING balance != 0
+            ) AS masterTbl
+            LEFT JOIN (
+                SELECT o1.UL_ORD_FINCODE, MAX(o1.UL_ORD_PRICE_PER_SHARE) AS last_traded_price
+                FROM unlisted_orders o1
+                INNER JOIN (
+                    SELECT UL_ORD_FINCODE, MAX(UL_ORD_DATE) AS latest_order_date
+                    FROM unlisted_orders WHERE UL_ORD_TYPE='Sell' AND UL_ORD_STATUS='Completed' {$cond}
+                    GROUP BY UL_ORD_FINCODE
+                ) latest ON o1.UL_ORD_FINCODE = latest.UL_ORD_FINCODE
+                    AND o1.UL_ORD_DATE = latest.latest_order_date
+                    AND o1.UL_ORD_TYPE = 'Sell' AND o1.UL_ORD_STATUS = 'Completed' {$cond}
+                GROUP BY o1.UL_ORD_FINCODE
+            ) AS ULP ON ULP.UL_ORD_FINCODE = masterTbl.company_id
+            LEFT JOIN unlisted_stocks ON unlisted_stocks.UL_STOCKS_FINCODE = masterTbl.company_id",
+            array_merge($p, $p, $p)
+        );
+    }
+
+    // ─── Transactions Ledger ───────────────────────────────────────────────────
+
+    public function transactions()
+    {
+        if (!$this->canAccessTransactions()) abort(403);
+        return view('admin.pg.transactions');
+    }
+
+    public function transactionsData(Request $request)
+    {
+        if (!$this->canAccessTransactions()) abort(403);
+
+        [$isDemat, $from, $select, $where, $order, $params] = $this->transactionsFilterSql($request);
+
+        $pageNo = max(0, (int) $request->input('page_no', 0));
+        $limit  = 25;
+
+        $total = DB::select("SELECT COUNT(*) AS cnt FROM {$from} {$where}", $params)[0]->cnt ?? 0;
+        $rows  = DB::select(
+            "SELECT {$select} FROM {$from} {$where} ORDER BY {$order} LIMIT {$limit} OFFSET " . ($pageNo * $limit),
+            $params
+        );
+
+        $pagination = $this->buildPagination($total, $pageNo, $limit, 'loadTransactionsPage');
+
+        return view('admin.pg.partials.transactions-rows', compact('rows', 'isDemat', 'total', 'pagination'));
+    }
+
+    public function exportTransactions(Request $request)
+    {
+        if (!$this->canAccessTransactions()) abort(403);
+
+        [$isDemat, $from, $select, $where, $order, $params] = $this->transactionsFilterSql($request);
+
+        $rows = DB::select("SELECT {$select} FROM {$from} {$where} ORDER BY {$order}", $params);
+
+        $filename = 'transactions_' . now()->format('Ymd_His') . '.csv';
+        $headers  = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0',
+        ];
+
+        $callback = function () use ($rows, $isDemat) {
+            $out = fopen('php://output', 'w');
+            if ($isDemat) {
+                fputcsv($out, ['ID', 'Company', 'User', 'Demat Date', 'Qty', 'Type']);
+                foreach ($rows as $r) {
+                    fputcsv($out, [
+                        $r->DEMAT_TRANS_ID,
+                        $r->UL_STOCKS_COMPNAME ?? '',
+                        $r->user_name ?? '',
+                        $r->DEMAT_DATE,
+                        $r->DEMAT_QTY,
+                        $r->DEMAT_IN_OUT_FLAG,
+                    ]);
+                }
+            } else {
+                fputcsv($out, ['TID', 'From/To', 'Account', 'Direct', 'Commission', 'TDS', 'Trans. Date', 'Ref No.', 'Type', 'Amount In', 'Amount Out', 'Balance', 'Remarks', 'Cust.', 'Created']);
+                foreach ($rows as $r) {
+                    fputcsv($out, [
+                        $r->pgt_tid,
+                        $r->pgt_from_to,
+                        $r->pgt_bank_account,
+                        $r->pgt_direct_flag ? 'Yes' : 'No',
+                        $r->pgt_commission_flag ? 'Yes' : 'No',
+                        $r->pgt_TDS_flag ? 'Yes' : 'No',
+                        $r->pgt_transaction_date,
+                        $r->pgt_ref_no,
+                        $r->pgt_transaction_type,
+                        $r->pgt_transaction_type === 'Flow In' ? $r->pgt_in_out_amount : '',
+                        $r->pgt_transaction_type === 'Flow Out' ? $r->pgt_in_out_amount : '',
+                        $r->pgt_balance,
+                        $r->pgt_remarks,
+                        $r->cust_name ?? '',
+                        $r->pgt_created_on,
+                    ]);
+                }
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Builds the FROM/SELECT/WHERE/ORDER fragments + bound params for the
+     * Transactions ledger, shared by transactionsData() and exportTransactions().
+     * Returns [$isDemat, $from, $select, $where, $order, $params].
+     */
+    private function transactionsFilterSql(Request $request): array
+    {
+        // Laravel's ConvertEmptyStringsToNull middleware turns blank query params into
+        // null, so every input is cast back to a string here — a strict !== '' check
+        // against a raw null would otherwise be true and wrongly count as "filter set".
+        $account    = (string) $request->input('px_account_filter', '');
+        $isDemat    = $account === 'Demat';
+        $flow       = (string) $request->input('px_account_flow', '');
+        $tid        = trim((string) $request->input('tid_filter', ''));
+        $direct     = (string) $request->input('direct_filter', '');
+        $commission = (string) $request->input('commission_filter', '');
+        $tds        = (string) $request->input('tds_filter', '');
+        $fincode    = (int) $request->input('fincode_filter', 0);
+        $userId     = (int) $request->input('user_id_filter', 0);
+        $fromDate   = (string) $request->input('from_date', '');
+        $toDate     = (string) $request->input('to_date', '');
+
+        $where  = 'WHERE 1';
+        $params = [];
+
+        if ($isDemat) {
+            if ($tid !== '') {
+                $where   .= ' AND demat_transactions.DEMAT_TRANS_ID = ?';
+                $params[] = (int) $tid;
+            }
+            if ($flow !== '') {
+                $where   .= ' AND demat_transactions.DEMAT_IN_OUT_FLAG = ?';
+                $params[] = $flow === 'Flow_In' ? 'Flow In' : 'Flow Out';
+            }
+            if ($fincode > 0) {
+                $where   .= ' AND demat_transactions.DEMAT_FINCODE = ?';
+                $params[] = $fincode;
+            }
+            if ($userId > 0) {
+                $where   .= ' AND demat_transactions.DEMAT_USER_ID = ?';
+                $params[] = $userId;
+            }
+            if ($fromDate) {
+                $where   .= ' AND demat_transactions.DEMAT_DATE >= ?';
+                $params[] = $fromDate . ' 00:00:00';
+            }
+            if ($toDate) {
+                $where   .= ' AND demat_transactions.DEMAT_DATE <= ?';
+                $params[] = $toDate . ' 23:59:59';
+            }
+
+            $from   = 'demat_transactions
+                        LEFT JOIN unlisted_stocks ON unlisted_stocks.UL_STOCKS_FINCODE = demat_transactions.DEMAT_FINCODE
+                        LEFT JOIN users ON users.uid = demat_transactions.DEMAT_USER_ID';
+            $select = 'demat_transactions.*, unlisted_stocks.UL_STOCKS_COMPNAME, users.name AS user_name';
+            $order  = 'demat_transactions.DEMAT_DATE DESC, demat_transactions.DEMAT_TRANS_ID DESC';
+        } else {
+            if ($account !== '') {
+                $where   .= ' AND pg_transactions.pgt_bank_account = ?';
+                $params[] = $account;
+            }
+            if ($flow !== '') {
+                $where   .= ' AND pg_transactions.pgt_transaction_type = ?';
+                $params[] = $flow === 'Flow_In' ? 'Flow In' : 'Flow Out';
+            }
+            if ($tid !== '') {
+                $where   .= ' AND pg_transactions.pgt_tid = ?';
+                $params[] = (int) $tid;
+            }
+            if ($direct !== '') {
+                $where   .= ' AND pg_transactions.pgt_direct_flag = ?';
+                $params[] = (int) $direct;
+            }
+            if ($commission !== '') {
+                $where   .= ' AND pg_transactions.pgt_commission_flag = ?';
+                $params[] = (int) $commission;
+            }
+            if ($tds !== '') {
+                $where   .= ' AND pg_transactions.pgt_TDS_flag = ?';
+                $params[] = (int) $tds;
+            }
+            if ($userId > 0) {
+                $where   .= ' AND pg_transactions.pgt_transaction_for_user_id = ?';
+                $params[] = $userId;
+            }
+            if ($fromDate) {
+                $where   .= ' AND pg_transactions.pgt_transaction_date >= ?';
+                $params[] = $fromDate;
+            }
+            if ($toDate) {
+                $where   .= ' AND pg_transactions.pgt_transaction_date <= ?';
+                $params[] = $toDate;
+            }
+
+            $from   = 'pg_transactions LEFT JOIN users AS custUser ON custUser.uid = pg_transactions.pgt_transaction_for_user_id';
+            $select = 'pg_transactions.*, custUser.name AS cust_name';
+            $order  = 'pg_transactions.pgt_transaction_date DESC, pg_transactions.pgt_tid DESC';
+        }
+
+        return [$isDemat, $from, $select, $where, $order, $params];
+    }
+
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
     private function buildPagination(int $total, int $pageNo, int $limit, string $jsFn): string
@@ -1275,6 +1631,12 @@ class PgController extends Controller
     {
         $pg = session('privilege.pg', []);
         return !empty(session('privilege.admin')) || !empty($pg['dashboard']);
+    }
+
+    private function canAccessTransactions(): bool
+    {
+        $pg = session('privilege.pg', []);
+        return !empty(session('privilege.admin')) || !empty($pg['transactions']);
     }
 
     // ─── Request Dashboard ────────────────────────────────────────────────────
