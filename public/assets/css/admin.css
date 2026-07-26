@@ -1,3 +1,8 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
 /* ===========================
    ADMIN LAYOUT — TOPBAR & NAV
    =========================== */
@@ -135,6 +140,30 @@
     .mobile-nav-overlay { display: none !important; }
 }
 
+@media screen and (max-width: 480px) {
+    .ug-admin-brand {
+        border-right: none;
+        padding-right: 6px;
+        min-width: 0;
+        gap: 6px;
+    }
+    .ug-admin-brand img { height: 24px; }
+    .ug-admin-brand span { display: none; }
+
+    a.topbar-icon-btn[title="View Public Site"] { display: none; }
+
+    .topbar-icon-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+    }
+
+    .ug-user-trigger { padding: 4px 6px 4px 4px; }
+    .ug-user-trigger .user-avatar { width: 24px; height: 24px; font-size: 11px; }
+
+    .topbar .navbar > .ms-auto { gap: 4px !important; }
+}
+
 .admin-main {
     max-width: 100% !important;
     padding: 24px 20px !important;
@@ -206,6 +235,36 @@
     margin: 0 0 24px;
 }
 
+.admin-page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.admin-page-head .admin-page-title {
+    margin-bottom: 4px;
+}
+
+.admin-page-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin: 0;
+}
+
+.admin-page-head-date {
+    font-size: 13px;
+    color: #777;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 6px 14px;
+    white-space: nowrap;
+}
+.admin-page-head-date i { color: #87b942; margin-right: 4px; }
+
 /* ===========================
    CARD
    =========================== */
@@ -215,6 +274,7 @@
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    min-width: 0;
 }
 
 /* ===========================
@@ -222,7 +282,7 @@
    =========================== */
 .admin-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
     gap: 16px;
     margin-bottom: 28px;
 }
@@ -230,25 +290,199 @@
 .admin-stat-card {
     background: #fff;
     border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+.stat-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+}
+
+.stat-icon-blue   { background: #e3f2fd; color: #1565c0; }
+.stat-icon-green  { background: #e8f5e9; color: #2e7d32; }
+.stat-icon-purple { background: #ede7f6; color: #5e35b1; }
+.stat-icon-orange { background: #fff3e0; color: #e65100; }
+.stat-icon-teal   { background: #e0f2f1; color: #00796b; }
+.stat-icon-pink   { background: #fce4ec; color: #c2185b; }
+.stat-icon-red    { background: #ffebee; color: #c62828; }
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 .admin-stat-card .stat-number {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
-    color: #87b942;
+    color: #1a1a1a;
     display: block;
-    line-height: 1;
-    margin-bottom: 6px;
+    line-height: 1.2;
 }
 
 .admin-stat-card .stat-label {
-    font-size: 13px;
+    font-size: 12.5px;
     color: #777;
-    font-weight: 500;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-stat-card .stat-sub {
+    font-size: 11.5px;
+    color: #999;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-sub-up { color: #2e7d32; }
+.stat-sub-up i { margin-right: 2px; }
+
+/* ===========================
+   DASHBOARD CHARTS
+   =========================== */
+.admin-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.admin-chart-card-wide {
+    grid-column: 1 / -1;
+}
+
+@media screen and (max-width: 991px) {
+    .admin-chart-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admin-chart-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 16px;
+}
+
+.admin-chart-canvas-wrap {
+    position: relative;
+    height: 280px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.admin-chart-canvas-wrap-sm {
+    height: 220px;
+}
+
+.admin-chart-canvas-wrap canvas {
+    max-width: 100% !important;
+}
+
+/* ===========================
+   DASHBOARD RESPONSIVE
+   =========================== */
+@media screen and (max-width: 768px) {
+    .admin-main {
+        padding: 18px 12px !important;
+    }
+
+    .admin-page-head {
+        align-items: flex-start;
+    }
+
+    .admin-page-head-date {
+        order: -1;
+    }
+
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .admin-chart-grid {
+        gap: 12px;
+    }
+
+    .admin-stat-card {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .stat-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    .admin-stat-card .stat-number {
+        font-size: 19px;
+    }
+
+    .admin-stat-card .stat-label {
+        font-size: 11px;
+        white-space: normal;
+    }
+
+    .admin-stat-card .stat-sub {
+        font-size: 10.5px;
+        white-space: normal;
+    }
+
+    .admin-card {
+        padding: 16px;
+    }
+
+    .admin-chart-canvas-wrap {
+        height: 220px;
+    }
+
+    .admin-chart-canvas-wrap-sm {
+        height: 200px;
+    }
+
+    .admin-table {
+        font-size: 12px;
+    }
+
+    .admin-table thead th,
+    .admin-table tbody td {
+        padding: 9px 10px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-stat-card .stat-label,
+    .admin-stat-card .stat-sub {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 /* ===========================
@@ -306,6 +540,12 @@
 .admin-badge.badge-unlisted { background: #fff3e0; color: #e65100; }
 .admin-badge.badge-locked   { background: #fce4ec; color: #c62828; }
 .admin-badge.badge-warn     { background: #fff8e1; color: #f57f17; }
+
+.admin-badge.badge-completed { background: #e8f5e9; color: #2e7d32; }
+.admin-badge.badge-pending   { background: #fff8e1; color: #f57f17; }
+.admin-badge.badge-cancelled { background: #fce4ec; color: #c62828; }
+.admin-badge.badge-buy       { background: #e8f5e9; color: #2e7d32; }
+.admin-badge.badge-sell      { background: #ffebee; color: #c62828; }
 
 .reset-btn {
     padding: 4px 10px;

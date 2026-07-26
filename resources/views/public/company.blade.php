@@ -184,8 +184,11 @@
     <div class="cp-section-nav" id="cpSectionNav">
         <div class="cp-container">
             <nav class="cp-snav-links">
+                @if($priceHistory->isNotEmpty())
+                <a href="#price-trend" class="cp-snav-link {{ $stock->UL_STOCKS_ABOUT ? '' : 'active' }}">Price Chart</a>
+                @endif
                 @if($stock->UL_STOCKS_ABOUT)
-                <a href="#about" class="cp-snav-link active">Overview</a>
+                <a href="#about" class="cp-snav-link {{ $priceHistory->isEmpty() ? 'active' : '' }}">Overview</a>
                 @endif
                 @if($financials->isNotEmpty())
                 <a href="#financials" class="cp-snav-link">Financials</a>
@@ -201,6 +204,48 @@
     {{-- ── PAGE BODY ── --}}
     <div class="cp-body">
         <div class="cp-container">
+
+            {{-- Price Trend --}}
+            @if($priceHistory->isNotEmpty())
+            <section class="cp-section cp-section--price" id="price-trend">
+                <div class="cp-section-head">
+                    <h2>Price <span>Trend</span></h2>
+                    <div class="cp-price-range-row" id="cpPriceRangeRow">
+                        <button class="cp-range-btn" data-range="1m">1M</button>
+                        <button class="cp-range-btn" data-range="3m">3M</button>
+                        <button class="cp-range-btn" data-range="6m">6M</button>
+                        <button class="cp-range-btn" data-range="1y">1Y</button>
+                        <button class="cp-range-btn active" data-range="all">All</button>
+                    </div>
+                </div>
+
+                <div class="cp-price-chart-stats" id="cpPriceChartStats">
+                    <div class="cp-pcs-item">
+                        <span class="cp-pcs-label">Period Change</span>
+                        <span class="cp-pcs-value" id="cpPcsChange">—</span>
+                    </div>
+                    <div class="cp-pcs-item">
+                        <span class="cp-pcs-label">Period High</span>
+                        <span class="cp-pcs-value" id="cpPcsHigh">—</span>
+                    </div>
+                    <div class="cp-pcs-item">
+                        <span class="cp-pcs-label">Period Low</span>
+                        <span class="cp-pcs-value" id="cpPcsLow">—</span>
+                    </div>
+                </div>
+
+                <div class="cp-price-chart-box">
+                    <canvas id="cpPriceChart"></canvas>
+                </div>
+                <p class="cp-price-chart-note">Prices shown are indicative unlisted-market bid prices, updated periodically.</p>
+
+                <script>
+                window._priceHistory = {!! json_encode($priceHistory->map(function ($p) {
+                    return ['date' => $p->UL_PD_DATE, 'price' => (float) $p->UL_PD_BID_PRICE];
+                })->values()) !!};
+                </script>
+            </section>
+            @endif
 
             {{-- About --}}
             @if($stock->UL_STOCKS_ABOUT)
@@ -878,6 +923,116 @@
         });
     }
 
+    // ── Price Trend chart ──
+    function fmtInr(v) {
+        if (v === null || v === undefined || isNaN(v)) return '—';
+        return '₹' + Number(v).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+    }
+
+    function filterPriceRange(data, range) {
+        if (!data.length || range === 'all') return data;
+        var endDate = new Date(data[data.length - 1].date.replace(' ', 'T'));
+        var startDate = new Date(endDate);
+        if (range === '1m') startDate.setMonth(startDate.getMonth() - 1);
+        else if (range === '3m') startDate.setMonth(startDate.getMonth() - 3);
+        else if (range === '6m') startDate.setMonth(startDate.getMonth() - 6);
+        else if (range === '1y') startDate.setFullYear(startDate.getFullYear() - 1);
+        var filtered = data.filter(function (d) { return new Date(d.date.replace(' ', 'T')) >= startDate; });
+        return filtered.length ? filtered : data.slice(-1);
+    }
+
+    function renderPriceChart(range) {
+        var raw = window._priceHistory;
+        if (!raw || !raw.length) return;
+
+        var points = filterPriceRange(raw, range);
+        var labels = points.map(function (p) {
+            return new Date(p.date.replace(' ', 'T')).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
+        });
+        var prices = points.map(function (p) { return p.price; });
+
+        var first = prices[0], last = prices[prices.length - 1];
+        var change = last - first;
+        var changePct = first ? (change / first) * 100 : 0;
+        var high = Math.max.apply(null, prices);
+        var low  = Math.min.apply(null, prices);
+
+        var changeEl = document.getElementById('cpPcsChange');
+        if (changeEl) {
+            changeEl.textContent = (change >= 0 ? '+' : '') + fmtInr(change) + '  (' + (change >= 0 ? '+' : '') + changePct.toFixed(2) + '%)';
+            changeEl.className = 'cp-pcs-value ' + (change >= 0 ? 'cp-pcs-up' : 'cp-pcs-down');
+        }
+        var highEl = document.getElementById('cpPcsHigh');
+        if (highEl) highEl.textContent = fmtInr(high);
+        var lowEl = document.getElementById('cpPcsLow');
+        if (lowEl) lowEl.textContent = fmtInr(low);
+
+        var canvas = document.getElementById('cpPriceChart');
+        if (!canvas) return;
+        if (_charts.cpPrice) { _charts.cpPrice.destroy(); delete _charts.cpPrice; }
+
+        var ctx = canvas.getContext('2d');
+        var isUp = change >= 0;
+        var lineColor = isUp ? GREEN : RED;
+        var gradient = ctx.createLinearGradient(0, 0, 0, canvas.clientHeight || 280);
+        gradient.addColorStop(0, isUp ? 'rgba(135,185,66,0.28)' : 'rgba(224,92,92,0.24)');
+        gradient.addColorStop(1, isUp ? 'rgba(135,185,66,0.02)' : 'rgba(224,92,92,0.02)');
+
+        _charts.cpPrice = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: prices,
+                    borderColor: lineColor,
+                    backgroundColor: gradient,
+                    borderWidth: 2.5,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: prices.length <= 1 ? 4 : 0,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: lineColor,
+                    pointHoverBackgroundColor: lineColor,
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2.6,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1a1a1a',
+                        padding: 10,
+                        displayColors: false,
+                        callbacks: { label: function (c) { return fmtInr(c.raw); } }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 }, color: '#888', maxRotation: 0, autoSkip: true, maxTicksLimit: 7 }
+                    },
+                    y: {
+                        grid: { color: '#f2f4f7' },
+                        ticks: { font: { size: 11 }, color: '#888', callback: function (v) { return '₹' + v; } }
+                    }
+                }
+            }
+        });
+    }
+
+    document.querySelectorAll('.cp-range-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.cp-range-btn').forEach(function (b) { b.classList.remove('active'); });
+            this.classList.add('active');
+            renderPriceChart(this.dataset.range);
+        });
+    });
+
     function renderChartTab() {
         var d = window._finData;
         if (!d) return;
@@ -901,10 +1056,14 @@
     }
 
     // Init
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', showPane);
-    } else {
+    function initPage() {
         showPane();
+        if (window._priceHistory && window._priceHistory.length) renderPriceChart('all');
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPage);
+    } else {
+        initPage();
     }
 })();
 </script>
