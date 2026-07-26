@@ -75,7 +75,7 @@
         </div>
         <div class="disclaimer">
             <p><strong>Disclaimer:</strong> UnlistedGain is an information portal owned and operated by
-                UnlistedGain Pvt. Ltd. The data feed is provided by Accord Fintech Pvt. Ltd. UnlistedGain is not
+                UnlistedGain Pvt. Ltd. UnlistedGain is not
                 an investment advisory portal and does not make any investment recommendations and therefore does
                 not require any license from SEBI/RBI or regulatory authority in India. Investors are advised to
                 use the data at their own risks.</p>

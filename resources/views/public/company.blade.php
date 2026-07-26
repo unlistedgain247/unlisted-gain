@@ -693,12 +693,12 @@
                             <span class="cp-detail-value">{{ $stock->UL_STOCKS_DEMAT_ACCOUNT_REQ ? 'Yes' : 'No' }}</span>
                         </div>
                     </div>
-                    @if($stock->UL_STOCKS_ROFR_FLAG !== null)
+                    @if($stock->UL_STOCKS_ROFR_FLAG === 'Yes' || $stock->UL_STOCKS_ROFR_FLAG === 'No')
                     <div class="cp-detail-card">
                         <div class="cp-detail-icon"><i class="fas fa-shield-alt"></i></div>
                         <div class="cp-detail-body">
                             <span class="cp-detail-label">ROFR Applicable</span>
-                            <span class="cp-detail-value">{{ $stock->UL_STOCKS_ROFR_FLAG ? 'Yes' : 'No' }}</span>
+                            <span class="cp-detail-value">{{ $stock->UL_STOCKS_ROFR_FLAG }}</span>
                         </div>
                     </div>
                     @endif
