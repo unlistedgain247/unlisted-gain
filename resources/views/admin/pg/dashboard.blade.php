@@ -341,7 +341,7 @@
                             @php $netSale=0; $netPurchase=0; @endphp
                             @foreach($orderReportRows as $r)
                             @php
-                                $label = $r->UL_ORD_TYPE === 'Buy' ? 'Sale' : 'Purchase';
+                                $label = $r->UL_ORD_TYPE === 'Buy' ? 'Purchase' : 'Sale';
                                 $net   = $r->UL_ORD_TYPE === 'Buy'
                                        ? ($r->total_amount - $r->total_commission)
                                        : ($r->total_amount + $r->total_commission);
@@ -798,10 +798,6 @@
                     <div class="col-12 mt-1">
                         <div class="d-flex gap-4 flex-wrap">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="pgt_direct_flag" id="pgdDirectFlag">
-                                <label class="form-check-label" for="pgdDirectFlag" style="font-size:12px;">Direct Transaction</label>
-                            </div>
-                            <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="pgt_commission_flag" id="pgdCommissionFlag">
                                 <label class="form-check-label" for="pgdCommissionFlag" style="font-size:12px;">Commission</label>
                             </div>
@@ -1004,7 +1000,6 @@ function saveAddTransaction() {
         pgt_transaction_date: dt, pgt_hour: hh, pgt_minute: mm,
         pgt_ref_no: ref, pgt_remarks: $('#pgdTxnRemarks').val(),
         pgt_transaction_for_user_id: 0,
-        pgt_direct_flag:     $('#pgdDirectFlag').is(':checked')     ? 1 : 0,
         pgt_commission_flag: $('#pgdCommissionFlag').is(':checked') ? 1 : 0,
         pgt_TDS_flag:        $('#pgdTdsFlag').is(':checked')        ? 1 : 0
     };

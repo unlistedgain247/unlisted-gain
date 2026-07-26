@@ -270,6 +270,12 @@ class StocksController extends Controller
             ->orderByDesc('UL_PD_DATE')
             ->first();
 
+        $priceHistory = DB::table('unlisted_price_data')
+            ->where('UL_PD_FINCODE', $fincode)
+            ->where('UL_PD_INVALID_FLAG', 0)
+            ->orderBy('UL_PD_DATE')
+            ->get(['UL_PD_DATE', 'UL_PD_BID_PRICE']);
+
         $latestFin = DB::table('unlisted_financials')
             ->where('UL_FIN_FINCODE', $fincode)
             ->where('UL_FIN_STATUS', 1)
@@ -338,7 +344,7 @@ class StocksController extends Controller
             : null;
 
         return view('public.company', compact(
-            'stock', 'priceData', 'latestFin', 'financials', 'quarterlyFin', 'thesis', 'thesisHtml',
+            'stock', 'priceData', 'priceHistory', 'latestFin', 'financials', 'quarterlyFin', 'thesis', 'thesisHtml',
             'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue'
         ));
     }

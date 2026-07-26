@@ -719,8 +719,8 @@ class PgController extends Controller
                     UNION ALL
                     SELECT DEMAT_USER_ID AS user_id, DEMAT_FINCODE AS company_id,
                         DEMAT_QTY AS share_price_per_quantity,
-                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow Out' THEN DEMAT_QTY ELSE 0 END AS credit_qty,
-                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow In'  THEN DEMAT_QTY ELSE 0 END AS debit_qty,
+                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow In'  THEN DEMAT_QTY ELSE 0 END AS credit_qty,
+                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow Out' THEN DEMAT_QTY ELSE 0 END AS debit_qty,
                         DEMAT_DATE AS date_time
                     FROM demat_transactions WHERE 1 {$dmatDate}
                 ) AS all_demat
@@ -957,8 +957,8 @@ class PgController extends Controller
                     UNION ALL
                     SELECT DEMAT_USER_ID AS user_id, DEMAT_FINCODE AS company_id,
                         DEMAT_QTY AS share_price_per_quantity,
-                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow Out' THEN DEMAT_QTY ELSE 0 END AS credit_qty,
-                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow In'  THEN DEMAT_QTY ELSE 0 END AS debit_qty,
+                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow In'  THEN DEMAT_QTY ELSE 0 END AS credit_qty,
+                        CASE WHEN DEMAT_IN_OUT_FLAG='Flow Out' THEN DEMAT_QTY ELSE 0 END AS debit_qty,
                         DEMAT_DATE AS date_time
                     FROM demat_transactions WHERE 1 {$dmatDate}
                 ) AS all_demat

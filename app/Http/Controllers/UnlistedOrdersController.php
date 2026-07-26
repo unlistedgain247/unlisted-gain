@@ -14,7 +14,6 @@ class UnlistedOrdersController extends Controller
         if (!$this->canAccess()) abort(403);
 
         $adminUsers = User::whereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads')) = 'true'")
-            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads_allocation')) = 'true'")
             ->orderBy('name')
             ->get(['uid', 'name']);
 
@@ -83,37 +82,60 @@ class UnlistedOrdersController extends Controller
     {
         if (!$this->canAccess()) return response()->json(['success' => false], 403);
 
-        $exists = DB::table('unlisted_orders')->where('UL_ORD_ID', $orderId)->exists();
-        if (!$exists) return response()->json(['success' => false, 'message' => 'Order not found.'], 404);
+        $order = DB::table('unlisted_orders')->where('UL_ORD_ID', $orderId)->first();
+        if (!$order) return response()->json(['success' => false, 'message' => 'Order not found.'], 404);
 
-        $qty   = (int) $request->input('qty', 0);
-        $price = (float) $request->input('price_per_share', 0);
+        $newStatus = $request->has('status') ? $request->input('status', '') : $order->UL_ORD_STATUS;
 
-        $dateStr = $request->input('order_date', '');
-        $hr      = $request->input('order_hr', '0');
-        $min     = $request->input('order_min', '0');
-        $orderDate = null;
-        if ($dateStr) {
-            $orderDate = $dateStr . ' ' . str_pad($hr, 2, '0', STR_PAD_LEFT) . ':' . str_pad($min, 2, '0', STR_PAD_LEFT) . ':00';
+        // Completed is a terminal state — cannot be moved to any other status from here.
+        if ($order->UL_ORD_STATUS === 'Completed' && $request->has('status') && $newStatus !== 'Completed') {
+            return response()->json(['success' => false, 'message' => 'Completed orders cannot be reverted to another status.']);
         }
 
-        DB::table('unlisted_orders')->where('UL_ORD_ID', $orderId)->update([
-            'UL_ORD_TYPE'                    => $request->input('type', ''),
-            'UL_ORD_QUANTITY'                => $qty ?: null,
-            'UL_ORD_PRICE_PER_SHARE'         => $price ?: null,
-            'UL_ORD_AMOUNT'                  => ($qty && $price) ? $qty * $price : null,
-            'UL_ORD_STATUS'                  => $request->input('status', ''),
-            'UL_ORD_SUB_STATUS'              => $request->input('sub_status', ''),
-            'UL_ORD_DATE'                    => $orderDate,
-            'UL_ORD_INTERMEDIARY_USER_ID'    => $request->input('intermediary_uid') ?: null,
-            'UL_ORD_INTERMEDIARY_MARGIN'     => $request->input('margin') !== '' ? (float) $request->input('margin') : null,
-            'UL_ORD_INTERMEDIARY_COMMISSION' => $request->input('commission') !== '' ? (float) $request->input('commission') : null,
-            'UL_ORD_LP'                      => $request->input('lp') !== '' ? (float) $request->input('lp') : null,
-            'UL_ORD_MLP'                     => $request->input('mlp') !== '' ? (float) $request->input('mlp') : null,
-            'UL_ORD_ADDED_BY'                => $request->input('added_by') ?: null,
-            'UL_ORD_DIRECT_FLAG'             => $request->input('direct_flag') ? 1 : 0,
-            'UL_ORD_UPDATE_TIME'             => now(),
-        ]);
+        // Completing an order requires LP and Order Added By to be set (existing value counts too).
+        if ($newStatus === 'Completed') {
+            $lp      = $request->has('lp')       ? $request->input('lp')       : $order->UL_ORD_LP;
+            $addedBy = $request->has('added_by') ? $request->input('added_by') : $order->UL_ORD_ADDED_BY;
+            if ($lp === null || $lp === '' || !$addedBy) {
+                return response()->json(['success' => false, 'message' => 'LP and Order Added By must be set before marking an order Completed.']);
+            }
+        }
+
+        $data = [];
+
+        if ($request->has('type')) $data['UL_ORD_TYPE'] = $request->input('type', '');
+
+        if ($request->has('qty') || $request->has('price_per_share')) {
+            $qty   = $request->has('qty')             ? (int) $request->input('qty', 0)             : (int) $order->UL_ORD_QUANTITY;
+            $price = $request->has('price_per_share') ? (float) $request->input('price_per_share', 0) : (float) $order->UL_ORD_PRICE_PER_SHARE;
+            if ($request->has('qty'))              $data['UL_ORD_QUANTITY']        = $qty ?: null;
+            if ($request->has('price_per_share'))  $data['UL_ORD_PRICE_PER_SHARE'] = $price ?: null;
+            $data['UL_ORD_AMOUNT'] = ($qty && $price) ? $qty * $price : null;
+        }
+
+        if ($request->has('status'))     $data['UL_ORD_STATUS']     = $request->input('status', '');
+        if ($request->has('sub_status')) $data['UL_ORD_SUB_STATUS'] = $request->input('sub_status', '');
+
+        if ($request->has('order_date')) {
+            $dateStr = $request->input('order_date', '');
+            $hr      = $request->input('order_hr', '0');
+            $min     = $request->input('order_min', '0');
+            $data['UL_ORD_DATE'] = $dateStr
+                ? ($dateStr . ' ' . str_pad($hr, 2, '0', STR_PAD_LEFT) . ':' . str_pad($min, 2, '0', STR_PAD_LEFT) . ':00')
+                : null;
+        }
+
+        if ($request->has('intermediary_uid')) $data['UL_ORD_INTERMEDIARY_USER_ID']    = $request->input('intermediary_uid') ?: null;
+        if ($request->has('margin'))            $data['UL_ORD_INTERMEDIARY_MARGIN']     = $request->input('margin') !== '' ? (float) $request->input('margin') : null;
+        if ($request->has('commission'))        $data['UL_ORD_INTERMEDIARY_COMMISSION'] = $request->input('commission') !== '' ? (float) $request->input('commission') : null;
+        if ($request->has('lp'))                $data['UL_ORD_LP']                      = $request->input('lp') !== '' ? (float) $request->input('lp') : null;
+        if ($request->has('mlp'))                $data['UL_ORD_MLP']                    = $request->input('mlp') !== '' ? (float) $request->input('mlp') : null;
+        if ($request->has('added_by'))          $data['UL_ORD_ADDED_BY']                = $request->input('added_by') ?: null;
+        if ($request->has('direct_flag'))       $data['UL_ORD_DIRECT_FLAG']             = $request->input('direct_flag') ? 1 : 0;
+
+        $data['UL_ORD_UPDATE_TIME'] = now();
+
+        DB::table('unlisted_orders')->where('UL_ORD_ID', $orderId)->update($data);
 
         return response()->json(['success' => true]);
     }
