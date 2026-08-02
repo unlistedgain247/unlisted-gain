@@ -102,7 +102,7 @@
                                     </a>
                                 </li>
                                 {{-- My Author Page (authors/reviewers only) --}}
-                                @if(!empty(array_filter(session('privilege.cms', []))))
+                                @if(!empty(array_filter(\App\Helpers\Privilege::get('cms') ?? [])))
                                 <li>
                                     <a class="dropdown-item py-2 d-flex align-items-center gap-2"
                                        href="{{ route('public.authors.show', [session('uid'), \Illuminate\Support\Str::slug(session('name', 'author'))]) }}"
@@ -143,7 +143,7 @@
             <nav class="navbar navbar-expand w-100 p-0">
                 <ul class="navbar-nav gap-1">
 
-                        @if(session('privilege.admin'))
+                        @if(\App\Helpers\Privilege::get('admin'))
                         <li class="nav-item">
                             <a href="{{ url('/admin/dashboard') }}"
                                class="nav-link {{ request()->is('admin/dashboard') ? 'ug-active' : '' }}">
@@ -154,8 +154,11 @@
                         @endif
 
                         @php
-                            $_navUl     = session('privilege.unlisted', []);
-                            $_navAdmin  = !empty(session('privilege.admin'));
+                            // Privilege::get() re-reads the DB each request instead of trusting
+                            // the snapshot session() took at login — a revoked grant hides the
+                            // nav item immediately instead of only after the user logs back in.
+                            $_navUl     = \App\Helpers\Privilege::get('unlisted') ?? [];
+                            $_navAdmin  = !empty(\App\Helpers\Privilege::get('admin'));
                             $_navHasAny = $_navAdmin || !empty(array_filter($_navUl));
                             $_navUrl    = ($_navAdmin || !empty($_navUl['stocks']))
                                 ? url('/admin/unlisted')
@@ -171,7 +174,7 @@
                         </li>
                         @endif
 
-                        @if(session('privilege.user_master'))
+                        @if(\App\Helpers\Privilege::get('user_master'))
                         <li class="nav-item">
                             <a href="{{ url('/admin/users') }}"
                                class="nav-link {{ request()->is('admin/users*') ? 'ug-active' : '' }}">
@@ -182,8 +185,8 @@
                         @endif
 
                         @php
-                            $_navPg     = session('privilege.pg', []);
-                            $_navPgAny  = !empty(session('privilege.admin')) || !empty(array_filter($_navPg));
+                            $_navPg     = \App\Helpers\Privilege::get('pg') ?? [];
+                            $_navPgAny  = !empty(\App\Helpers\Privilege::get('admin')) || !empty(array_filter($_navPg));
                             $_navPgUrl  = !empty($_navPg['dashboard'])
                                 ? url('/admin/pg/dashboard')
                                 : (!empty($_navPg['margin'])
@@ -202,7 +205,7 @@
                         </li>
                         @endif
 
-                        @if(!empty(array_filter(session('privilege.cms', []))))
+                        @if(!empty(array_filter(\App\Helpers\Privilege::get('cms') ?? [])))
                         <li class="nav-item">
                             <a href="{{ url('/admin/cms/articles') }}"
                                class="nav-link {{ request()->is('admin/cms*') ? 'ug-active' : '' }}">

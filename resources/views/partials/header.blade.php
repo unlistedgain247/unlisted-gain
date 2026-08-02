@@ -1,5 +1,5 @@
 @php
-    $__cmsPriv = array_filter(session('privilege.cms', []));
+    $__cmsPriv = array_filter(\App\Helpers\Privilege::get('cms') ?? []);
     $__isCmsAuthor   = !empty($__cmsPriv['author']);
     $__isCmsReviewer = !empty($__cmsPriv['reviewer']);
     $__cmsRoleLabel  = $__isCmsAuthor && $__isCmsReviewer
@@ -92,7 +92,7 @@
                                 <i class="fa-solid fa-newspaper"></i> {{ $__cmsRoleLabel }} Page
                             </a>
                         @endif
-                        @if(!empty(session('privilege')))
+                        @if(!empty(\App\Helpers\Privilege::get()))
                             <a href="{{ url('/admin') }}" class="mob-auth-btn mob-btn-admin">
                                 <i class="fa-solid fa-gauge-high"></i> Admin Panel
                             </a>
@@ -152,7 +152,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if(!empty(session('privilege')))
+                        @if(!empty(\App\Helpers\Privilege::get()))
                             <li>
                                 <a href="{{ url('/admin') }}" class="account-menu-item">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>

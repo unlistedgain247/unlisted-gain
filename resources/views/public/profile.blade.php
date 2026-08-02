@@ -271,7 +271,7 @@
                 <span class="pf-info-value">{{ $user->created_at ? $user->created_at->format('d F Y') : 'N/A' }}</span>
             </div>
 
-            @if(!empty(session('privilege')))
+            @if(!empty(\App\Helpers\Privilege::get()))
             <div class="pf-info-row">
                 <span class="pf-info-label">Admin Access</span>
                 <span class="pf-info-value">

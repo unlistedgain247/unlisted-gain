@@ -5,7 +5,7 @@
 @endonce
 
 @php
-    $_pg    = session('privilege.pg', []);
+    $_pg    = \App\Helpers\Privilege::get('pg') ?? [];
     $_dash  = !empty($_pg['dashboard']);
     $_marg  = !empty($_pg['margin']);
     $_merr  = !empty($_pg['margin_error']);

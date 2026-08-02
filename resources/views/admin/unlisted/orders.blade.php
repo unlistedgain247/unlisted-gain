@@ -150,7 +150,7 @@
             </div>
 
             @php
-                $_canIntermediary = !empty(session('privilege.unlisted', [])['order_backend']);
+                $_canIntermediary = !empty((\App\Helpers\Privilege::get('unlisted') ?? [])['order_backend']);
             @endphp
             @if($_canIntermediary)
             {{-- Intermediary section --}}

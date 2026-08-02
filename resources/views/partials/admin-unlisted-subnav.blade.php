@@ -5,8 +5,8 @@
 @endonce
 
 @php
-    $_ul      = session('privilege.unlisted', []);
-    $_isAdmin = !empty(session('privilege.admin'));
+    $_ul      = \App\Helpers\Privilege::get('unlisted') ?? [];
+    $_isAdmin = !empty(\App\Helpers\Privilege::get('admin'));
     $_stocks  = $_isAdmin || !empty($_ul['stocks']);
     $_leads   = $_isAdmin || !empty($_ul['leads']) || !empty($_ul['leads_allocation']);
     $_orders  = $_isAdmin || !empty($_ul['orders']);

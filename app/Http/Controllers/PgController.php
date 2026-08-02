@@ -1627,28 +1627,31 @@ class PgController extends Controller
         return $html;
     }
 
+    // Privilege::get() re-reads the DB each request instead of trusting the
+    // snapshot session() took at login — a revoked grant takes effect
+    // immediately instead of only after the user logs back in.
     private function canAccessMargin(): bool
     {
-        $pg = session('privilege.pg', []);
-        return !empty(session('privilege.admin')) || !empty($pg['margin']);
+        $pg = Privilege::get('pg') ?? [];
+        return !empty(Privilege::get('admin')) || !empty($pg['margin']);
     }
 
     private function canAccessMarginError(): bool
     {
-        $pg = session('privilege.pg', []);
-        return !empty(session('privilege.admin')) || !empty($pg['margin_error']);
+        $pg = Privilege::get('pg') ?? [];
+        return !empty(Privilege::get('admin')) || !empty($pg['margin_error']);
     }
 
     private function canAccessPgDashboard(): bool
     {
-        $pg = session('privilege.pg', []);
-        return !empty(session('privilege.admin')) || !empty($pg['dashboard']);
+        $pg = Privilege::get('pg') ?? [];
+        return !empty(Privilege::get('admin')) || !empty($pg['dashboard']);
     }
 
     private function canAccessTransactions(): bool
     {
-        $pg = session('privilege.pg', []);
-        return !empty(session('privilege.admin')) || !empty($pg['transactions']);
+        $pg = Privilege::get('pg') ?? [];
+        return !empty(Privilege::get('admin')) || !empty($pg['transactions']);
     }
 
     // ─── Request Dashboard ────────────────────────────────────────────────────
