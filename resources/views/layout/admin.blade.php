@@ -157,10 +157,13 @@
                             // Privilege::get() re-reads the DB each request instead of trusting
                             // the snapshot session() took at login — a revoked grant hides the
                             // nav item immediately instead of only after the user logs back in.
+                            // No 'admin' bypass here — RequirePrivilege's own 'unlisted' check
+                            // requires a real sub-privilege regardless of the admin flag, so a
+                            // nav item an admin-without-unlisted-access could click through to
+                            // a 403 would be actively misleading.
                             $_navUl     = \App\Helpers\Privilege::get('unlisted') ?? [];
-                            $_navAdmin  = !empty(\App\Helpers\Privilege::get('admin'));
-                            $_navHasAny = $_navAdmin || !empty(array_filter($_navUl));
-                            $_navUrl    = ($_navAdmin || !empty($_navUl['stocks']))
+                            $_navHasAny = !empty(array_filter($_navUl));
+                            $_navUrl    = !empty($_navUl['stocks'])
                                 ? url('/admin/unlisted')
                                 : url('/admin/unlisted/leads');
                         @endphp
@@ -186,7 +189,7 @@
 
                         @php
                             $_navPg     = \App\Helpers\Privilege::get('pg') ?? [];
-                            $_navPgAny  = !empty(\App\Helpers\Privilege::get('admin')) || !empty(array_filter($_navPg));
+                            $_navPgAny  = !empty(array_filter($_navPg));
                             $_navPgUrl  = !empty($_navPg['dashboard'])
                                 ? url('/admin/pg/dashboard')
                                 : (!empty($_navPg['margin'])
