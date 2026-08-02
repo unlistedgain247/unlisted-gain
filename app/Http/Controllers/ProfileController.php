@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SafeUpload;
 use App\Helpers\SessionAuth;
 use App\Models\Article;
 use App\Models\User;
@@ -253,7 +254,8 @@ class ProfileController extends Controller
         }
 
         $file = $request->file('avatar');
-        $ext  = strtolower($file->getClientOriginalExtension());
+        $ext  = SafeUpload::imageExtension($file);
+        abort_if($ext === null, 422, 'Unsupported image type.');
         $dir  = 'private/avatars';
 
         Storage::makeDirectory($dir);
@@ -302,7 +304,8 @@ class ProfileController extends Controller
 
     private function storeKycFile(UploadedFile $file, string $folder, int|string $uid): string
     {
-        $ext = strtolower($file->getClientOriginalExtension());
+        $ext = SafeUpload::documentExtension($file);
+        abort_if($ext === null, 422, 'Unsupported file type.');
         $dir = 'private/kyc/' . $folder;
 
         $prefix = match ($folder) {

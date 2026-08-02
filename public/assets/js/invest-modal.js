@@ -1,22 +1,35 @@
 // invest-modal.js — modal open/close + auth-redirect flow (server-session backed)
 
+function formatInvestRupees(amount) {
+    return '₹' + Number(amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function updateInvestTotal() {
+    var qty   = parseInt($('#investQty').val(), 10) || 0;
+    var price = parseFloat($('#investSubmitBtn').data('price')) || 0;
+    $('#investTotal').text(formatInvestRupees(qty * price));
+}
+
 function openInvestModal(data) {
-    var type    = data.type    || 'buy';
-    var company = data.company || '';
-    var price   = data.price != null
-        ? '₹' + Number(data.price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : '—';
+    var type     = data.type    || 'buy';
+    var isSell   = type === 'sell';
+    var company  = data.company || '';
+    var price    = data.price != null ? formatInvestRupees(data.price) : '—';
     var fincode  = data.fincode  || '';
     var lotSize  = parseInt(data.lot_size, 10) || 50;
-    var label    = type === 'sell' ? 'Sell' : 'Buy';
+    var label    = isSell ? 'Sell' : 'Buy';
 
-    $('#investTitle').text(label + ' – ' + company);
+    $('#investBox').toggleClass('sell-mode', isSell);
+    $('#investTypeIcon').toggleClass('fa-arrow-trend-up', !isSell).toggleClass('fa-arrow-trend-down', isSell);
+    $('#investKicker').text(label + ' Shares');
+    $('#investTitle').text(company);
     $('#investFundName').text(company);
     $('#investSharePrice').text(price);
-    $('#investSubmitBtn').text(label).toggleClass('sell-mode', type === 'sell').data({ fincode: fincode, type: type, company: company, price: data.price, lotSize: lotSize });
+    $('#investSubmitBtn').text(label).toggleClass('sell-mode', isSell).data({ fincode: fincode, type: type, company: company, price: data.price, lotSize: lotSize });
     $('#investQty').attr({ min: lotSize, step: lotSize }).val(lotSize);
-    $('#investMinQtyLabel').text('(Min QTY - ' + lotSize + ')');
+    $('#investMinQtyLabel').text('Min qty ' + lotSize);
     $('#investAlert').hide().text('').removeClass('invest-alert-success invest-alert-error');
+    updateInvestTotal();
 
     $('#investModal').fadeIn(180);
     $('body').addClass('invest-modal-open');
@@ -36,6 +49,21 @@ $(document).ready(function () {
     });
     $(document).on('keydown', function (e) {
         if (e.key === 'Escape' && $('#investModal').is(':visible')) closeInvestModal();
+    });
+
+    // --- Quantity stepper + live total ---
+    $('#investQty').on('input', updateInvestTotal);
+
+    $('#investQtyMinus').on('click', function () {
+        var lotSize = $('#investSubmitBtn').data('lotSize') || 50;
+        var current = parseInt($('#investQty').val(), 10) || lotSize;
+        $('#investQty').val(Math.max(lotSize, current - lotSize)).trigger('input');
+    });
+
+    $('#investQtyPlus').on('click', function () {
+        var lotSize = $('#investSubmitBtn').data('lotSize') || 50;
+        var current = parseInt($('#investQty').val(), 10) || 0;
+        $('#investQty').val(current + lotSize).trigger('input');
     });
 
     // --- Buy / Sell submit ---
