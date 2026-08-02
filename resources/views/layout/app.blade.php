@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'UnlistedGain | India\'s #1 Marketplace to Buy & Sell Unlisted Shares')</title>
-    <meta name="description" content="@yield('meta_description', 'UnlistedGain is the most trusted platform to buy and sell unlisted, pre-IPO, and ESOP shares in India at the best prices.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'unlisted shares, pre-IPO shares, buy unlisted shares India, sell unlisted shares, NSE unlisted price')">
+    <title>{!! $__env->yieldContent('title', 'UnlistedGain | India&#039;s #1 Marketplace to Buy &amp; Sell Unlisted Shares') !!}</title>
+    <meta name="description" content="{!! $__env->yieldContent('meta_description', 'UnlistedGain is the most trusted platform to buy and sell unlisted, pre-IPO, and ESOP shares in India at the best prices.') !!}">
+    <meta name="keywords" content="{!! $__env->yieldContent('meta_keywords', 'unlisted shares, pre-IPO shares, buy unlisted shares India, sell unlisted shares, NSE unlisted price') !!}">
     <meta name="author" content="UnlistedGain">
     <meta name="robots" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -35,6 +35,8 @@
     @include('partials.footer')
 
     @include('components.invest-modal')
+
+    @include('partials.reading-utils')
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/js/main.js') }}?v={{ filemtime(public_path('assets/js/main.js')) }}"></script>

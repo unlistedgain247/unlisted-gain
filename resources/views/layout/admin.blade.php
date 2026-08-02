@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
@@ -101,6 +101,17 @@
                                         My Profile
                                     </a>
                                 </li>
+                                {{-- My Author Page (authors/reviewers only) --}}
+                                @if(!empty(array_filter(session('privilege.cms', []))))
+                                <li>
+                                    <a class="dropdown-item py-2 d-flex align-items-center gap-2"
+                                       href="{{ route('public.authors.show', [session('uid'), \Illuminate\Support\Str::slug(session('name', 'author'))]) }}"
+                                       target="_blank">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg>
+                                        My Author Page
+                                    </a>
+                                </li>
+                                @endif
                                 {{-- View Public Site --}}
                                 <li>
                                     <a class="dropdown-item py-2 d-flex align-items-center gap-2" href="{{ url('/') }}" target="_blank">
@@ -144,9 +155,9 @@
 
                         @php
                             $_navUl     = session('privilege.unlisted', []);
-                            $_navAdmin  = !empty(session('privilege.admin')) || !empty(session('privilege.user_master'));
+                            $_navAdmin  = !empty(session('privilege.admin'));
                             $_navHasAny = $_navAdmin || !empty(array_filter($_navUl));
-                            $_navUrl    = ($_navAdmin || !empty($_navUl['stockx']))
+                            $_navUrl    = ($_navAdmin || !empty($_navUl['stocks']))
                                 ? url('/admin/unlisted')
                                 : url('/admin/unlisted/leads');
                         @endphp
@@ -187,6 +198,16 @@
                                class="nav-link {{ request()->is('admin/pg*') ? 'ug-active' : '' }}">
                                 <div class="parent-icon"><i class="fa-solid fa-credit-card"></i></div>
                                 <div class="menu-title">PG</div>
+                            </a>
+                        </li>
+                        @endif
+
+                        @if(!empty(array_filter(session('privilege.cms', []))))
+                        <li class="nav-item">
+                            <a href="{{ url('/admin/cms/articles') }}"
+                               class="nav-link {{ request()->is('admin/cms*') ? 'ug-active' : '' }}">
+                                <div class="parent-icon"><i class="fa-solid fa-newspaper"></i></div>
+                                <div class="menu-title">CMS</div>
                             </a>
                         </li>
                         @endif

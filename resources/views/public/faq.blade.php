@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Frequently Asked Questions (FAQ) | UnlistedGain')
 @section('meta_description', 'Find answers to commonly asked questions about unlisted shares, pre-IPO investing, buying/selling process, taxes, and security on UnlistedGain.')

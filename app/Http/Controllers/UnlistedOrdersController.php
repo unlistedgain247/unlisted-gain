@@ -143,7 +143,6 @@ class UnlistedOrdersController extends Controller
     private function canAccess(): bool
     {
         return !empty(Privilege::get('admin'))
-            || !empty(Privilege::get('user_master'))
             || !empty(Privilege::get('unlisted.orders'));
     }
 }

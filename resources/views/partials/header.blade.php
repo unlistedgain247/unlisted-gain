@@ -1,3 +1,11 @@
+@php
+    $__cmsPriv = array_filter(session('privilege.cms', []));
+    $__isCmsAuthor   = !empty($__cmsPriv['author']);
+    $__isCmsReviewer = !empty($__cmsPriv['reviewer']);
+    $__cmsRoleLabel  = $__isCmsAuthor && $__isCmsReviewer
+        ? 'Author & Reviewer'
+        : ($__isCmsReviewer ? 'Reviewer' : 'Author');
+@endphp
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
@@ -43,8 +51,14 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('unlisted') || request()->is('unlisted/*') ? 'nav-current' : '' }}"><i class="fa-solid fa-cart-shopping sub-icon"></i>Buy Shares</a></li>
-                        <li><a href="{{ url('/unlisted') }}" class="{{ request()->is('sell') ? 'nav-current' : '' }}"><i class="fa-solid fa-hand-holding-dollar sub-icon"></i>Sell Shares</a></li>
+                        <li><a href="{{ url('/sell') }}" class="{{ request()->is('sell') ? 'nav-current' : '' }}"><i class="fa-solid fa-hand-holding-dollar sub-icon"></i>Sell Shares</a></li>
                     </ul>
+                </li>
+                <li>
+                    <a href="{{ route('public.articles') }}" class="nav-link {{ request()->is('articles') || request()->is('articles/*') ? 'nav-current' : '' }}">
+                        <span class="nav-icon-wrap"><i class="fa-solid fa-newspaper nav-icon"></i></span>
+                        <span>Articles</span>
+                    </a>
                 </li>
                 <li>
                     <a href="{{ url('/unlisted-shares-price-list-india') }}" class="nav-link {{ request()->is('unlisted-shares-price-list-india') ? 'nav-current' : '' }}">
@@ -73,6 +87,11 @@
                         </div>
                     </div>
                     <div class="mob-action-row">
+                        @if($__cmsPriv)
+                            <a href="{{ route('public.authors.show', [session('uid'), \Illuminate\Support\Str::slug(session('name', 'author'))]) }}" class="mob-auth-btn mob-btn-admin" target="_blank">
+                                <i class="fa-solid fa-newspaper"></i> {{ $__cmsRoleLabel }} Page
+                            </a>
+                        @endif
                         @if(!empty(session('privilege')))
                             <a href="{{ url('/admin') }}" class="mob-auth-btn mob-btn-admin">
                                 <i class="fa-solid fa-gauge-high"></i> Admin Panel
@@ -125,6 +144,14 @@
                                 My Profile
                             </a>
                         </li>
+                        @if($__cmsPriv)
+                            <li>
+                                <a href="{{ route('public.authors.show', [session('uid'), \Illuminate\Support\Str::slug(session('name', 'author'))]) }}" class="account-menu-item" target="_blank">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg>
+                                    My {{ $__cmsRoleLabel }} Page
+                                </a>
+                            </li>
+                        @endif
                         @if(!empty(session('privilege')))
                             <li>
                                 <a href="{{ url('/admin') }}" class="account-menu-item">

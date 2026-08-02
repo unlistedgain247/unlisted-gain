@@ -6,11 +6,61 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+/* ── Design tokens: shared elevation/radius/motion scale.
+   Purely additive — existing colors, layout and container widths are untouched.
+   Used by the site-wide premium-polish rules below and available to any page CSS. ── */
+:root {
+    --ug-radius-sm: 10px;
+    --ug-radius-md: 16px;
+    --ug-radius-lg: 20px;
+    --ug-shadow-xs: 0 1px 3px rgba(20, 30, 20, .06);
+    --ug-shadow-sm: 0 4px 14px rgba(20, 30, 20, .07);
+    --ug-shadow-md: 0 10px 28px rgba(20, 30, 20, .10);
+    --ug-shadow-lg: 0 20px 48px rgba(20, 30, 20, .14);
+    --ug-ease: cubic-bezier(.22, 1, .36, 1);
+    --ug-transition: all .25s var(--ug-ease);
+    --ug-focus-ring: 0 0 0 4px rgba(135, 185, 66, .18);
+}
+
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Inter', 'Arial', sans-serif;
     background-color: #fff;
     color: #333;
     margin: 0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    line-height: 1.25;
+    letter-spacing: -.01em;
+}
+
+p { line-height: 1.7; }
+
+a { transition: color .2s ease; }
+
+/* Keyboard-focus ring in the existing brand green — doesn't touch mouse-click states
+   or any element's own colors/border. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid rgba(74, 124, 32, .5);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Subtle, elegant lift used by card components across the site — apply via
+   `.ug-lift` or reference `--ug-shadow-*` directly in a component's own hover rule. */
+.ug-lift {
+    transition: var(--ug-transition);
+}
+.ug-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ug-shadow-md);
 }
 
 /* Company name link used across all listing tables */
@@ -95,11 +145,16 @@ body {
 .faq-item {
     background: #fff;
     border: 1px solid #eee;
-    border-radius: 12px;
+    border-radius: var(--ug-radius-sm);
     margin-bottom: 15px;
     overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    transition: var(--ug-transition);
+    box-shadow: var(--ug-shadow-xs);
+}
+
+.faq-item:hover:not(.active) {
+    border-color: #e2ead4;
+    box-shadow: var(--ug-shadow-sm);
 }
 
 .faq-question {
@@ -184,12 +239,15 @@ body {
     font-weight: 700;
     cursor: pointer;
     margin-top: 20px;
-    transition: background 0.3s;
+    transition: var(--ug-transition);
     font-family: inherit;
+    box-shadow: 0 6px 18px rgba(135, 185, 66, .22);
 }
 
 .view-all-btn:hover {
     background: #6e9735;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(135, 185, 66, .32);
 }
 
 @media (max-width: 480px) {
@@ -389,3 +447,159 @@ body {
     .main-footer .footer-links li a { font-size: 13px; }
     .main-footer .disclaimer { font-size: 9px; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Site-wide: scroll-to-top + share button/modal
+   (see resources/views/partials/reading-utils.blade.php — included
+   once in layout/app.blade.php, so this runs on every public page)
+   ══════════════════════════════════════════════════════════════ */
+
+.scroll-top-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid #e6ebe1;
+    color: #4a7c20;
+    box-shadow: 0 8px 20px rgba(20,30,20,.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity .2s, transform .2s, visibility .2s, border-color .15s, color .15s;
+    z-index: 500;
+}
+.scroll-top-btn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.scroll-top-btn:hover { border-color: #87b942; color: #87b942; }
+
+/* Injected into a breadcrumb bar when one is present on the page */
+.breadcrumb-share-btn {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 16px;
+    border: 1.5px solid #dfe9d2;
+    background: #fff;
+    color: #4a7c20;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+}
+.breadcrumb-share-btn:hover { background: #f0f6e8; }
+.breadcrumb-share-btn i { font-size: 11px; }
+
+/* Fallback floating button for pages with no breadcrumb to attach to */
+.floating-share-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 78px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #87b942;
+    border: none;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(135,185,66,.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    z-index: 500;
+    transition: background .15s, transform .15s;
+}
+.floating-share-btn:hover { background: #4a7c20; transform: translateY(-2px); }
+
+/* Share modal */
+.share-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+.share-modal-overlay.open { display: flex; }
+
+.share-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.2);
+    overflow: hidden;
+    animation: shareModalIn .18s ease;
+    font-family: 'Inter', sans-serif;
+}
+@keyframes shareModalIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.share-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid #eee;
+}
+.share-modal-header h3 { font-size: 15px; font-weight: 800; color: #14171a; margin: 0; }
+.share-modal-close {
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: #f4f4f4; color: #666;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px; transition: background .15s;
+}
+.share-modal-close:hover { background: #eee; }
+
+.share-modal-body { padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.share-modal-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border: none;
+    background: #fff;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: background .15s;
+    font-family: inherit;
+}
+.share-modal-option:hover { background: #fafbf8; }
+.share-modal-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; flex-shrink: 0;
+}
+.share-modal-icon.wa { background: #25d366; }
+.share-modal-icon.tw { background: #14171a; }
+.share-modal-icon.li { background: #0a66c2; }
+.share-modal-icon.cp { background: #87b942; }
+.share-modal-option.copied { color: #4a7c20; }
+
+/* ── Shared AJAX paginator (partials/paginator.blade.php) ── */
+.pagi-wrap{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 22px;border-top:1px solid #e2e8f0;background:#fafafa;flex-shrink:0;flex-wrap:wrap}
+.pagi-btn{min-width:32px;height:32px;padding:0 9px;border:1.5px solid #e2e8f0;background:#fff;border-radius:7px;font-size:13px;font-weight:500;color:#475569;cursor:pointer;transition:all .15s;line-height:1}
+.pagi-btn:hover:not(:disabled){background:#f1f5f9;border-color:#87b942;color:#87b942}
+.pagi-btn.pagi-active{background:#87b942;border-color:#87b942;color:#fff;font-weight:700}
+.pagi-btn:disabled{opacity:.4;cursor:not-allowed}
+.pagi-ellipsis{padding:0 4px;color:#94a3b8;font-size:14px;line-height:32px}

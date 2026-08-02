@@ -9,7 +9,7 @@
 }
 
 .cp-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -244,11 +244,11 @@
 }
 
 .cp-btn-buy  { background: #87b942; color: #fff; box-shadow: 0 3px 10px rgba(135,185,66,0.3); }
-.cp-btn-buy:hover  { background: #6e9735; box-shadow: 0 4px 14px rgba(135,185,66,0.4); }
+.cp-btn-buy:hover  { background: #6e9735; box-shadow: 0 6px 18px rgba(135,185,66,0.4); transform: translateY(-1px); }
 .cp-btn-buy:active { transform: scale(0.97); }
 
 .cp-btn-sell { background: #fff; color: #dc3545; border: 1.5px solid #dc3545; box-shadow: none; }
-.cp-btn-sell:hover { background: #dc3545; color: #fff; }
+.cp-btn-sell:hover { background: #dc3545; color: #fff; box-shadow: 0 6px 18px rgba(220,53,69,.28); transform: translateY(-1px); }
 .cp-btn-sell:active { transform: scale(0.97); }
 
 .cp-lot-note {
@@ -278,9 +278,9 @@
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
 }
-.cp-btn-quote:hover { background: #6e9735; color: #fff; text-decoration: none; }
+.cp-btn-quote:hover { background: #6e9735; color: #fff; text-decoration: none; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(135,185,66,.35); }
 
 /* ── Stats Strip ──────────────────────────────── */
 .cp-stats-strip {
@@ -807,6 +807,61 @@
 /* ── Pane visibility ── */
 .fin-pane { display: block; padding: 0 0 6px; }
 .fin-hidden { display: none !important; }
+
+/* ── Company Documents (nested bucket tabs inside the Docs pane) ── */
+.doc-bucket-wrap { padding: 16px 28px 4px; }
+
+.doc-bucket-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+.doc-bucket-tab {
+    padding: 7px 16px;
+    border: 1.5px solid #e5e8ec;
+    border-radius: 20px;
+    background: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+}
+.doc-bucket-tab:hover:not(.active) { border-color: #c8e49a; color: #4a7c20; }
+.doc-bucket-tab.active { background: #87b942; border-color: #87b942; color: #fff; }
+
+.doc-bucket-pane { display: none; }
+.doc-bucket-pane.active { display: block; }
+
+.doc-table th, .doc-table td { text-align: left; }
+.doc-dl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: #f0f8e6;
+    color: #4a7c20;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s;
+}
+.doc-dl-btn:hover { background: #dcedc4; color: #3a6218; }
+.doc-dl-na { color: #ccc; font-size: 13px; }
+
+.doc-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+}
+.doc-empty i { font-size: 24px; display: block; margin-bottom: 10px; color: #ddd; }
+.doc-empty p { margin: 0; font-size: 13.5px; }
+
+@media (max-width: 576px) {
+    .doc-bucket-wrap { padding: 14px 16px 4px; }
+}
 
 /* ── Scrollable table wrapper ── */
 .fin-table-wrap {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -80,19 +81,25 @@ class UsersController extends Controller
     public function getPrivilegeModal(string $uid)
     {
         $user = User::query()->where('uid', $uid)->firstOrFail();
+        $canGrantAdmin = (bool) Privilege::get('admin');
 
-        return view('admin.partials.privilege-modal', compact('user'));
+        return view('admin.partials.privilege-modal', compact('user', 'canGrantAdmin'));
     }
 
     public function savePrivilege(Request $request, string $uid)
     {
         $user = User::query()->where('uid', $uid)->firstOrFail();
 
+        // Only an existing admin may grant/revoke admin access — user_master alone
+        // must not be able to self-escalate to admin.
+        $isAdmin = (bool) Privilege::get('admin');
+        $admin   = $isAdmin ? $request->boolean('admin') : (bool) ($user->privilege['admin'] ?? false);
+
         $privilege = [
-            'admin'       => $request->boolean('admin'),
+            'admin'       => $admin,
             'user_master' => $request->boolean('user_master'),
             'unlisted'    => [
-                'stockx'           => $request->boolean('unlisted_stockx'),
+                'stocks'           => $request->boolean('unlisted_stocks'),
                 'leads'            => $request->boolean('unlisted_leads'),
                 'leads_allocation' => $request->boolean('unlisted_leads_allocation'),
                 'orders'           => $request->boolean('unlisted_orders'),
@@ -104,6 +111,10 @@ class UsersController extends Controller
                 'margin'       => $request->boolean('pg_margin'),
                 'margin_error' => $request->boolean('pg_margin_error'),
                 'transactions' => $request->boolean('pg_transactions'),
+            ],
+            'cms' => [
+                'author'   => $request->boolean('cms_author'),
+                'reviewer' => $request->boolean('cms_reviewer'),
             ],
         ];
 

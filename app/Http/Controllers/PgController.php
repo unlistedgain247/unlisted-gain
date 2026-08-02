@@ -611,9 +611,13 @@ class PgController extends Controller
             WHERE REQUEST_TYPE = 'Cash' AND (REQUEST_STATUS IS NULL OR REQUEST_STATUS = '' OR REQUEST_STATUS = 'Pending')
         ) AS wdraw ON masterTbl.user_id = wdraw.REQUEST_USER_ID";
 
-        $userBalParams  = array_merge($ordP, $pgtP, $ordP);
-        $userBalRows    = DB::select($userBalSql . ' WHERE (balance >= 100 OR balance < 0)', $userBalParams);
-        $userBalPending = DB::select($userBalSql . ' WHERE balance < 0', $userBalParams);
+        $userBalParams = array_merge($ordP, $pgtP, $ordP);
+        $userBalRows   = DB::select($userBalSql . ' WHERE (balance >= 100 OR balance < 0)', $userBalParams);
+
+        // Every `balance < 0` row already satisfies `balance >= 100 OR balance < 0`,
+        // so $userBalPending is always a subset of $userBalRows — filter in PHP
+        // instead of re-running this same 5-table UNION query a second time.
+        $userBalPending = array_values(array_filter($userBalRows, fn($r) => $r->balance < 0));
 
         $totalLiabilityBal = 0; $totalLiabilityBalCnt = 0;
         foreach ($userBalRows as $r) {
@@ -1233,30 +1237,38 @@ class PgController extends Controller
 
         $datetime = $date . ' ' . $hour . ':' . $minute . ':00';
 
-        // Compute running balance for this account
-        $lastBal = DB::select(
-            "SELECT pgt_balance FROM pg_transactions
-             WHERE pgt_bank_account = ? ORDER BY pgt_created_on DESC, pgt_tid DESC LIMIT 1",
-            [$account]
-        );
-        $prevBal  = $lastBal ? (float)$lastBal[0]->pgt_balance : 0;
-        $newBal   = $flowType === 'Flow In' ? $prevBal + $amount : $prevBal - $amount;
+        // Read the current running balance and insert the new row inside a single
+        // locked transaction, so two concurrent submissions for the same account
+        // can't both read the same previous balance and silently drop one amount.
+        $newBal = DB::transaction(function () use ($account, $flowType, $fromTo, $amount, $datetime, $date, $userId, $refNo, $remarks, $directFlag, $commissionFlag, $tdsFlag) {
+            $lastBal = DB::table('pg_transactions')
+                ->where('pgt_bank_account', $account)
+                ->orderByDesc('pgt_created_on')
+                ->orderByDesc('pgt_tid')
+                ->lockForUpdate()
+                ->value('pgt_balance');
 
-        DB::table('pg_transactions')->insert([
-            'pgt_transaction_date'          => $date,
-            'pgt_in_out_amount'             => $amount,
-            'pgt_transaction_type'          => $flowType,
-            'pgt_from_to'                   => $fromTo,
-            'pgt_bank_account'              => $account,
-            'pgt_balance'                   => round($newBal, 2),
-            'pgt_transaction_for_user_id'   => $fromTo === 'Customer' ? $userId : 0,
-            'pgt_ref_no'                    => $refNo,
-            'pgt_remarks'                   => $remarks,
-            'pgt_direct_flag'               => $directFlag,
-            'pgt_commission_flag'           => $commissionFlag,
-            'pgt_TDS_flag'                  => $tdsFlag,
-            'pgt_created_on'                => $datetime,
-        ]);
+            $prevBal = $lastBal !== null ? (float) $lastBal : 0;
+            $newBal  = $flowType === 'Flow In' ? $prevBal + $amount : $prevBal - $amount;
+
+            DB::table('pg_transactions')->insert([
+                'pgt_transaction_date'          => $date,
+                'pgt_in_out_amount'             => $amount,
+                'pgt_transaction_type'          => $flowType,
+                'pgt_from_to'                   => $fromTo,
+                'pgt_bank_account'              => $account,
+                'pgt_balance'                   => round($newBal, 2),
+                'pgt_transaction_for_user_id'   => $fromTo === 'Customer' ? $userId : 0,
+                'pgt_ref_no'                    => $refNo,
+                'pgt_remarks'                   => $remarks,
+                'pgt_direct_flag'               => $directFlag,
+                'pgt_commission_flag'           => $commissionFlag,
+                'pgt_TDS_flag'                  => $tdsFlag,
+                'pgt_created_on'                => $datetime,
+            ]);
+
+            return $newBal;
+        });
 
         return response()->json(['success' => true, 'message' => 'Transaction saved. New balance: ' . number_format($newBal, 2)]);
     }
@@ -1734,6 +1746,19 @@ class PgController extends Controller
 
         if (!in_array($status, ['Pending', 'Completed', 'Cancelled'])) {
             return response()->json(['success' => false, 'message' => 'Invalid status.']);
+        }
+
+        $current = DB::table('withdrawal_request')->where('REQUEST_ID', $requestId)->value('REQUEST_STATUS');
+        if ($current === null) {
+            return response()->json(['success' => false, 'message' => 'Request not found.'], 404);
+        }
+
+        // Completed/Cancelled are terminal — once money or shares have actually
+        // moved (or the request was explicitly cancelled), it can't be silently
+        // reopened or reassigned, which would wreck the audit trail for payouts
+        // already made.
+        if (in_array($current, ['Completed', 'Cancelled']) && $status !== $current) {
+            return response()->json(['success' => false, 'message' => "This request is already {$current} and cannot be changed."]);
         }
 
         DB::table('withdrawal_request')

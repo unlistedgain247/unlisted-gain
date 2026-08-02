@@ -1,0 +1,35 @@
+/* ── Toggle switch (same as Dashboard table) ─── */
+    .tgl-switch { position: relative; display: inline-block; width: 44px; height: 24px; cursor: pointer; }
+    .tgl-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .tgl-slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; transition: background 0.2s; }
+    .tgl-slider::before {
+        content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+        background: #fff; border-radius: 50%; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+    .tgl-switch input:checked+.tgl-slider { background: #87b942; }
+    .tgl-switch input:checked+.tgl-slider::before { transform: translateX(20px); }
+
+    /* ── Filter bar ─── */
+    .doc-filters {
+        display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+        padding: 16px 20px; border-bottom: 1px solid #f0f0f0; background: #fafafa;
+    }
+    .doc-filters .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .doc-filters label {
+        font-size: 10px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.06em; color: #999;
+    }
+    .doc-filters input, .doc-filters select {
+        padding: 6px 10px; border: 1px solid #e0e0e0; border-radius: 6px;
+        font-size: 12px; color: #333; background: #fff; height: 34px; min-width: 160px;
+    }
+    .doc-filters input:focus, .doc-filters select:focus { outline: none; border-color: #87b942; }
+    .doc-add-btn {
+        margin-left: auto; padding: 0 18px; height: 34px; border-radius: 6px;
+        border: none; font-size: 12px; font-weight: 600; cursor: pointer;
+        background: #87b942; color: #fff; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .doc-add-btn:hover { background: #6e9735; }
+    #docsTableContainer { min-height: 200px; }
+    .docs-loading { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }

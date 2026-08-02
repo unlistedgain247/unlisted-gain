@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Privilege;
+use App\Models\Article;
 use App\Models\User;
 use App\Models\UnlistedLead;
 use App\Models\UnlistedOrder;
@@ -20,7 +21,7 @@ class AdminController extends Controller
         if (!empty(Privilege::get('user_master'))) {
             return redirect()->route('admin.users');
         }
-        if (!empty(Privilege::get('unlisted.stockx'))) {
+        if (!empty(Privilege::get('unlisted.stocks'))) {
             return redirect()->route('admin.unlisted');
         }
         if (!empty(Privilege::get('unlisted.leads')) || !empty(Privilege::get('unlisted.leads_allocation'))) {
@@ -117,6 +118,14 @@ class AdminController extends Controller
             })
             ->count();
 
+        // ── CMS / Articles ───────────────────────────────────────────────────
+        $totalArticles     = Article::count();
+        $publishedArticles = Article::where('status', 'published')->count();
+        $draftArticles     = Article::where('status', 'draft')->count();
+        $articles30d       = Article::where('status', 'published')
+            ->where('published_at', '>=', now()->subDays(30))
+            ->count();
+
         return view('admin.dashboard', compact(
             'totalUsers', 'adminUsers', 'unlistedUsers', 'channelPartners', 'newUsers30d',
             'totalStocks', 'activeStocks',
@@ -124,7 +133,8 @@ class AdminController extends Controller
             'orderMonthLabels', 'orderMonthCounts', 'orderMonthAmounts',
             'topStocks', 'recentOrders',
             'totalLeads', 'leads30d',
-            'pendingWithdrawals'
+            'pendingWithdrawals',
+            'totalArticles', 'publishedArticles', 'draftArticles', 'articles30d'
         ));
     }
 }

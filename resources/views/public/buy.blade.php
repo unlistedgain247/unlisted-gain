@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Buy Unlisted Shares & Pre-IPO Stocks | UnlistedGain')
 @section('meta_description', 'Browse and invest in top unlisted and pre-IPO shares in India. Real-time price discovery and secure transactions.')
@@ -7,126 +7,6 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/pagecss/buy.css') }}?v={{ filemtime(public_path('assets/css/pagecss/buy.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
-    <style>
-        .shares-table-wrapper { overflow-x: auto; }
-
-        .shares-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Inter', sans-serif;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .shares-table thead tr {
-            background: #f8f9fa;
-            border-bottom: 2px solid #eee;
-        }
-
-        .shares-table thead th {
-            padding: 14px 20px;
-            text-align: left;
-            font-size: 13px;
-            color: #888;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .shares-table tbody tr {
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.2s;
-        }
-
-        .shares-table tbody tr:hover { background: #f8fcf2; }
-
-        .shares-table tbody td {
-            padding: 16px 20px;
-            font-size: 14px;
-            color: #333;
-            vertical-align: middle;
-        }
-
-        .company-cell { display: flex; align-items: center; gap: 12px; }
-
-        .company-cell img {
-            width: 44px;
-            height: 44px;
-            object-fit: contain;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 4px;
-            background: #fff;
-        }
-
-        .company-cell span { font-weight: 600; color: #1a1a1a; font-size: 15px; }
-
-        .td-mcap, .td-price { font-weight: 700; color: #1a1a1a; }
-        .td-pe   { color: #555; }
-
-        .action-btns { display: flex; gap: 8px; }
-
-        .buy-btn, .sell-btn {
-            padding: 7px 18px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            display: inline-block;
-            transition: background 0.2s;
-        }
-        .buy-btn  { background: #28a745; color: #fff; }
-        .sell-btn { background: #dc3545; color: #fff; }
-        .buy-btn:hover  { background: #218838; color: #fff; text-decoration: none; }
-        .sell-btn:hover { background: #c82333; color: #fff; text-decoration: none; }
-
-        .no-results {
-            text-align: center;
-            padding: 50px 20px;
-            color: #888;
-            font-size: 15px;
-        }
-
-        .pricing-disclaimer {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        .pricing-disclaimer i {
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        @media (max-width: 768px) {
-            .shares-table thead th,
-            .shares-table tbody td { padding: 12px 12px; }
-            .company-cell img { width: 34px; height: 34px; }
-            .company-cell span { font-size: 13px; }
-            .action-btns { flex-direction: column; gap: 5px; }
-            .buy-btn, .sell-btn { padding: 5px 14px; font-size: 12px; text-align: center; }
-        }
-
-        @media (max-width: 480px) {
-            .shares-table thead th { font-size: 11px; padding: 10px 8px; }
-            .shares-table tbody td { font-size: 12px; padding: 10px 8px; }
-            /* Hide P/E on tiny screens to save space */
-            .shares-table th:nth-child(4),
-            .shares-table td:nth-child(4) { display: none; }
-            .company-cell { gap: 8px; }
-            .company-cell img { width: 28px; height: 28px; }
-            .company-cell span { font-size: 12px; }
-            .pricing-disclaimer p { font-size: 12px; }
-        }
-
-        #sharesLoading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #888;
-            font-size: 15px;
-        }
-        #sharesLoading i { font-size: 28px; display: block; margin-bottom: 12px; color: #87b942; }
-    </style>
 @endpush
 
 @section('subheader')
@@ -135,24 +15,64 @@
 
 @section('content')
 <main>
-    <section class="ug-shares-page">
-        <div class="shares-header">
-            <div class="filter-tabs">
-                <button class="tab-btn active" data-filter="all">All Shares</button>
-                <button class="tab-btn" data-filter="trending">Trending Shares</button>
-                <button class="tab-btn" data-filter="others">Others</button>
-                <button class="tab-btn" data-filter="now-listed">Now Listed</button>
-                <button class="tab-btn" data-filter="unavailable">Unavailable</button>
+    {{-- Hero --}}
+    <section class="buy-hero">
+        <div class="buy-hero-inner">
+            <span class="buy-hero-eyebrow">Buy &amp; Sell Directly</span>
+            <h1 class="buy-hero-title">Top Unlisted &amp; <span>Pre-IPO Shares</span></h1>
+            <p class="buy-hero-subtitle">Trade directly with verified sellers at transparent, competitive pricing.</p>
+
+            <div class="buy-hero-search">
+                <div class="search-box-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="shareSearch" placeholder="Search company name...">
+                </div>
+                <div class="buy-hero-chips">
+                    <span class="buy-hero-chips-label">Popular:</span>
+                    @foreach(['NSE', 'OYO', 'CSK', 'HDB Financial', 'Boat'] as $chip)
+                    <button type="button" class="pi-chip" data-term="{{ $chip }}">{{ $chip }}</button>
+                    @endforeach
+                </div>
             </div>
         </div>
+    </section>
 
-        <h1 class="main-title">Top Unlisted Shares / <span>Pre-IPO Shares</span></h1>
-
-        <div class="controls-row">
-            <div class="search-wrapper">
-                <input type="text" id="shareSearch" placeholder="Search by company name...">
-                <i class="fas fa-search"></i>
+    {{-- Stats --}}
+    <section class="buy-stats-section">
+        <div class="buy-stats-grid">
+            <div class="buy-stat-card">
+                <span class="buy-stat-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <div>
+                    <div class="buy-stat-value">{{ count($stocks) }}+</div>
+                    <div class="buy-stat-label">Companies Listed</div>
+                </div>
             </div>
+            <div class="buy-stat-card">
+                <span class="buy-stat-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <div>
+                    <div class="buy-stat-value">Verified</div>
+                    <div class="buy-stat-label">Listings &amp; Sellers</div>
+                </div>
+            </div>
+            <div class="buy-stat-card">
+                <span class="buy-stat-icon"><i class="fa-solid fa-wallet"></i></span>
+                <div>
+                    <div class="buy-stat-value">Same-Day</div>
+                    <div class="buy-stat-label">Demat Transfer</div>
+                </div>
+            </div>
+            <div class="buy-stat-card">
+                <span class="buy-stat-icon"><i class="fa-solid fa-chart-line"></i></span>
+                <div>
+                    <div class="buy-stat-value">100%</div>
+                    <div class="buy-stat-label">Price Transparency</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ug-shares-page">
+        <div class="controls-row">
             <div class="sort-wrapper">
                 <select id="alphaSort">
                     <option value="mcap">Market Cap ↓</option>
@@ -163,15 +83,20 @@
         </div>
 
         <div class="pricing-disclaimer">
-            <i class="fas fa-info-circle"></i>
+            <i class="fa-solid fa-circle-info"></i>
             <p><strong>Note:</strong> Pricing and availability of unlisted shares are subject to change on a daily
                 basis. Please connect with our team for the latest price updates and availability.</p>
         </div>
 
         {{-- Loading state — shown until JS initialises --}}
         <div id="sharesLoading">
-            <i class="fas fa-spinner fa-spin"></i>
-            Loading shares&hellip;
+            <div class="pi-skeleton">
+                <div class="pi-skeleton-row"></div>
+                <div class="pi-skeleton-row"></div>
+                <div class="pi-skeleton-row"></div>
+                <div class="pi-skeleton-row"></div>
+                <div class="pi-skeleton-row"></div>
+            </div>
         </div>
 
         <div id="sharesContainer" class="shares-table-wrapper" style="display:none">
@@ -179,10 +104,10 @@
                 <thead>
                     <tr>
                         <th>Company</th>
-                        <th>Market Cap (&#8377; In Cr.)</th>
-                        <th>Current Price (&#8377;)</th>
-                        <th>P/E Ratio</th>
-                        <th>Buy / Sell</th>
+                        <th>Market Cap</th>
+                        <th>Price</th>
+                        <th>P/E <i class="fa-solid fa-circle-info pe-info" title="P/E ratio vs. earnings — Green: up to 25 (attractively valued) · Orange: 25–45 (moderately valued) · Red: above 45 or negative (richly valued / currently loss-making)"></i></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="sharesTableBody">
@@ -296,12 +221,6 @@
         // --- On sort change: fetch immediately ---
         $('#alphaSort').on('change', fetchRows);
 
-        // --- Tab buttons (UI only for now) ---
-        $('.tab-btn').on('click', function () {
-            $('.tab-btn').removeClass('active');
-            $(this).addClass('active');
-        });
-
         // --- Fetch rows from backend, swap tbody ---
         function fetchRows() {
             var q    = $('#shareSearch').val().trim();
@@ -344,7 +263,11 @@
             $tbody.empty();
 
             if (pageData.length === 0) {
-                $tbody.html('<tr><td colspan="5" class="no-results">No shares found.</td></tr>');
+                $tbody.html('<tr><td colspan="5" class="no-results">' +
+                    '<div class="no-results-icon"><i class="fa-solid fa-magnifying-glass"></i></div>' +
+                    '<div class="no-results-title">No matching company found.</div>' +
+                    '<div class="no-results-sub">Try another keyword.</div>' +
+                    '</td></tr>');
                 return;
             }
 
@@ -396,6 +319,13 @@
                 renderPagination();
                 $('html,body').animate({ scrollTop: $('#sharesContainer').offset().top - 100 }, 300);
             }
+        });
+
+        // Quick-search chips
+        $('.pi-chip').on('click', function () {
+            $('#shareSearch').val($(this).data('term'));
+            fetchRows();
+            $('html,body').animate({ scrollTop: $('.ug-shares-page').offset().top - 80 }, 400);
         });
     });
 </script>

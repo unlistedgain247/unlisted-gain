@@ -47,5 +47,19 @@ class AppServiceProvider extends ServiceProvider
                     'message' => 'Too many registration attempts. Please try again later.',
                 ], 429));
         });
+
+        // Password change, avatar/KYC document uploads: 10/min per session+IP.
+        // (The global ThrottleRequestsException handler in bootstrap/app.php
+        // already renders a clean JSON message, so no custom response here.)
+        RateLimiter::for('profile-sensitive', function (Request $request) {
+            $key = 'profile-sensitive|uid:' . (session('uid') ?: 'guest') . '|ip:' . $request->ip();
+            return Limit::perMinute(10)->by($key);
+        });
+
+        // Public search/data endpoints: 60/min per IP — generous enough for
+        // normal pagination/search use, enough to blunt scraping/DoS abuse.
+        RateLimiter::for('public-data', function (Request $request) {
+            return Limit::perMinute(60)->by('public-data|ip:' . $request->ip());
+        });
     }
 }

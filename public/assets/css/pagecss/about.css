@@ -3,7 +3,7 @@
    ================================================ */
 
 .ab-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 24px;
 }
@@ -112,6 +112,13 @@
     border-radius: 14px;
     padding: 24px 20px;
     text-align: center;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.ab-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(135, 185, 66, .14);
+    border-color: #c8e49a;
 }
 
 .ab-stat strong {
@@ -450,7 +457,7 @@
     color: #fff;
 }
 
-.ab-cta-btn.primary:hover { background: #1a5a0d; }
+.ab-cta-btn.primary:hover { background: #1a5a0d; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.25); }
 
 .ab-cta-btn.outline {
     background: transparent;

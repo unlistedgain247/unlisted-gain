@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', $stock->UL_STOCKS_COMPNAME . ' Unlisted Share Price, Financials & Analysis | UnlistedGain')
 @section('meta_description', 'Buy ' . $stock->UL_STOCKS_COMPNAME . ' unlisted shares at the best price. View current share price, market cap, P/E ratio, financials and investment thesis on UnlistedGain.')
@@ -377,6 +377,7 @@
                         <button class="fin-tab" data-tab="bs">Balance Sheet</button>
                         <button class="fin-tab" data-tab="cf">Cash Flow</button>
                         <button class="fin-tab" data-tab="ratio">Ratio</button>
+                        <button class="fin-tab" data-tab="docs">Company Documents</button>
                     </div>
                     <p class="fin-note-top"><i class="fas fa-info-circle"></i> All figures are in Crores (&#8377;)</p>
 
@@ -446,6 +447,11 @@
                         </table></div>
                     </div>
 
+                    {{-- Company Documents --}}
+                    <div class="fin-pane fin-hidden" id="fp-y-docs">
+                        @include('public.partials.company-docs', ['documents' => $documents])
+                    </div>
+
                     @if($qFin->isNotEmpty())
                     {{-- Quarterly P&L --}}
                     <div class="fin-pane fin-hidden" id="fp-q-pl">
@@ -506,6 +512,11 @@
                             @endforeach
                             </tbody>
                         </table></div>
+                    </div>
+
+                    {{-- Company Documents (same content regardless of period) --}}
+                    <div class="fin-pane fin-hidden" id="fp-q-docs">
+                        @include('public.partials.company-docs', ['documents' => $documents])
                     </div>
                     @endif
 
@@ -858,6 +869,22 @@
             btn.classList.add('active');
             showPane();
         }
+    });
+
+    // Company Documents — nested bucket tabs (Results / Corporate Actions / etc.)
+    // Scoped to the clicked button's own .doc-bucket-wrap so it works correctly
+    // even though the same partial is included twice (yearly + quarterly panes).
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('.doc-bucket-tab');
+        if (!btn) return;
+        var wrap = btn.closest('.doc-bucket-wrap');
+        if (!wrap) return;
+        wrap.querySelectorAll('.doc-bucket-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var key = btn.dataset.bucket;
+        wrap.querySelectorAll('.doc-bucket-pane').forEach(function(p){ p.classList.remove('active'); });
+        var pane = wrap.querySelector('.doc-bucket-pane[data-bucket-pane="' + key + '"]');
+        if (pane) pane.classList.add('active');
     });
 
     function showPane() {

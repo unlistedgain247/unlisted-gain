@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'UnlistedGain | India\'s #1 Marketplace to Buy & Sell Unlisted Shares')
 @section('meta_description', 'UnlistedGain is the most trusted platform to buy and sell unlisted, pre-IPO, and ESOP shares in India at the best prices. Invest in high-growth companies early with real-time price discovery.')
@@ -7,38 +7,67 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}?v={{ filemtime(public_path('assets/css/styles.css')) }}">
     <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
-    <style>
-        .item-icon-fallback {
-            width: 40px; height: 40px; border-radius: 8px;
-            background: linear-gradient(135deg, #87b942, #5a8a1e);
-            color: #fff; font-weight: 700; font-size: 13px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/hero-v2.css') }}?v={{ filemtime(public_path('assets/css/pagecss/hero-v2.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/live-market-widget.css') }}?v={{ filemtime(public_path('assets/css/pagecss/live-market-widget.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/welcome.css') }}?v={{ filemtime(public_path('assets/css/pagecss/welcome.css')) }}">
 @endpush
 
 @section('content')
 
     {{-- Hero Section --}}
     <main>
-        <section class="ug-hero">
-            <div class="hero-container">
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        India's Premier Marketplace for <br>
-                        <span class="highlight">Unlisted Shares & Pre-IPO Investments</span>
-                    </h1>
-                    <h2 class="hero-subtitle">Buy and Sell Unlisted Shares at the Most Competitive Prices</h2>
-
-                    <div class="hero-description">
-                        <p>Unlock early-stage investment opportunities with India's most trusted platform for
-                            <strong>Unlisted Shares, Pre-IPO stocks, and ESOPs.</strong> We bridge the gap between
-                            savvy investors and high-growth companies before they hit the mainboard exchanges.
-                        </p>
+        <section class="ug-hero-v2">
+            <div class="ug-hero-v2-inner">
+                <div class="ug-hero-v2-left">
+                    <span class="ug-hero-v2-eyebrow">India's Pre-IPO Marketplace</span>
+                    <h1 class="ug-hero-v2-title">Invest in companies <span>before they list.</span></h1>
+                    <p class="ug-hero-v2-subtitle">
+                        Buy and sell <strong>Unlisted Shares, Pre-IPO stocks and ESOPs</strong> at the most
+                        competitive prices — verified sellers, SEBI-compliant, same-day demat transfer.
+                    </p>
+                    <div class="ug-hero-v2-ctas">
+                        <a href="#shareSearchInput" class="ug-hero-cta-primary">Start Investing <span>&rarr;</span></a>
+                        <a href="{{ route('public.price-list') }}" class="ug-hero-cta-secondary">Browse Companies <span>&rsaquo;</span></a>
                     </div>
 
-                    <a href="#" class="hero-cta">Get Latest Trending Stocks</a>
+                    <div class="ug-hero-v2-trust">
+                        <div class="ug-hero-v2-trust-item">
+                            <strong>{{ $totalStocks }}+</strong>
+                            <span>Companies Tracked</span>
+                        </div>
+                        <div class="ug-hero-v2-trust-sep"></div>
+                        <div class="ug-hero-v2-trust-item">
+                            <strong>&#8377;{{ $totalMcap >= 1000 ? number_format($totalMcap / 1000, 1) . 'K' : number_format($totalMcap, 0) }}+</strong>
+                            <span>Cr Combined Mcap</span>
+                        </div>
+                        <div class="ug-hero-v2-trust-sep"></div>
+                        <div class="ug-hero-v2-trust-item">
+                            <strong>SEBI</strong>
+                            <span>Compliant Transfers</span>
+                        </div>
+                    </div>
+
+                    @if($latestArticles->isNotEmpty())
+                    <div class="ug-hero-ticker" id="ugHeroTicker">
+                        <span class="ug-hero-ticker-badge"><span class="ug-hero-ticker-dot"></span>Live Updates</span>
+                        <div class="ug-hero-ticker-viewport">
+                            <div class="ug-hero-ticker-track" id="ugTickerTrack">
+                                @foreach($latestArticles as $i => $article)
+                                <a href="{{ route('public.articles.show', $article->slug) }}"
+                                   class="ug-hero-ticker-item {{ $i === 0 ? 'active' : '' }}">
+                                    <span class="ug-hero-ticker-title">{{ $article->title }}</span>
+                                    <span class="ug-hero-ticker-time">{{ $article->published_at?->diffForHumans() }}</span>
+                                </a>
+                                @endforeach
+                            </div>
+                        </div>
+                        <span class="ug-hero-ticker-count"><span id="ugTickerPos">1</span>/{{ $latestArticles->count() }}</span>
+                    </div>
+                    @endif
+                </div>
+
+                <div class="ug-hero-v2-right">
+                    @include('partials.live-market-widget', ['rows' => $marketWidget, 'totalStocks' => $totalStocks])
                 </div>
             </div>
         </section>
@@ -476,6 +505,7 @@
 <script src="{{ asset('assets/js/slider.js') }}?v={{ filemtime(public_path('assets/js/slider.js')) }}"></script>
 <script src="{{ asset('assets/js/shares-icon-slider.js') }}?v={{ filemtime(public_path('assets/js/shares-icon-slider.js')) }}"></script>
 <script src="{{ asset('assets/js/trending-stocks.js') }}?v={{ filemtime(public_path('assets/js/trending-stocks.js')) }}"></script>
+<script src="{{ asset('assets/js/live-market-widget.js') }}?v={{ filemtime(public_path('assets/js/live-market-widget.js')) }}"></script>
 @endpush
 
 @endsection

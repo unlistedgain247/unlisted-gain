@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'SEBI Guidelines for Unlisted Share Trading | UnlistedGain')
 @section('meta_description', 'A comprehensive overview of the regulatory framework governing unlisted shares and pre-IPO investments in India. Learn about SEBI regulations and ICDR guidelines.')

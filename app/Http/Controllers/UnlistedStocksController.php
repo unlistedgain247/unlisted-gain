@@ -3,20 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Privilege;
+use App\Helpers\SafeUpload;
 use App\Models\UnlistedStock;
 use App\Models\UnlistedPriceData;
 use App\Models\UnlistedFinancials;
 use App\Models\UnlistedThesis;
+use App\Models\UnlistedDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class UnlistedStocksController extends Controller
 {
+    private function canAccess(): bool
+    {
+        return !empty(Privilege::get('admin'))
+            || !empty(Privilege::get('unlisted.stocks'));
+    }
+
     public function index()
     {
-        $isAdmin = !empty(Privilege::get('admin')) || !empty(Privilege::get('user_master'));
-        if (!$isAdmin && empty(Privilege::get('unlisted.stockx'))) abort(403);
+        if (!$this->canAccess()) abort(403);
 
         $stocks   = UnlistedStock::orderByDesc('UL_STOCKS_FINCODE')->paginate(20);
         $fincodes = $stocks->pluck('UL_STOCKS_FINCODE');
@@ -39,8 +46,195 @@ class UnlistedStocksController extends Controller
         return view('admin.unlisted.index', compact('stocks', 'latestPrices'));
     }
 
+    public function docs()
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $stocks = UnlistedStock::orderBy('UL_STOCKS_COMPNAME')
+            ->get(['UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME']);
+
+        return view('admin.unlisted.docs', compact('stocks'));
+    }
+
+    public function docsData(Request $request)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $query = DB::table('unlisted_documents as d')
+            ->join('unlisted_stocks as s', 's.UL_STOCKS_FINCODE', '=', 'd.UL_DOC_FINCODE')
+            ->select('d.*', 's.UL_STOCKS_COMPNAME')
+            ->orderByDesc('d.UL_DOC_ID');
+
+        if ($fincode = $request->input('fincode', '')) {
+            $query->where('d.UL_DOC_FINCODE', $fincode);
+        }
+
+        if ($type = $request->input('type', '')) {
+            $query->where('d.UL_DOC_TYPE', $type);
+        }
+
+        if ($status = $request->input('status', '')) {
+            $query->where('d.UL_DOC_STATUS', $status);
+        }
+
+        if ($s = trim($request->input('q', ''))) {
+            $query->where(function ($qq) use ($s) {
+                $qq->where('s.UL_STOCKS_COMPNAME', 'like', "%{$s}%")
+                   ->orWhere('d.UL_DOC_DESCRIPTION', 'like', "%{$s}%");
+            });
+        }
+
+        $documents = $query->paginate(25);
+
+        return view('admin.unlisted.partials.docs-rows', compact('documents'));
+    }
+
+    private function docsDestDir(): string
+    {
+        // Same production-safe resolution as the company-logo upload above:
+        // on Hostinger, public_html/ sits next to the app dir, and public_path()
+        // is not web-accessible there.
+        $parentPublicHtml = dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html';
+        $webRoot = is_dir($parentPublicHtml) ? $parentPublicHtml : public_path();
+
+        return $webRoot . DIRECTORY_SEPARATOR . 'company-docs';
+    }
+
+    private function storeDocumentFile($file, int $fincode, string $type): string
+    {
+        $ext = SafeUpload::documentExtension($file);
+
+        // Should be unreachable — the `mimes:` validation rule already rejected
+        // anything outside the allowed types — but never fall back to a
+        // client-supplied extension if this map ever misses a case.
+        abort_if($ext === null, 422, 'Unsupported file type.');
+
+        $typeSlug = Str::slug($type);
+        $filename = $fincode . '_' . $typeSlug . '_' . time() . '_' . uniqid() . '.' . $ext;
+
+        $destDir = $this->docsDestDir();
+        if (!is_dir($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $file->move($destDir, $filename);
+
+        return 'company-docs/' . $filename;
+    }
+
+    private function docValidationRules(): array
+    {
+        return [
+            'fincode'        => 'required|integer|exists:unlisted_stocks,UL_STOCKS_FINCODE',
+            'type'           => 'required|in:' . implode(',', UnlistedDocument::DOC_TYPES),
+            'research_house' => 'required_if:type,Research Report|nullable|string|max:100',
+            'date'           => 'nullable|date',
+            'period_mm'      => 'nullable|in:03,06,09,12',
+            'period_yy'      => 'nullable|digits:4',
+            'description'    => 'nullable|string|max:500',
+            'upload_type'    => 'required|in:file,link',
+            'status'         => 'required|in:1,0',
+        ];
+    }
+
+    public function storeDocument(Request $request)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $rules         = $this->docValidationRules();
+        $rules['file'] = 'required_if:upload_type,file|nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png|max:10240';
+        $rules['link'] = 'required_if:upload_type,link|nullable|url|max:500';
+
+        $validated = $request->validate($rules);
+
+        $data = [
+            'UL_DOC_FINCODE'        => $validated['fincode'],
+            'UL_DOC_TYPE'           => $validated['type'],
+            'UL_DOC_RESEARCH_HOUSE' => $validated['research_house'] ?? null,
+            'UL_DOC_DATE'           => $validated['date'] ?? null,
+            'UL_DOC_PERIOD_MM'      => $validated['period_mm'] ?? null,
+            'UL_DOC_PERIOD_YY'      => $validated['period_yy'] ?? null,
+            'UL_DOC_DESCRIPTION'    => $validated['description'] ?? null,
+            'UL_DOC_STATUS'         => $validated['status'],
+            'UL_DOC_INSERT_BY'      => session('uid'),
+            'UL_DOC_INSERT_TIME'    => now(),
+            'UL_DOC_UPDATE_TIME'    => now(),
+        ];
+
+        if ($validated['upload_type'] === 'file') {
+            $data['UL_DOC_FILE_PATH'] = $this->storeDocumentFile($request->file('file'), $validated['fincode'], $validated['type']);
+        } else {
+            $data['UL_DOC_FILELINK'] = $validated['link'];
+        }
+
+        UnlistedDocument::create($data);
+
+        return response()->json(['success' => true, 'message' => 'Document added successfully.']);
+    }
+
+    public function getDocument(int $id)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $document = UnlistedDocument::findOrFail($id);
+
+        return response()->json(['success' => true, 'document' => $document]);
+    }
+
+    public function updateDocument(Request $request, int $id)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $document = UnlistedDocument::findOrFail($id);
+
+        $rules         = $this->docValidationRules();
+        $rules['file'] = 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png|max:10240';
+        $rules['link'] = 'nullable|url|max:500';
+
+        $validated = $request->validate($rules);
+
+        $data = [
+            'UL_DOC_FINCODE'        => $validated['fincode'],
+            'UL_DOC_TYPE'           => $validated['type'],
+            'UL_DOC_RESEARCH_HOUSE' => $validated['research_house'] ?? null,
+            'UL_DOC_DATE'           => $validated['date'] ?? null,
+            'UL_DOC_PERIOD_MM'      => $validated['period_mm'] ?? null,
+            'UL_DOC_PERIOD_YY'      => $validated['period_yy'] ?? null,
+            'UL_DOC_DESCRIPTION'    => $validated['description'] ?? null,
+            'UL_DOC_STATUS'         => $validated['status'],
+            'UL_DOC_UPDATE_TIME'    => now(),
+        ];
+
+        if ($validated['upload_type'] === 'file') {
+            if ($request->hasFile('file')) {
+                $data['UL_DOC_FILE_PATH'] = $this->storeDocumentFile($request->file('file'), $validated['fincode'], $validated['type']);
+                $data['UL_DOC_FILELINK']  = null;
+            }
+        } else {
+            $data['UL_DOC_FILELINK']  = $validated['link'];
+            $data['UL_DOC_FILE_PATH'] = null;
+        }
+
+        $document->update($data);
+
+        return response()->json(['success' => true, 'message' => 'Document updated successfully.']);
+    }
+
+    public function toggleDocumentStatus(int $id)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $document  = UnlistedDocument::findOrFail($id);
+        $newStatus = $document->UL_DOC_STATUS === '1' ? '0' : '1';
+        $document->update(['UL_DOC_STATUS' => $newStatus, 'UL_DOC_UPDATE_TIME' => now()]);
+
+        return response()->json(['success' => true, 'status' => $newStatus]);
+    }
+
     public function storeStock(Request $request)
     {
+        if (!$this->canAccess()) abort(403);
+
         $request->validate(['name' => 'required|string|max:255'], [
             'name.required' => 'Company name is required.',
         ]);
@@ -74,6 +268,8 @@ class UnlistedStocksController extends Controller
 
     public function storeIndustry(Request $request)
     {
+        if (!$this->canAccess()) abort(403);
+
         $request->validate(['name' => 'required|string|max:100'], [
             'name.required' => 'Industry name is required.',
         ]);
@@ -106,6 +302,8 @@ class UnlistedStocksController extends Controller
 
     public function toggleStockStatus(string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock     = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
         $newStatus = $stock->UL_STOCKS_STATUS === '1' ? '0' : '1';
         $stock->update(['UL_STOCKS_STATUS' => $newStatus]);
@@ -115,6 +313,8 @@ class UnlistedStocksController extends Controller
 
     public function getPriceModal(string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)
                     ->select('UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME')
                     ->firstOrFail();
@@ -124,6 +324,8 @@ class UnlistedStocksController extends Controller
 
     public function storePriceData(Request $request, string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $request->validate([
@@ -150,6 +352,8 @@ class UnlistedStocksController extends Controller
 
     public function getPriceList(Request $request, string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)
                     ->select('UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME')
                     ->firstOrFail();
@@ -164,6 +368,8 @@ class UnlistedStocksController extends Controller
 
     public function updatePriceEntry(Request $request, string $fincode, string $date)
     {
+        if (!$this->canAccess()) abort(403);
+
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $request->validate([
@@ -184,6 +390,8 @@ class UnlistedStocksController extends Controller
 
     public function deletePriceEntry(string $fincode, string $date)
     {
+        if (!$this->canAccess()) abort(403);
+
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $updated = UnlistedPriceData::where('UL_PD_FINCODE', $fincode)
@@ -197,6 +405,8 @@ class UnlistedStocksController extends Controller
 
     public function getFinancialsModal(string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)
                     ->select('UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME')
                     ->firstOrFail();
@@ -206,6 +416,8 @@ class UnlistedStocksController extends Controller
 
     public function storeFinancialsData(Request $request, string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $request->validate([
@@ -281,6 +493,8 @@ class UnlistedStocksController extends Controller
 
     public function getFinancialsListModal(Request $request, string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)
                     ->select('UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME')
                     ->firstOrFail();
@@ -294,6 +508,8 @@ class UnlistedStocksController extends Controller
 
     public function getFinancialsEditModal(string $fincode, string $periodEnd, string $type, string $noMonths)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)
                     ->select('UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME')
                     ->firstOrFail();
@@ -309,6 +525,8 @@ class UnlistedStocksController extends Controller
 
     public function updateFinancialsData(Request $request, string $fincode, string $periodEnd, string $type, string $noMonths)
     {
+        if (!$this->canAccess()) abort(403);
+
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $request->validate([
@@ -378,6 +596,8 @@ class UnlistedStocksController extends Controller
 
     public function softDeleteFinancial(string $fincode, string $periodEnd, string $type, string $noMonths)
     {
+        if (!$this->canAccess()) abort(403);
+
         $updated = UnlistedFinancials::where('UL_FIN_FINCODE',   $fincode)
                     ->where('UL_FIN_Period_end', $periodEnd)
                     ->where('UL_FIN_Type',       $type)
@@ -391,6 +611,8 @@ class UnlistedStocksController extends Controller
 
     public function getOverviewModal(string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $industries = DB::table('industry_master')
@@ -404,8 +626,12 @@ class UnlistedStocksController extends Controller
 
     public function updateOverview(Request $request, string $fincode)
     {
-        $request->validate(['logo' => 'nullable|file|mimes:png,jpg,jpeg,webp,svg|max:2048'], [
-            'logo.mimes' => 'Only PNG, JPG, JPEG, SVG, WEBP files are allowed.',
+        if (!$this->canAccess()) abort(403);
+
+        // SVG is deliberately excluded — it can carry an embedded <script> that
+        // executes if the file's raw URL is opened directly (stored XSS).
+        $request->validate(['logo' => 'nullable|file|mimes:png,jpg,jpeg,webp|max:2048'], [
+            'logo.mimes' => 'Only PNG, JPG, JPEG, WEBP files are allowed.',
             'logo.max'   => 'Logo must not exceed 2 MB.',
         ]);
 
@@ -437,8 +663,8 @@ class UnlistedStocksController extends Controller
         ];
 
         if ($request->hasFile('logo') && $request->file('logo')->isValid()) {
-            $ext  = strtolower($request->file('logo')->getClientOriginalExtension());
-            $ext  = ['jfif' => 'jpg', 'jpeg' => 'jpg'][$ext] ?? $ext;
+            $ext = SafeUpload::imageExtension($request->file('logo'));
+            abort_if($ext === null, 422, 'Unsupported image type.');
             $slug = $stock->UL_STOCKS_SLUG;
             $filename = $slug . '.' . $ext;
             // On Hostinger, public_html/ sits next to the app dir (unlisted-gain/../public_html)
@@ -474,6 +700,8 @@ class UnlistedStocksController extends Controller
 
     public function getThesisModal(string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $stock  = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)
                     ->select('UL_STOCKS_FINCODE', 'UL_STOCKS_COMPNAME')
                     ->firstOrFail();
@@ -486,6 +714,8 @@ class UnlistedStocksController extends Controller
 
     public function saveThesis(Request $request, string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
         $thesis = UnlistedThesis::where('UL_THESIS_FINCODE', $fincode)
@@ -493,7 +723,10 @@ class UnlistedStocksController extends Controller
                     ->first();
 
         $data = [
-            'UL_THESIS_CONTENT'     => $request->input('UL_THESIS_CONTENT'),
+            // Rendered raw ({!! !!}) on the public company page — must be sanitized
+            // the same way CmsArticleController purifies article content, since this
+            // module's privilege is independently grantable to non-admin staff.
+            'UL_THESIS_CONTENT'     => clean($request->input('UL_THESIS_CONTENT', '')),
             'UL_THESIS_ACTIVE'      => $request->input('UL_THESIS_ACTIVE', '1'),
             'UL_THESIS_UPDATE_TIME' => now(),
         ];
@@ -512,13 +745,17 @@ class UnlistedStocksController extends Controller
 
     public function uploadThesisImage(Request $request, string $fincode)
     {
+        if (!$this->canAccess()) abort(403);
+
         $request->validate(['file' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120']);
 
         $folder = public_path('images/unlisted-thesis-images');
         if (!is_dir($folder)) mkdir($folder, 0755, true);
 
-        $file     = $request->file('file');
-        $filename = 'thesis_' . $fincode . '_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $file = $request->file('file');
+        $ext  = SafeUpload::imageExtension($file);
+        abort_if($ext === null, 422, 'Unsupported image type.');
+        $filename = 'thesis_' . $fincode . '_' . time() . '_' . uniqid() . '.' . $ext;
         $file->move($folder, $filename);
 
         return response()->json(['location' => asset('images/unlisted-thesis-images/' . $filename)]);

@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'What is Pre-IPO Investment? Benefits & How to Buy | UnlistedGain')
 @section('meta_description', 'Learn everything about Pre-IPO investing. Discover how it works, the potential for multifold returns, and the best way to buy pre-IPO shares before they hit the stock exchange.')
@@ -7,39 +7,6 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/pre-ipo.css') }}?v={{ filemtime(public_path('assets/css/pagecss/pre-ipo.css')) }}">
 <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
-<style>
-    .pi-listing-section { padding: 40px 24px 20px; max-width: 1400px; margin: 0 auto; }
-    .pi-listing-section .section-title { font-size: 22px; font-weight: 700; margin-bottom: 20px; color: #1a1a1a; }
-    .pi-listing-section .section-title span { color: #87b942; }
-    .pi-controls { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
-    .pi-controls input[type="text"] {
-        flex: 1; min-width: 200px; padding: 9px 14px;
-        border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;
-    }
-    .pi-controls input[type="text"]:focus { border-color: #87b942; }
-    .pi-controls select {
-        padding: 9px 14px; border: 1.5px solid #e2e8f0;
-        border-radius: 8px; font-size: 14px; background: #fff; cursor: pointer; outline: none;
-    }
-    .pi-loading { text-align: center; padding: 48px; color: #94a3b8; font-size: 15px; }
-    .shares-table-wrapper { overflow-x: auto; }
-    .shares-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
-    .shares-table thead tr { background: #0c3105; }
-    .shares-table thead th { padding: 13px 18px; text-align: left; font-size: 13px; color: #fff; font-weight: 600; white-space: nowrap; }
-    .shares-table tbody tr { border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background .15s; }
-    .shares-table tbody tr:hover { background: #f8fcf2; }
-    .shares-table tbody td { padding: 14px 18px; font-size: 14px; color: #333; vertical-align: middle; }
-    .company-cell { display: flex; align-items: center; gap: 10px; }
-    .company-cell img { width: 36px; height: 36px; object-fit: contain; border: 1px solid #eee; border-radius: 6px; padding: 3px; background: #fff; }
-    .td-price { font-weight: 700; color: #1a1a1a; }
-    .action-btns { display: flex; gap: 6px; }
-    .buy-btn, .sell-btn { padding: 5px 14px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: background .2s; }
-    .buy-btn  { background: #28a745; color: #fff; }
-    .sell-btn { background: #dc3545; color: #fff; }
-    .buy-btn:hover  { background: #218838; }
-    .sell-btn:hover { background: #c82333; }
-    .no-results { text-align: center; padding: 32px; color: #aaa; }
-</style>
 @endpush
 
 @section('subheader')
@@ -48,17 +15,78 @@
 
 @section('content')
 <main>
+    {{-- Hero --}}
+    <section class="pi-hero">
+        <div class="pi-hero-inner">
+            <span class="pi-hero-eyebrow">Private Market Investing</span>
+            <h1 class="pi-hero-title">Pre-IPO &amp; <span>Unlisted Shares</span></h1>
+            <p class="pi-hero-subtitle">Invest in India&rsquo;s fastest growing private companies before they go public.</p>
+
+            <div class="pi-hero-search">
+                <div class="search-box-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="piSearch" value="{{ $q }}" placeholder="Search company name...">
+                    <button type="button" class="pi-hero-search-btn" aria-label="Search">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="pi-hero-chips">
+                    <span class="pi-hero-chips-label">Popular:</span>
+                    @foreach(['NSE', 'OYO', 'CSK', 'HDB Financial', 'Boat'] as $chip)
+                    <button type="button" class="pi-chip" data-term="{{ $chip }}">{{ $chip }}</button>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Stats --}}
+    <section class="pi-stats-section">
+        <div class="pi-stats-grid">
+            <div class="pi-stat-card">
+                <span class="pi-stat-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <div>
+                    <div class="pi-stat-value">{{ $stocks->total() }}+</div>
+                    <div class="pi-stat-label">Companies Listed</div>
+                </div>
+            </div>
+            <div class="pi-stat-card">
+                <span class="pi-stat-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <div>
+                    <div class="pi-stat-value">Verified</div>
+                    <div class="pi-stat-label">Listings &amp; Sellers</div>
+                </div>
+            </div>
+            <div class="pi-stat-card">
+                <span class="pi-stat-icon"><i class="fa-solid fa-wallet"></i></span>
+                <div>
+                    <div class="pi-stat-value">Same-Day</div>
+                    <div class="pi-stat-label">Demat Transfer</div>
+                </div>
+            </div>
+            <div class="pi-stat-card">
+                <span class="pi-stat-icon"><i class="fa-solid fa-chart-line"></i></span>
+                <div>
+                    <div class="pi-stat-value">100%</div>
+                    <div class="pi-stat-label">Price Transparency</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     {{-- Stock listing --}}
     <section class="pi-listing-section" id="preIpoListing">
         <h2 class="section-title">Pre-IPO &amp; <span>Unlisted Share Listings</span></h2>
+        <p class="pi-listing-subtitle">Browse verified companies, compare valuations and invest directly.</p>
 
         <div class="pi-controls">
-            <input type="text" id="piSearch" value="{{ $q }}" placeholder="Search by company name...">
-            <select id="piSort">
-                <option value="mcap" {{ $sort === 'mcap' ? 'selected' : '' }}>Market Cap ↓</option>
-                <option value="asc"  {{ $sort === 'asc'  ? 'selected' : '' }}>A &ndash; Z</option>
-                <option value="desc" {{ $sort === 'desc' ? 'selected' : '' }}>Z &ndash; A</option>
-            </select>
+            <div class="pi-sort-field">
+                <select id="piSort">
+                    <option value="mcap" {{ $sort === 'mcap' ? 'selected' : '' }}>Market Cap ↓</option>
+                    <option value="asc"  {{ $sort === 'asc'  ? 'selected' : '' }}>A &ndash; Z</option>
+                    <option value="desc" {{ $sort === 'desc' ? 'selected' : '' }}>Z &ndash; A</option>
+                </select>
+            </div>
         </div>
 
         <div id="preIpoContainer">
@@ -75,45 +103,85 @@
                     <h2 class="main-title">Best Platform To <span>Buy Pre-IPO | Unlisted Shares</span></h2>
 
                     <div class="tab-buttons">
-                        <button class="tab-btn active" data-tab="what">What?</button>
-                        <button class="tab-btn" data-tab="why">Why?</button>
-                        <button class="tab-btn" data-tab="how">How?</button>
+                        <button class="tab-btn active" data-tab="what"><i class="fa-solid fa-circle-info"></i> What?</button>
+                        <button class="tab-btn" data-tab="why"><i class="fa-solid fa-chart-line"></i> Why?</button>
+                        <button class="tab-btn" data-tab="how"><i class="fa-solid fa-list-check"></i> How?</button>
                     </div>
 
                     <div class="content-box" id="tab-what">
                         <h3>What Are Pre-IPO Shares?</h3>
-                        <p>Pre-IPO Companies are private firms who intend to have a listing on the stock market. In India that would mean being listed on the NSE or BSE or both. Once listed, these companies are referred to as publicly listed companies.</p>
+                        <div class="definition-box">
+                            <i class="fa-solid fa-quote-left definition-icon"></i>
+                            <p>Pre-IPO Companies are private firms who intend to have a listing on the stock market. In India that would mean being listed on the NSE or BSE or both. Once listed, these companies are referred to as publicly listed companies.</p>
+                        </div>
                         <p>Companies who have opened their IPO but have not yet been listed on the stock market, or have not yet made an Initial Public Offering, are referred to as Unlisted/Pre-IPO shares.</p>
                     </div>
 
                     <div class="content-box" id="tab-why" style="display:none;">
                         <h3>Why Invest in Pre-IPO Shares?</h3>
                         <p>Pre-IPO investing offers the opportunity to buy shares at a price lower than the eventual IPO price, allowing early investors to benefit from significant listing gains.</p>
-                        <ul>
-                            <li>Potential for multifold returns compared to listed stocks</li>
-                            <li>Early access before public listing drives valuations higher</li>
-                            <li>Portfolio diversification with high-growth private companies</li>
-                            <li>Less volatility compared to listed markets in growth phase</li>
+                        <ul class="benefit-list">
+                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Potential for multifold returns compared to listed stocks</li>
+                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Early access before public listing drives valuations higher</li>
+                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Portfolio diversification with high-growth private companies</li>
+                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Less volatility compared to listed markets in growth phase</li>
                         </ul>
                     </div>
 
                     <div class="content-box" id="tab-how" style="display:none;">
                         <h3>How to Buy Pre-IPO Shares?</h3>
                         <p>Buying pre-IPO shares in India is straightforward through UnlistedGain:</p>
-                        <ol>
-                            <li>Browse the listing below and select your desired company</li>
-                            <li>Click <strong>Buy</strong> and fill in the quantity</li>
-                            <li>Our team will contact you to complete the transfer to your Demat account</li>
-                            <li>Shares appear in your Demat account within 2–3 working days</li>
-                        </ol>
-                        <p>Minimum investment varies per company based on lot size.</p>
+                        <div class="steps-list">
+                            <div class="step-item">
+                                <span class="step-number">1</span>
+                                <p>Browse the listing below and select your desired company</p>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">2</span>
+                                <p>Click <strong>Buy</strong> and fill in the quantity</p>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">3</span>
+                                <p>Our team will contact you to complete the transfer to your Demat account</p>
+                            </div>
+                            <div class="step-item">
+                                <span class="step-number">4</span>
+                                <p>Shares appear in your Demat account within 2&ndash;3 working days</p>
+                            </div>
+                        </div>
+                        <p class="steps-note"><i class="fa-solid fa-circle-info"></i> Minimum investment varies per company based on lot size.</p>
                     </div>
                 </div>
 
                 <div class="info-visual">
-                    <div class="video-wrapper">
-                        <div class="video-placeholder">
-                            <div class="play-btn"></div>
+                    <div class="info-highlights">
+                        <div class="info-highlight-item">
+                            <span class="info-highlight-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                            <div>
+                                <h4>Verified Companies</h4>
+                                <p>Every listing is checked before it goes live.</p>
+                            </div>
+                        </div>
+                        <div class="info-highlight-item">
+                            <span class="info-highlight-icon"><i class="fa-solid fa-chart-line"></i></span>
+                            <div>
+                                <h4>Transparent Pricing</h4>
+                                <p>Real market cap, P/E and price data, no hidden markups.</p>
+                            </div>
+                        </div>
+                        <div class="info-highlight-item">
+                            <span class="info-highlight-icon"><i class="fa-solid fa-wallet"></i></span>
+                            <div>
+                                <h4>Secure Demat Transfer</h4>
+                                <p>Shares move straight into your demat account.</p>
+                            </div>
+                        </div>
+                        <div class="info-highlight-item">
+                            <span class="info-highlight-icon"><i class="fa-solid fa-headset"></i></span>
+                            <div>
+                                <h4>Dedicated Support</h4>
+                                <p>Our team guides you through every transaction.</p>
+                            </div>
                         </div>
                     </div>
                     <div class="action-btns">
@@ -123,19 +191,9 @@
                 </div>
             </div>
 
-            <div class="info-row reverse">
-                <div class="info-text">
-                    <h2 class="promo-title">Investment In Pre-IPO | Unlisted Shares <span>Delivers Multifold Returns.</span></h2>
-                    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="video-link">Browse all listings &rarr;</a>
-                </div>
-
-                <div class="info-visual">
-                    <div class="video-wrapper">
-                        <div class="video-placeholder">
-                            <div class="play-btn"></div>
-                        </div>
-                    </div>
-                </div>
+            <div class="promo-banner">
+                <h2 class="promo-title">Investment In Pre-IPO | Unlisted Shares <span>Delivers Multifold Returns.</span></h2>
+                <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="promo-cta">Browse all listings <i class="fa-solid fa-arrow-right"></i></a>
             </div>
 
         </div>
@@ -201,7 +259,9 @@ function loadPreIpoPage(page) {
     var q    = $('#piSearch').val().trim();
     var sort = $('#piSort').val();
 
-    $('#preIpoContainer').html('<div class="pi-loading"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:22px"></i></div>');
+    var skeletonRows = '';
+    for (var i = 0; i < 5; i++) { skeletonRows += '<div class="pi-skeleton-row"></div>'; }
+    $('#preIpoContainer').html('<div class="pi-skeleton">' + skeletonRows + '</div>');
 
     $.get('{{ route("public.pre-ipo.data") }}', { q: q, sort: sort, page: page })
      .done(function (html) {
@@ -236,6 +296,19 @@ $(document).ready(function () {
 
     // Sort
     $('#piSort').on('change', function () { loadPreIpoPage(1); });
+
+    // Hero search button
+    $('.pi-hero-search-btn').on('click', function () { loadPreIpoPage(1); });
+
+    // Quick-search chips
+    $('.pi-chip').on('click', function () {
+        $('#piSearch').val($(this).data('term'));
+        loadPreIpoPage(1);
+        var target = $('#preIpoListing');
+        if (target.length) {
+            $('html,body').animate({ scrollTop: target.offset().top - 80 }, 400);
+        }
+    });
 
     // Tab switching
     $('.tab-btn').on('click', function () {

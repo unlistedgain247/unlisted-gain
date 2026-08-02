@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\Privilege;
+use App\Helpers\SessionAuth;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,7 @@ class RequirePrivilege
      *
      * Special key 'unlisted' → passes if ANY unlisted sub-privilege is true.
      * Special key 'pg' → passes if ANY pg sub-privilege is true.
+     * Special key 'cms' → passes if ANY cms sub-privilege is true.
      * Dotted keys (e.g. 'pg.dashboard') check that specific sub-privilege.
      *
      * Usage:
@@ -25,7 +27,7 @@ class RequirePrivilege
      */
     public function handle(Request $request, Closure $next, string ...$keys): Response
     {
-        if (!session('uid')) {
+        if (!SessionAuth::valid()) {
             return redirect()->route('login');
         }
 
@@ -38,6 +40,10 @@ class RequirePrivilege
                 }
             } elseif ($key === 'pg') {
                 if (!empty(array_filter($privilege['pg'] ?? []))) {
+                    return $next($request);
+                }
+            } elseif ($key === 'cms') {
+                if (!empty(array_filter($privilege['cms'] ?? []))) {
                     return $next($request);
                 }
             } elseif (str_contains($key, '.')) {

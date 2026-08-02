@@ -1,41 +1,6 @@
 @once
 @push('styles')
-<style>
-    .pgd-overlay {
-        display:none; position:fixed; inset:0;
-        background:rgba(0,0,0,.5); z-index:9000;
-        align-items:flex-start; justify-content:center;
-        padding:30px 16px; overflow-y:auto;
-    }
-    .pgd-overlay.open { display:flex; }
-    .pgd-modal {
-        background:#fff; border-radius:12px; width:100%; max-width:950px;
-        box-shadow:0 12px 48px rgba(0,0,0,.22); flex-shrink:0; margin:auto;
-        overflow:hidden;
-    }
-    .pgd-modal-hdr {
-        display:flex; align-items:center; justify-content:space-between;
-        padding:13px 18px; border-bottom:none;
-        background:#1e293b;
-    }
-    .pgd-modal-hdr h5 { font-size:13px; font-weight:700; color:#fff; margin:0; }
-    .pgd-modal-close {
-        background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
-        border-radius:7px; width:28px; height:28px; display:flex; align-items:center;
-        justify-content:center; font-size:17px; color:#fff; cursor:pointer; line-height:1; padding:0;
-    }
-    .pgd-modal-close:hover { background:rgba(255,255,255,.28); }
-    .pgd-modal-body { padding:18px 20px; max-height:72vh; overflow-y:auto; overflow-x:auto; }
-    .pgd-modal-body .table { font-size:12px; }
-
-    @media (max-width: 575.98px) {
-        .pgd-overlay { padding: 8px 8px; }
-        .pgd-modal { border-radius: 8px; }
-        .pgd-modal-hdr { padding: 10px 12px; }
-        .pgd-modal-body { padding: 12px 10px; max-height: 85vh; }
-        .pgd-modal-hdr h5 { font-size: 12px; }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pg-map-transaction-modal.css') }}?v={{ filemtime(public_path('assets/css/admin/pg-map-transaction-modal.css')) }}">
 @endpush
 @endonce
 

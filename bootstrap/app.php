@@ -18,6 +18,22 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest.only' => \App\Http\Middleware\GuestOnly::class,
             'privilege'  => \App\Http\Middleware\RequirePrivilege::class,
         ]);
+
+        $middleware->web(append: [
+            \App\Http\Middleware\SecurityHeaders::class,
+        ]);
+
+        // Opt-in only — unset by default, which trusts no proxy (the safe
+        // framework default). Only set TRUSTED_PROXIES in .env after confirming
+        // with your host that traffic actually passes through a TLS-terminating
+        // proxy/load balancer in front of PHP; otherwise trusting proxy headers
+        // here lets any client spoof X-Forwarded-For/X-Forwarded-Proto directly
+        // (fake source IP for rate limiting, fake HTTPS status for cookies).
+        if ($trustedProxies = env('TRUSTED_PROXIES')) {
+            $middleware->trustProxies(
+                at: $trustedProxies === '*' ? '*' : explode(',', $trustedProxies),
+            );
+        }
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Return JSON for throttle errors so AJAX login/register forms handle them properly

@@ -101,6 +101,15 @@
             </div>
         </div>
 
+        <div class="admin-stat-card">
+            <div class="stat-icon stat-icon-cyan"><i class="fa-solid fa-newspaper"></i></div>
+            <div class="stat-info">
+                <span class="stat-number">{{ number_format($totalArticles) }}</span>
+                <span class="stat-label">CMS Articles</span>
+                <span class="stat-sub">{{ $publishedArticles }} published · {{ $draftArticles }} drafts</span>
+            </div>
+        </div>
+
     </div>
 
     {{-- ═══════ CHARTS ═══════ --}}

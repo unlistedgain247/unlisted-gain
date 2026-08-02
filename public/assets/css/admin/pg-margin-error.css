@@ -1,0 +1,26 @@
+#pgMerrTableWrap { min-height: 200px; }
+    .pg-loading { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+
+    /* ── Margin Error Modal ───────────────────────────────── */
+    #pgMerrOverlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5); z-index: 9000;
+        align-items: flex-start; justify-content: center;
+        padding: 30px 16px; overflow-y: auto;
+    }
+    #pgMerrOverlay.open { display: flex; }
+    #pgMerrModal {
+        background: #fff; border-radius: 12px; width: 100%; max-width: 1100px;
+        box-shadow: 0 12px 48px rgba(0,0,0,0.22); overflow: hidden;
+        flex-shrink: 0; margin: auto;
+    }
+    #pgMerrModal .pge-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 24px; border-bottom: 1px solid #f0f0f0;
+    }
+    #pgMerrModal .pge-title { font-size: 16px; font-weight: 700; color: #111827; }
+    #pgMerrModal .pge-close {
+        background: none; border: none; font-size: 22px; color: #9ca3af; cursor: pointer; line-height: 1;
+    }
+    #pgMerrModal .pge-close:hover { color: #374151; }
+    #pgMerrModalBody { padding: 20px 24px; min-height: 200px; }

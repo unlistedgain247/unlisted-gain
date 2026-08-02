@@ -41,6 +41,13 @@ class User extends Authenticatable
         'user_pan_no',
         'user_pan_image',
         'user_pan_verified',
+        // Author profile
+        'author_bio',
+        'author_linkedin',
+        'author_twitter',
+        'author_facebook',
+        'author_instagram',
+        'author_website',
     ];
 
     protected $hidden = [

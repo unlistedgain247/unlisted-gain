@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'PAN Requirements for Unlisted Shares | UnlistedGain')
 @section('meta_description', 'Everything you need to know about PAN requirements and tax implications when investing in unlisted shares in India. Understand STCG and LTCG for unlisted stocks.')

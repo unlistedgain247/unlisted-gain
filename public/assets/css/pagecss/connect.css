@@ -3,7 +3,7 @@
    ================================================ */
 
 .cn-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 24px;
 }
@@ -88,6 +88,13 @@
     min-width: 220px;
     flex: 1;
     max-width: 300px;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.cn-info-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(135, 185, 66, .14);
+    border-color: #c8e49a;
 }
 
 .cn-info-icon {
@@ -101,6 +108,11 @@
     flex-shrink: 0;
     color: #fff;
     font-size: 16px;
+    transition: transform .25s ease;
+}
+
+.cn-info-item:hover .cn-info-icon {
+    transform: scale(1.08) rotate(-4deg);
 }
 
 .cn-info-item strong {

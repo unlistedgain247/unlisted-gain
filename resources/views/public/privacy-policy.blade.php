@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Privacy Policy | UnlistedGain')
 @section('meta_description', 'Read our Privacy Policy to understand how UnlistedGain collects, uses, and protects your personal and financial information while using our unlisted share marketplace.')

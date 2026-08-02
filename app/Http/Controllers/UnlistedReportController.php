@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -10,14 +11,46 @@ class UnlistedReportController extends Controller
 {
     private function canAccess(): bool
     {
-        $ul = session('privilege.unlisted', []);
-        return !empty($ul['unlisted_reports']);
+        // Privilege::get() re-reads the DB each request (unlike a cached
+        // session value), so a revoked grant takes effect immediately instead
+        // of staying valid until the session naturally expires.
+        return !empty(Privilege::get('admin')) || !empty(Privilege::get('unlisted.unlisted_reports'));
     }
 
     public function index()
     {
         if (!$this->canAccess()) abort(403);
         return view('admin.unlisted.reports');
+    }
+
+    // Renders one "Month/Employee-wise Performance" table. $rows are plain
+    // arrays of [label, customers, orders, amount] already picked out by the
+    // caller for whichever side (Buy/Sell) is being displayed.
+    private function renderPerformanceTable(string $title, string $labelHeader, array $rows): string
+    {
+        $html = '<div class="col-md-6"><p class="rpt-sub-label">' . $title . '</p>';
+        $html .= '<table class="table table-sm table-striped table-bordered font-13-data-table"><thead><tr>
+            <th>' . $labelHeader . '</th><th>Customers</th><th>Orders</th><th>Amount</th><th>Avg/Cust</th><th>Avg/Order</th>
+            </tr></thead><tbody>';
+
+        if (empty($rows)) {
+            $html .= '<tr><td colspan="6" class="text-center text-muted">No data</td></tr>';
+        } else {
+            foreach ($rows as [$label, $customers, $orders, $amount]) {
+                $avgPerCust  = $customers > 0 ? round($amount / $customers) : 0;
+                $avgPerOrder = $orders > 0 ? round($amount / $orders) : 0;
+                $html .= '<tr>
+                    <td>' . $label . '</td>
+                    <td>' . $customers . '</td>
+                    <td>' . $orders . '</td>
+                    <td>₹' . number_format($amount, 0) . '</td>
+                    <td>₹' . number_format($avgPerCust, 0) . '</td>
+                    <td>₹' . number_format($avgPerOrder, 0) . '</td>
+                </tr>';
+            }
+        }
+
+        return $html . '</tbody></table></div>';
     }
 
     // Orders Report — month-wise & employee-wise performance (Buy / Sell)
@@ -36,127 +69,58 @@ class UnlistedReportController extends Controller
             $dateBindings = [$fromDate . ' 00:00:00', $toDate . ' 23:59:59'];
         }
 
-        $monthBuySql = "SELECT MONTH(UL_ORD_DATE) AS mnth, YEAR(UL_ORD_DATE) AS yr,
-            COUNT(DISTINCT UL_ORD_USER_ID) AS num_customers,
-            COUNT(*) AS num_orders,
-            SUM(UL_ORD_AMOUNT) AS amount,
-            ROUND(SUM(UL_ORD_AMOUNT) / NULLIF(COUNT(DISTINCT UL_ORD_USER_ID),0)) AS avg_per_cust,
-            ROUND(SUM(UL_ORD_AMOUNT) / NULLIF(COUNT(*),0)) AS avg_per_order
+        // Buy and Sell used to be two near-identical queries (the Sell one built
+        // by str_replace()-ing 'Buy' into 'Sell' inside the Buy query's SQL
+        // string) — fragile, and doubles the DB round-trips for no reason.
+        // One conditionally-aggregated query gives both sides at once.
+        $monthRows = DB::select("SELECT MONTH(UL_ORD_DATE) AS mnth, YEAR(UL_ORD_DATE) AS yr,
+            COUNT(DISTINCT CASE WHEN UL_ORD_TYPE = 'Buy'  THEN UL_ORD_USER_ID END) AS buy_customers,
+            SUM(CASE WHEN UL_ORD_TYPE = 'Buy'  THEN 1 ELSE 0 END)               AS buy_orders,
+            SUM(CASE WHEN UL_ORD_TYPE = 'Buy'  THEN UL_ORD_AMOUNT ELSE 0 END)   AS buy_amount,
+            COUNT(DISTINCT CASE WHEN UL_ORD_TYPE = 'Sell' THEN UL_ORD_USER_ID END) AS sell_customers,
+            SUM(CASE WHEN UL_ORD_TYPE = 'Sell' THEN 1 ELSE 0 END)               AS sell_orders,
+            SUM(CASE WHEN UL_ORD_TYPE = 'Sell' THEN UL_ORD_AMOUNT ELSE 0 END)   AS sell_amount
             FROM unlisted_orders
-            WHERE UL_ORD_STATUS = 'Completed' AND UL_ORD_TYPE = 'Buy' $dateWhere
-            GROUP BY YEAR(UL_ORD_DATE), MONTH(UL_ORD_DATE) ORDER BY yr, mnth";
+            WHERE UL_ORD_STATUS = 'Completed' $dateWhere
+            GROUP BY YEAR(UL_ORD_DATE), MONTH(UL_ORD_DATE) ORDER BY yr, mnth", $dateBindings);
 
-        $monthSellSql = str_replace("UL_ORD_TYPE = 'Buy'", "UL_ORD_TYPE = 'Sell'", $monthBuySql);
-
-        $empBuySql = "SELECT u.name AS emp_name, o.UL_ORD_ADDED_BY,
-            COUNT(DISTINCT o.UL_ORD_USER_ID) AS num_customers,
-            COUNT(*) AS num_orders,
-            SUM(o.UL_ORD_AMOUNT) AS amount,
-            ROUND(SUM(o.UL_ORD_AMOUNT) / NULLIF(COUNT(DISTINCT o.UL_ORD_USER_ID),0)) AS avg_per_cust,
-            ROUND(SUM(o.UL_ORD_AMOUNT) / NULLIF(COUNT(*),0)) AS avg_per_order
+        $empRows = DB::select("SELECT u.name AS emp_name, o.UL_ORD_ADDED_BY,
+            COUNT(DISTINCT CASE WHEN o.UL_ORD_TYPE = 'Buy'  THEN o.UL_ORD_USER_ID END) AS buy_customers,
+            SUM(CASE WHEN o.UL_ORD_TYPE = 'Buy'  THEN 1 ELSE 0 END)               AS buy_orders,
+            SUM(CASE WHEN o.UL_ORD_TYPE = 'Buy'  THEN o.UL_ORD_AMOUNT ELSE 0 END) AS buy_amount,
+            COUNT(DISTINCT CASE WHEN o.UL_ORD_TYPE = 'Sell' THEN o.UL_ORD_USER_ID END) AS sell_customers,
+            SUM(CASE WHEN o.UL_ORD_TYPE = 'Sell' THEN 1 ELSE 0 END)               AS sell_orders,
+            SUM(CASE WHEN o.UL_ORD_TYPE = 'Sell' THEN o.UL_ORD_AMOUNT ELSE 0 END) AS sell_amount
             FROM unlisted_orders AS o
             LEFT JOIN users AS u ON u.uid = o.UL_ORD_ADDED_BY
-            WHERE o.UL_ORD_STATUS = 'Completed' AND o.UL_ORD_TYPE = 'Buy' $dateWhere
-            GROUP BY o.UL_ORD_ADDED_BY, u.name ORDER BY amount DESC";
-
-        $empSellSql = str_replace("UL_ORD_TYPE = 'Buy'", "UL_ORD_TYPE = 'Sell'", $empBuySql);
-
-        $monthBuy  = DB::select($monthBuySql, $dateBindings);
-        $monthSell = DB::select($monthSellSql, $dateBindings);
-        $empBuy    = DB::select($empBuySql, $dateBindings);
-        $empSell   = DB::select($empSellSql, $dateBindings);
+            WHERE o.UL_ORD_STATUS = 'Completed' $dateWhere
+            GROUP BY o.UL_ORD_ADDED_BY, u.name", $dateBindings);
 
         $monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $monthLabel = fn ($r) => ($monthNames[$r->mnth] ?? $r->mnth) . ' ' . $r->yr;
+        $empLabel   = fn ($r) => e($r->emp_name ?: 'UID:' . $r->UL_ORD_ADDED_BY);
 
-        $table = '<div class="row">';
+        // The old separate Buy/Sell queries filtered by type *before* grouping,
+        // so a month/employee with zero orders on one side simply never
+        // produced a row there. Grouping both sides in one query means every
+        // month/employee with completed orders shows up regardless — filter
+        // out the zero-order side per table to match the original output.
+        $monthBuyRows  = array_values(array_filter($monthRows, fn ($r) => $r->buy_orders > 0));
+        $monthSellRows = array_values(array_filter($monthRows, fn ($r) => $r->sell_orders > 0));
+        $empBuyRows  = collect($empRows)->filter(fn ($r) => $r->buy_orders > 0)->sortByDesc('buy_amount')->values();
+        $empSellRows = collect($empRows)->filter(fn ($r) => $r->sell_orders > 0)->sortByDesc('sell_amount')->values();
 
-        // Month-wise Buy
-        $table .= '<div class="col-md-6"><p class="rpt-sub-label">Month-wise Performance (Buy)</p>';
-        $table .= '<table class="table table-sm table-striped table-bordered font-13-data-table"><thead><tr>
-            <th>Month</th><th>Customers</th><th>Orders</th><th>Amount</th><th>Avg/Cust</th><th>Avg/Order</th>
-            </tr></thead><tbody>';
-        if (empty($monthBuy)) {
-            $table .= '<tr><td colspan="6" class="text-center text-muted">No data</td></tr>';
-        } else {
-            foreach ($monthBuy as $r) {
-                $table .= '<tr>
-                    <td>' . ($monthNames[$r->mnth] ?? $r->mnth) . ' ' . $r->yr . '</td>
-                    <td>' . $r->num_customers . '</td>
-                    <td>' . $r->num_orders . '</td>
-                    <td>₹' . number_format($r->amount, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_cust, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_order, 0) . '</td>
-                </tr>';
-            }
-        }
-        $table .= '</tbody></table></div>';
-
-        // Month-wise Sell
-        $table .= '<div class="col-md-6"><p class="rpt-sub-label">Month-wise Performance (Sell)</p>';
-        $table .= '<table class="table table-sm table-striped table-bordered font-13-data-table"><thead><tr>
-            <th>Month</th><th>Customers</th><th>Orders</th><th>Amount</th><th>Avg/Cust</th><th>Avg/Order</th>
-            </tr></thead><tbody>';
-        if (empty($monthSell)) {
-            $table .= '<tr><td colspan="6" class="text-center text-muted">No data</td></tr>';
-        } else {
-            foreach ($monthSell as $r) {
-                $table .= '<tr>
-                    <td>' . ($monthNames[$r->mnth] ?? $r->mnth) . ' ' . $r->yr . '</td>
-                    <td>' . $r->num_customers . '</td>
-                    <td>' . $r->num_orders . '</td>
-                    <td>₹' . number_format($r->amount, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_cust, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_order, 0) . '</td>
-                </tr>';
-            }
-        }
-        $table .= '</tbody></table></div>';
-
-        $table .= '</div><div class="row">';
-
-        // Emp-wise Buy
-        $table .= '<div class="col-md-6"><p class="rpt-sub-label">Employee-wise Performance (Buy)</p>';
-        $table .= '<table class="table table-sm table-striped table-bordered font-13-data-table"><thead><tr>
-            <th>Employee</th><th>Customers</th><th>Orders</th><th>Amount</th><th>Avg/Cust</th><th>Avg/Order</th>
-            </tr></thead><tbody>';
-        if (empty($empBuy)) {
-            $table .= '<tr><td colspan="6" class="text-center text-muted">No data</td></tr>';
-        } else {
-            foreach ($empBuy as $r) {
-                $table .= '<tr>
-                    <td>' . e($r->emp_name ?: 'UID:' . $r->UL_ORD_ADDED_BY) . '</td>
-                    <td>' . $r->num_customers . '</td>
-                    <td>' . $r->num_orders . '</td>
-                    <td>₹' . number_format($r->amount, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_cust, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_order, 0) . '</td>
-                </tr>';
-            }
-        }
-        $table .= '</tbody></table></div>';
-
-        // Emp-wise Sell
-        $table .= '<div class="col-md-6"><p class="rpt-sub-label">Employee-wise Performance (Sell)</p>';
-        $table .= '<table class="table table-sm table-striped table-bordered font-13-data-table"><thead><tr>
-            <th>Employee</th><th>Customers</th><th>Orders</th><th>Amount</th><th>Avg/Cust</th><th>Avg/Order</th>
-            </tr></thead><tbody>';
-        if (empty($empSell)) {
-            $table .= '<tr><td colspan="6" class="text-center text-muted">No data</td></tr>';
-        } else {
-            foreach ($empSell as $r) {
-                $table .= '<tr>
-                    <td>' . e($r->emp_name ?: 'UID:' . $r->UL_ORD_ADDED_BY) . '</td>
-                    <td>' . $r->num_customers . '</td>
-                    <td>' . $r->num_orders . '</td>
-                    <td>₹' . number_format($r->amount, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_cust, 0) . '</td>
-                    <td>₹' . number_format($r->avg_per_order, 0) . '</td>
-                </tr>';
-            }
-        }
-        $table .= '</tbody></table></div>';
-
-        $table .= '</div>';
+        $table = '<div class="row">'
+            . $this->renderPerformanceTable('Month-wise Performance (Buy)', 'Month',
+                array_map(fn ($r) => [$monthLabel($r), $r->buy_customers, $r->buy_orders, $r->buy_amount], $monthBuyRows))
+            . $this->renderPerformanceTable('Month-wise Performance (Sell)', 'Month',
+                array_map(fn ($r) => [$monthLabel($r), $r->sell_customers, $r->sell_orders, $r->sell_amount], $monthSellRows))
+            . '</div><div class="row">'
+            . $this->renderPerformanceTable('Employee-wise Performance (Buy)', 'Employee',
+                $empBuyRows->map(fn ($r) => [$empLabel($r), $r->buy_customers, $r->buy_orders, $r->buy_amount])->all())
+            . $this->renderPerformanceTable('Employee-wise Performance (Sell)', 'Employee',
+                $empSellRows->map(fn ($r) => [$empLabel($r), $r->sell_customers, $r->sell_orders, $r->sell_amount])->all())
+            . '</div>';
 
         return response()->json(['table' => $table]);
     }
@@ -205,7 +169,11 @@ class UnlistedReportController extends Controller
                 $where
                 GROUP BY o.UL_ORD_USER_ID, u.name, al.name";
 
-            $total = count(DB::select($baseSql, $bindings));
+            // Count via a wrapped query instead of materializing every grouped
+            // row into PHP just to call count() on the array — avoids pulling
+            // the full result set (and every SUM/CASE column) over the wire
+            // twice on every page/pagination click.
+            $total = DB::selectOne("SELECT COUNT(*) AS cnt FROM ($baseSql) AS agg", $bindings)->cnt;
             $rows  = DB::select($baseSql . " ORDER BY amt_buy DESC LIMIT $limit OFFSET $offset", $bindings);
 
             $table = '<table class="table table-sm table-striped table-bordered font-13-data-table w-100">
@@ -287,7 +255,7 @@ class UnlistedReportController extends Controller
 
             Log::info('UnlistedReport companyOrders SQL', ['sql' => $baseSql, 'bindings' => $bindings]);
 
-            $total = count(DB::select($baseSql, $bindings));
+            $total = DB::selectOne("SELECT COUNT(*) AS cnt FROM ($baseSql) AS agg", $bindings)->cnt;
             $rows  = DB::select($baseSql . " ORDER BY amt_buy DESC LIMIT $limit OFFSET $offset", $bindings);
 
             $table = '<table class="table table-sm table-striped table-bordered font-13-data-table w-100">
@@ -414,7 +382,7 @@ class UnlistedReportController extends Controller
         $allBindings = array_merge($finBindings, $search ? ['%'.$search.'%','%'.$search.'%','%'.$search.'%'] : []);
 
         $rows  = DB::select($sql . " LIMIT $limit OFFSET $offset", $allBindings);
-        $total = count(DB::select($sql, $allBindings));
+        $total = DB::selectOne("SELECT COUNT(*) AS cnt FROM ($sql) AS agg", $allBindings)->cnt;
 
         // Sort: recent orders (within 6 months) first
         $cutoff = date('Y-m-d', strtotime('-6 months'));
@@ -517,7 +485,7 @@ class UnlistedReportController extends Controller
             LEFT JOIN unlisted_stocks AS us ON us.UL_STOCKS_FINCODE = uf.UL_FIN_FINCODE
             $where";
 
-        $total = count(DB::select($baseSql, $bindings));
+        $total = DB::selectOne("SELECT COUNT(*) AS cnt FROM ($baseSql) AS agg", $bindings)->cnt;
         $rows  = DB::select($baseSql . " ORDER BY uf.UL_FIN_INSERT_TIME DESC LIMIT $limit OFFSET $offset", $bindings);
 
         $periodLabel = function ($noMonths) {

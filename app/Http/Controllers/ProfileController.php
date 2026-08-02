@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SessionAuth;
+use App\Models\Article;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -12,7 +15,7 @@ class ProfileController extends Controller
 {
     private function authUser(): ?User
     {
-        if (!session('uid') || !session('session_token')) {
+        if (!SessionAuth::valid()) {
             return null;
         }
         return User::whereKey(session('uid'))->first();
@@ -67,14 +70,23 @@ class ProfileController extends Controller
 
         try {
             $request->validate([
-                'new_password' => 'required|min:6|confirmed',
+                'current_password' => 'required',
+                'new_password'     => 'required|min:8|confirmed',
             ], [
-                'new_password.required'  => 'New password is required.',
-                'new_password.min'       => 'Password must be at least 6 characters.',
-                'new_password.confirmed' => 'Password confirmation does not match.',
+                'current_password.required' => 'Your current password is required.',
+                'new_password.required'     => 'New password is required.',
+                'new_password.min'          => 'Password must be at least 8 characters.',
+                'new_password.confirmed'    => 'Password confirmation does not match.',
             ]);
         } catch (ValidationException $e) {
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'errors'  => ['current_password' => ['Current password is incorrect.']],
+            ], 422);
         }
 
         $user->update(['password' => $request->new_password]);
@@ -268,6 +280,14 @@ class ProfileController extends Controller
         if (!$user || !$user->avatar_path || !Storage::exists($user->avatar_path)) {
             abort(404);
         }
+
+        // Public only for the user themself, or for a user who has an actual
+        // public-facing author page (same rule AuthorController uses to decide
+        // that page exists at all) — otherwise this is just PII disclosure and
+        // a uid-enumeration oracle for ordinary customer accounts.
+        $isSelf = SessionAuth::valid() && (int) session('uid') === $uid;
+        $isPublicAuthor = Article::published()->where('created_by', $uid)->exists();
+        abort_unless($isSelf || $isPublicAuthor, 403);
 
         $mime = Storage::mimeType($user->avatar_path) ?: 'image/jpeg';
 

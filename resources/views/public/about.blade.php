@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'About UnlistedGain | Our Mission & Expertise in Unlisted Market')
 @section('meta_description', 'Learn about UnlistedGain Advantage Solutions Pvt. Ltd., India\'s premier gateway to Pre-IPO and Unlisted Shares. Meet our leadership team.')

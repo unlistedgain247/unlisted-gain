@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Privilege;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class UserDashboardController extends Controller
 {
+    // Same "admin or any pg.* sub-privilege" rule as the privilege:admin,pg
+    // route group below — the balance figure is PG-ledger data and shouldn't
+    // leak to CRM/leads/stock-desk roles just because they can open this tab.
+    private function canSeeBalance(): bool
+    {
+        return !empty(Privilege::get('admin')) || !empty(array_filter(Privilege::get('pg') ?? []));
+    }
+
     public function profile(string $uid)
     {
         $user = DB::table('users')->where('uid', $uid)->first();
@@ -24,14 +33,17 @@ class UserDashboardController extends Controller
                 ->value('name');
         }
 
-        $balance = DB::table('pg_transactions')
-            ->where('pgt_transaction_for_user_id', $uid)
-            ->selectRaw("
-                COALESCE(SUM(CASE WHEN pgt_transaction_type = 'Flow In'  THEN pgt_in_out_amount ELSE 0 END), 0) -
-                COALESCE(SUM(CASE WHEN pgt_transaction_type = 'Flow Out' THEN pgt_in_out_amount ELSE 0 END), 0)
-                AS balance
-            ")
-            ->value('balance') ?? 0;
+        $balance = null;
+        if ($this->canSeeBalance()) {
+            $balance = DB::table('pg_transactions')
+                ->where('pgt_transaction_for_user_id', $uid)
+                ->selectRaw("
+                    COALESCE(SUM(CASE WHEN pgt_transaction_type = 'Flow In'  THEN pgt_in_out_amount ELSE 0 END), 0) -
+                    COALESCE(SUM(CASE WHEN pgt_transaction_type = 'Flow Out' THEN pgt_in_out_amount ELSE 0 END), 0)
+                    AS balance
+                ")
+                ->value('balance') ?? 0;
+        }
 
         $ordersResult = DB::table('unlisted_orders')
             ->where('UL_ORD_USER_ID', $uid)

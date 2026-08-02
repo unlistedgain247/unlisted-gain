@@ -1,0 +1,195 @@
+/* Author page — relies on --ah-green* variables defined in articles.css,
+   which is always loaded alongside this file. */
+
+.author-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #24401a 0%, #4a7c20 45%, #87b942 100%);
+    padding: 60px 24px 76px;
+    font-family: 'Inter', sans-serif;
+}
+
+.author-hero::before,
+.author-hero::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(50px);
+    pointer-events: none;
+    opacity: .5;
+}
+
+.author-hero::before {
+    width: 340px;
+    height: 340px;
+    background: rgba(255, 255, 255, .16);
+    top: -160px;
+    right: -80px;
+}
+
+.author-hero::after {
+    width: 260px;
+    height: 260px;
+    background: rgba(255, 255, 255, .12);
+    bottom: -140px;
+    left: 10%;
+}
+
+.author-hero-pattern {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .35;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, .35) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 65% 70% at 15% 30%, #000 30%, transparent 85%);
+    mask-image: radial-gradient(ellipse 65% 70% at 15% 30%, #000 30%, transparent 85%);
+}
+
+.author-hero-inner {
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 28px;
+}
+
+.author-hero-avatar-ring {
+    flex-shrink: 0;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    padding: 4px;
+    background: conic-gradient(from 140deg, #d9f2b0, #fff, #d9f2b0 70%, #fff 100%);
+    box-shadow: 0 14px 32px rgba(20, 32, 10, .3);
+}
+
+.author-hero-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #fff;
+    color: #4a7c20;
+    font-size: 36px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.author-hero-avatar-dp {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.author-hero-avatar-initial { line-height: 1; }
+
+.author-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #fff;
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .3);
+    padding: 6px 13px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+
+.author-hero-name { font-size: 33px; font-weight: 800; color: #fff; margin: 0 0 10px; letter-spacing: -.01em; }
+.author-hero-bio { font-size: 15.5px; color: rgba(255, 255, 255, .85); line-height: 1.7; max-width: 640px; margin: 0 0 20px; }
+
+.author-hero-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.author-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .3);
+    padding: 7px 14px;
+    border-radius: 20px;
+}
+
+.author-hero-badge i { color: #d9f2b0; }
+
+.author-hero-badge-solid {
+    background: #fff;
+    color: #2d4a1a;
+    border-color: #fff;
+}
+
+.author-hero-badge-solid i { color: #4a7c20; }
+
+.author-hero-socials { display: flex; gap: 8px; }
+
+.author-hero-wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 44px;
+    display: block;
+}
+
+@media (max-width: 700px) {
+    .author-hero-inner { flex-direction: column; align-items: center; text-align: center; }
+    .author-hero-bio { max-width: 100%; }
+    .author-hero-badge-row { justify-content: center; }
+}
+
+.author-articles-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 44px 24px 70px;
+    font-family: 'Inter', sans-serif;
+}
+
+.author-articles-header {
+    margin: 0 0 26px;
+}
+
+.author-articles-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--ah-green-mid);
+    margin-bottom: 8px;
+}
+
+.author-articles-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ah-ink);
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+    .author-articles-wrap { padding-top: 34px; }
+    .author-articles-title { font-size: 19px; }
+    .author-articles-header { text-align: center; }
+}

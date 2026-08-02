@@ -322,6 +322,7 @@ html, body {
 .stat-icon-teal   { background: #e0f2f1; color: #00796b; }
 .stat-icon-pink   { background: #fce4ec; color: #c2185b; }
 .stat-icon-red    { background: #ffebee; color: #c62828; }
+.stat-icon-cyan   { background: #e0f7fa; color: #00838f; }
 
 .stat-info {
     display: flex;
@@ -1004,3 +1005,11 @@ html, body {
     background: #f8fafc;
     border-radius: 18px;
 }
+
+/* ── Shared AJAX paginator (partials/paginator.blade.php) ── */
+.pagi-wrap{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 22px;border-top:1px solid #e2e8f0;background:#fafafa;flex-shrink:0;flex-wrap:wrap}
+.pagi-btn{min-width:32px;height:32px;padding:0 9px;border:1.5px solid #e2e8f0;background:#fff;border-radius:7px;font-size:13px;font-weight:500;color:#475569;cursor:pointer;transition:all .15s;line-height:1}
+.pagi-btn:hover:not(:disabled){background:#f1f5f9;border-color:#87b942;color:#87b942}
+.pagi-btn.pagi-active{background:#87b942;border-color:#87b942;color:#fff;font-weight:700}
+.pagi-btn:disabled{opacity:.4;cursor:not-allowed}
+.pagi-ellipsis{padding:0 4px;color:#94a3b8;font-size:14px;line-height:32px}

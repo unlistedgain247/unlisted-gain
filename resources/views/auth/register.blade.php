@@ -9,22 +9,7 @@
     <link href="{{ asset('assets/auth/css/bootstrap-extended.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/auth/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/auth/css/icons.css') }}" rel="stylesheet">
-    <style>
-        .auth-page-wrapper {
-            background-image: url("{{ asset('assets/auth/images/login-images/02.png') }}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: calc(100vh - 60px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-        .auth-error { color: #dc3545; font-size: 12px; margin-top: 4px; display: none; }
-        .auth-alert { border-radius: 10px; font-size: 13px; padding: 10px 14px; margin-bottom: 10px; display: none; }
-        .is-invalid { border-color: #dc3545 !important; }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/register.css') }}?v={{ filemtime(public_path('assets/css/pagecss/register.css')) }}">
 @endpush
 
 @section('content')

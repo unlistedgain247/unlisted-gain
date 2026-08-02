@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Privilege;
+use App\Helpers\SessionAuth;
 use App\Models\User;
 use App\Models\UnlistedLead;
 use App\Models\UnlistedLeadActivity;
@@ -14,7 +15,7 @@ class UnlistedLeadsController extends Controller
 {
     public function leads()
     {
-        $isAdmin     = !empty(Privilege::get('admin')) || !empty(Privilege::get('user_master'));
+        $isAdmin     = !empty(Privilege::get('admin'));
         $canAllocate = $isAdmin || !empty(Privilege::get('unlisted.leads_allocation'));
         $canSeeOwn   = !empty(Privilege::get('unlisted.leads'));
 
@@ -27,7 +28,7 @@ class UnlistedLeadsController extends Controller
 
     public function leadsData(Request $request)
     {
-        $isAdmin     = !empty(Privilege::get('admin')) || !empty(Privilege::get('user_master'));
+        $isAdmin     = !empty(Privilege::get('admin'));
         $canAllocate = $isAdmin || !empty(Privilege::get('unlisted.leads_allocation'));
         $canSeeOwn   = !empty(Privilege::get('unlisted.leads'));
 
@@ -111,7 +112,6 @@ class UnlistedLeadsController extends Controller
     public function allocateLead(Request $request, int $leadId)
     {
         $canAllocate = !empty(Privilege::get('admin'))
-                    || !empty(Privilege::get('user_master'))
                     || !empty(Privilege::get('unlisted.leads_allocation'));
 
         if (!$canAllocate) return response()->json(['success' => false], 403);
@@ -197,7 +197,7 @@ class UnlistedLeadsController extends Controller
 
     public function investInquiry(Request $request)
     {
-        if (!session('uid')) {
+        if (!SessionAuth::valid()) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
 
@@ -312,7 +312,6 @@ class UnlistedLeadsController extends Controller
     private function canAccessLeads(): bool
     {
         return !empty(Privilege::get('admin'))
-            || !empty(Privilege::get('user_master'))
             || !empty(Privilege::get('unlisted.leads_allocation'))
             || !empty(Privilege::get('unlisted.leads'));
     }

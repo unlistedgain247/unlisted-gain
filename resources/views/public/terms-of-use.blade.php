@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Terms of Use | UnlistedGain')
 @section('meta_description', 'Review the Terms of Use for UnlistedGain. Understand our service eligibility, user responsibilities, and the legal framework for trading unlisted shares on our platform.')

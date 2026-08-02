@@ -1,0 +1,124 @@
+/* ── Filters ──────────────────────────────────────────────── */
+    .acc-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+        padding: 14px 18px;
+        background: #fafafa;
+        border: 1px solid #eef0f3;
+        border-radius: 14px;
+        margin-bottom: 20px;
+    }
+    .acc-filters .filter-group { display: flex; flex-direction: column; gap: 5px; }
+    .acc-filters label {
+        font-size: 10px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.06em; color: #9ca3af;
+    }
+    .acc-filters input {
+        padding: 0 12px; border: 1px solid #e2e4e9; border-radius: 8px;
+        font-size: 13px; color: #1f2937; background: #fff; height: 38px; min-width: 150px;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .acc-filters input:focus {
+        outline: none; border-color: #87b942; box-shadow: 0 0 0 3px rgba(135,185,66,.15);
+    }
+    .acc-filters .filter-btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 0 20px; height: 38px; border-radius: 8px;
+        border: none; font-size: 13px; font-weight: 600; cursor: pointer;
+        background: #87b942; color: #fff; transition: background .15s;
+    }
+    .acc-filters .filter-btn:hover { background: #769e39; }
+
+    /* ── KPI stat tiles (Report 1) ───────────────────────────────── */
+    .acc-kpi-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    .acc-kpi-tile {
+        background: #fff;
+        border: 1px solid #eef0f3;
+        border-radius: 14px;
+        padding: 16px 18px;
+        position: relative;
+        overflow: hidden;
+    }
+    .acc-kpi-tile::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        background: #87b942;
+    }
+    .acc-kpi-label {
+        font-size: 11px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .06em; color: #9ca3af; margin: 0 0 6px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .acc-kpi-value {
+        font-size: 24px; font-weight: 700; color: #111827; line-height: 1.15;
+    }
+    .acc-kpi-breakdown {
+        display: flex; gap: 14px; margin-top: 10px; padding-top: 10px;
+        border-top: 1px solid #f1f3f5;
+    }
+    .acc-kpi-breakdown div { font-size: 11px; color: #6b7280; }
+    .acc-kpi-breakdown span {
+        display: block; font-size: 13px; font-weight: 600; color: #374151;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Report cards (Opening / Closing holdings) ──────────────── */
+    .acc-card { background: #fff; border: 1px solid #eef0f3; border-radius: 14px; overflow: hidden; }
+    .acc-card-hdr {
+        display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        padding: 12px 16px; border-bottom: 1px solid #eef0f3; background: #fafbfc;
+    }
+    .acc-card-title { font-size: 13px; font-weight: 700; color: #1f2937; margin: 0; }
+    .acc-card-sub { font-size: 11px; color: #9ca3af; margin: 0; }
+    .acc-accent-bar {
+        display: inline-block; width: 3px; height: 14px; border-radius: 2px;
+        background: #87b942; flex-shrink: 0;
+    }
+
+    .acc-tbl { font-size: 12.5px; width: 100%; border-collapse: collapse; }
+    .acc-tbl thead th {
+        position: sticky; top: 0; z-index: 1;
+        background: #f8fafc; font-size: 10px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .05em; color: #6c757d;
+        padding: 9px 12px; border-bottom: 2px solid #eef0f3; white-space: nowrap;
+    }
+    .acc-tbl tbody td {
+        padding: 8px 12px; border-bottom: 1px solid #f4f5f7;
+        font-variant-numeric: tabular-nums; white-space: nowrap;
+    }
+    .acc-tbl tbody tr:nth-child(even) { background: #fbfcfd; }
+    .acc-tbl tbody tr:hover { background: #f4faee; }
+    .acc-tbl tfoot td {
+        padding: 10px 12px; background: #f0f7e8; font-weight: 700;
+        font-variant-numeric: tabular-nums; border-top: 2px solid #e1ebd3;
+    }
+    .acc-tbl-scroll { max-height: 420px; overflow-y: auto; }
+
+    .acc-val-pos { color: #0f7a3d; font-weight: 600; }
+    .acc-val-neg { color: #d0342c; font-weight: 600; }
+
+    .acc-reports-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    /* ── Mobile ──────────────────────────────────────────────── */
+    @media (max-width: 767.98px) {
+        .acc-filters { flex-direction: column; align-items: stretch; }
+        .acc-filters .filter-group { width: 100%; }
+        .acc-filters input { width: 100%; }
+        .acc-filters .filter-btn { width: 100%; justify-content: center; }
+
+        .acc-kpi-row { grid-template-columns: 1fr; }
+        .acc-kpi-value { font-size: 21px; }
+
+        .acc-reports-grid { grid-template-columns: 1fr; }
+    }

@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Knowledge Centre - Learn About Unlisted Shares | UnlistedGain')
 @section('meta_description', 'Your comprehensive resource hub for understanding unlisted shares, pre-IPO investments, and building wealth before companies go public. Learn how to invest safely.')

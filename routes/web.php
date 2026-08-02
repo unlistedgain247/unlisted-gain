@@ -13,6 +13,10 @@ use App\Http\Controllers\UnlistedOrdersController;
 use App\Http\Controllers\PgController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\UnlistedReportController;
+use App\Http\Controllers\CmsArticleController;
+use App\Http\Controllers\CmsAuthorProfileController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AuthorController;
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -38,6 +42,12 @@ Route::get('/pan-unlisted-shares', [PublicController::class, 'panUnlistedShares'
 Route::get('/sebi-guidelines',     [PublicController::class, 'sebiGuidelines'])->name('public.sebi-guidelines');
 Route::get('/knowledge-centre',    [PublicController::class, 'knowledgeCentre'])->name('public.knowledge-centre');
 Route::get('/faq',                 [PublicController::class, 'faq'])->name('public.faq');
+Route::get('/market-widget-data',  [PublicController::class, 'marketWidgetData'])->name('public.market-widget.data');
+
+Route::get('/articles',         [ArticleController::class, 'index'])->name('public.articles');
+Route::get('/articles/{slug}',  [ArticleController::class, 'show'])->name('public.articles.show');
+
+Route::get('/authors/{uid}/{slug?}', [AuthorController::class, 'show'])->name('public.authors.show');
 
 Route::post('/session/invest-intent', function (\Illuminate\Http\Request $request) {
     $path = $request->input('return_to', '/');
@@ -65,25 +75,27 @@ Route::post('/invest-inquiry', [UnlistedLeadsController::class, 'investInquiry']
 // Profile
 Route::get('/profile',            [ProfileController::class, 'show'])->name('profile');
 Route::post('/profile/update',    [ProfileController::class, 'update'])->name('profile.update');
-Route::post('/profile/password',  [ProfileController::class, 'updatePassword'])->name('profile.password');
-Route::post('/profile/avatar',    [ProfileController::class, 'uploadAvatar'])->name('profile.avatar.upload');
+Route::post('/profile/password',  [ProfileController::class, 'updatePassword'])->name('profile.password')->middleware('throttle:profile-sensitive');
+Route::post('/profile/avatar',    [ProfileController::class, 'uploadAvatar'])->name('profile.avatar.upload')->middleware('throttle:profile-sensitive');
 Route::get('/profile/avatar/{uid}', [ProfileController::class, 'serveAvatar'])->name('profile.avatar');
-Route::post('/profile/kyc/bank',  [ProfileController::class, 'uploadBank'])->name('profile.kyc.bank');
-Route::post('/profile/kyc/demat', [ProfileController::class, 'uploadDemat'])->name('profile.kyc.demat');
-Route::post('/profile/kyc/pan',   [ProfileController::class, 'uploadPan'])->name('profile.kyc.pan');
+Route::post('/profile/kyc/bank',  [ProfileController::class, 'uploadBank'])->name('profile.kyc.bank')->middleware('throttle:profile-sensitive');
+Route::post('/profile/kyc/demat', [ProfileController::class, 'uploadDemat'])->name('profile.kyc.demat')->middleware('throttle:profile-sensitive');
+Route::post('/profile/kyc/pan',   [ProfileController::class, 'uploadPan'])->name('profile.kyc.pan')->middleware('throttle:profile-sensitive');
 
 Route::prefix('unlisted')->group(function () {
     Route::get('/',       [StocksController::class, 'buy'])->name('public.buy');
-    Route::get('/stocks', [StocksController::class, 'stocks'])->name('public.stocks');
+    Route::get('/stocks', [StocksController::class, 'stocks'])->name('public.stocks')->middleware('throttle:public-data');
 });
 
-Route::get('/stocks/search-list', [StocksController::class, 'searchList'])->name('public.stocks.search-list');
+Route::get('/sell', [StocksController::class, 'sell'])->name('public.sell');
+
+Route::get('/stocks/search-list', [StocksController::class, 'searchList'])->name('public.stocks.search-list')->middleware('throttle:public-data');
 
 Route::get('/pre-ipo-unlisted-shares',       [StocksController::class, 'preIpo'])->name('public.pre-ipo');
-Route::get('/pre-ipo-unlisted-shares/data',  [StocksController::class, 'preIpoData'])->name('public.pre-ipo.data');
+Route::get('/pre-ipo-unlisted-shares/data',  [StocksController::class, 'preIpoData'])->name('public.pre-ipo.data')->middleware('throttle:public-data');
 
 Route::get('/unlisted-shares-price-list-india',       [StocksController::class, 'priceList'])->name('public.price-list');
-Route::get('/unlisted-shares-price-list-india/data',  [StocksController::class, 'priceListData'])->name('public.price-list.data');
+Route::get('/unlisted-shares-price-list-india/data',  [StocksController::class, 'priceListData'])->name('public.price-list.data')->middleware('throttle:public-data');
 
 Route::get('/companies/{slug}/', [StocksController::class, 'company'])->name('public.company');
 
@@ -130,6 +142,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/unlisted', [UnlistedStocksController::class, 'index'])
         ->middleware('privilege:unlisted')
         ->name('unlisted');
+
+    Route::get('/unlisted/docs', [UnlistedStocksController::class, 'docs'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.docs');
+
+    Route::get('/unlisted/docs/data', [UnlistedStocksController::class, 'docsData'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.docs.data');
+
+    Route::post('/unlisted/docs', [UnlistedStocksController::class, 'storeDocument'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.docs.store');
+
+    Route::get('/unlisted/docs/{id}', [UnlistedStocksController::class, 'getDocument'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.docs.get');
+
+    Route::put('/unlisted/docs/{id}', [UnlistedStocksController::class, 'updateDocument'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.docs.update');
+
+    Route::post('/unlisted/docs/{id}/toggle', [UnlistedStocksController::class, 'toggleDocumentStatus'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.docs.toggle');
 
     Route::post('/unlisted/stocks', [UnlistedStocksController::class, 'storeStock'])
         ->middleware('privilege:unlisted')
@@ -334,17 +370,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->name('pg.transactions.export');
 
     // ── User Dashboard Modal ─────────────────────────────────────────────────
+    // Non-financial tabs stay reachable by any staff role that can already see
+    // this user (CRM/leads/orders/stock desks); bank details, PG ledger, and
+    // withdrawals are gated stricter below since they're PII/financial data
+    // those roles have no business need to see.
     Route::prefix('/users/{uid}/dashboard')->middleware('privilege:admin,user_master,unlisted,pg')->group(function () {
         Route::get('/',                [UserDashboardController::class, 'profile']);
         Route::get('/orders',          [UserDashboardController::class, 'orders']);
         Route::get('/demat',           [UserDashboardController::class, 'demat']);
         Route::get('/portfolio',       [UserDashboardController::class, 'portfolio']);
+        Route::get('/communication',   [UserDashboardController::class, 'getCommunication']);
+        Route::post('/communication',  [UserDashboardController::class, 'saveCommunication']);
+    });
+
+    Route::prefix('/users/{uid}/dashboard')->middleware('privilege:admin,pg')->group(function () {
         Route::get('/transactions',    [UserDashboardController::class, 'transactions']);
         Route::get('/request-history',                          [UserDashboardController::class, 'requestHistory']);
         Route::post('/request-history/{requestId}/cancel',      [UserDashboardController::class, 'cancelRequest']);
         Route::get('/bank-demat',      [UserDashboardController::class, 'bankDemat']);
-        Route::get('/communication',   [UserDashboardController::class, 'getCommunication']);
-        Route::post('/communication',  [UserDashboardController::class, 'saveCommunication']);
         Route::get('/withdraw',        [UserDashboardController::class, 'withdrawForm']);
         Route::post('/withdraw',       [UserDashboardController::class, 'saveWithdraw']);
     });
@@ -386,4 +429,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/unlisted/reports/last-insert', [UnlistedReportController::class, 'lastInsert'])
         ->middleware('privilege:unlisted')
         ->name('unlisted.reports.last-insert');
+
+    // ── CMS / Articles ───────────────────────────────────────────────────────
+    Route::prefix('/cms/articles')->middleware('privilege:cms')->group(function () {
+        Route::get('/',                    [CmsArticleController::class, 'index'])->name('cms.articles');
+        Route::get('/create',              [CmsArticleController::class, 'create'])->name('cms.articles.create');
+        Route::post('/',                   [CmsArticleController::class, 'store'])->name('cms.articles.store');
+        Route::get('/{id}/edit',           [CmsArticleController::class, 'edit'])->name('cms.articles.edit');
+        Route::put('/{id}',                [CmsArticleController::class, 'update'])->name('cms.articles.update');
+        Route::post('/{id}/heartbeat',     [CmsArticleController::class, 'heartbeat'])->name('cms.articles.heartbeat');
+        Route::post('/{id}/release-lock',  [CmsArticleController::class, 'releaseLock'])->name('cms.articles.release-lock');
+        Route::post('/{id}/publish-toggle',[CmsArticleController::class, 'publishToggle'])->name('cms.articles.publish-toggle');
+        Route::delete('/{id}',             [CmsArticleController::class, 'trash'])->name('cms.articles.trash');
+        Route::post('/{id}/restore',       [CmsArticleController::class, 'restore'])->name('cms.articles.restore');
+        Route::delete('/{id}/force',       [CmsArticleController::class, 'forceDelete'])->name('cms.articles.force-delete');
+        Route::post('/upload-image',       [CmsArticleController::class, 'uploadContentImage'])->name('cms.articles.upload-image');
+        Route::get('/stocks/search',       [CmsArticleController::class, 'searchStocks'])->name('cms.articles.stocks.search');
+    });
+
+    Route::prefix('/cms/profile')->middleware('privilege:cms')->group(function () {
+        Route::get('/',  [CmsAuthorProfileController::class, 'edit'])->name('cms.profile.edit');
+        Route::post('/', [CmsAuthorProfileController::class, 'update'])->name('cms.profile.update');
+    });
 });

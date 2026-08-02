@@ -3,39 +3,7 @@
 @section('title', 'Transactions | PG | Admin')
 
 @push('styles')
-<style>
-    .pg-filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: flex-end;
-        padding: 16px 20px;
-        border-bottom: 1px solid #f0f0f0;
-        background: #fafafa;
-    }
-    .pg-filters .filter-group { display: flex; flex-direction: column; gap: 4px; position: relative; }
-    .pg-filters label {
-        font-size: 10px; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.06em; color: #999;
-    }
-    .pg-filters input, .pg-filters select {
-        padding: 6px 10px; border: 1px solid #e0e0e0; border-radius: 6px;
-        font-size: 12px; color: #333; background: #fff; height: 34px; min-width: 130px;
-    }
-    .pg-filters input:focus, .pg-filters select:focus { outline: none; border-color: #87b942; }
-    .pg-filters .filter-btn {
-        padding: 0 18px; height: 34px; border-radius: 6px;
-        border: none; font-size: 12px; font-weight: 600; cursor: pointer;
-        text-decoration: none; display: inline-flex; align-items: center;
-    }
-    .txn-dropdown {
-        position: absolute; top: 100%; left: 0; z-index: 9999; width: 100%;
-        background: #fff; border: 1px solid #ddd; border-radius: 4px;
-        display: none; max-height: 160px; overflow-y: auto; font-size: 12px;
-    }
-    #pgTxnTableWrap { min-height: 200px; }
-    .pg-loading { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/css/admin/pg-transactions.css') }}?v={{ filemtime(public_path('assets/css/admin/pg-transactions.css')) }}">
 @endpush
 
 @section('content')

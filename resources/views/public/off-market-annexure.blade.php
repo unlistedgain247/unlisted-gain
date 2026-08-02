@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Off Market Annexure - Share Transfer Guide | UnlistedGain')
 @section('meta_description', 'Understanding the off-market share transfer process and associated documentation for unlisted share transactions in India. Learn about DIS, CML, and transfer steps.')

@@ -2,6 +2,7 @@
     $p       = $user->privilege ?? [];
     $ul      = $p['unlisted'] ?? [];
     $pg      = $p['pg'] ?? [];
+    $cms     = $p['cms'] ?? [];
     $initials = collect(explode(' ', $user->name))->take(2)->map(fn($w) => strtoupper($w[0]))->join('');
     $checked  = fn(bool $val) => $val ? 'checked' : '';
 @endphp
@@ -40,7 +41,7 @@
                     Access Level
                 </div>
 
-                <label class="priv-toggle-row priv-toggle-featured">
+                <label class="priv-toggle-row priv-toggle-featured" @if(!$canGrantAdmin) title="Only an existing admin can grant admin access" @endif>
                     <div class="priv-toggle-info">
                         <span class="priv-toggle-name">Admin</span>
                         <span class="priv-toggle-desc">Full dashboard access</span>
@@ -48,7 +49,7 @@
                     <div class="priv-toggle-wrap">
                         <span class="priv-super-badge">Super</span>
                         <label class="priv-switch">
-                            <input type="checkbox" name="admin" {{ $checked(!empty($p['admin'])) }}>
+                            <input type="checkbox" name="admin" {{ $checked(!empty($p['admin'])) }} @disabled(!$canGrantAdmin)>
                             <span class="priv-slider"></span>
                         </label>
                     </div>
@@ -91,7 +92,7 @@
                 <div class="priv-pill-grid">
                     @php
                         $unlistedItems = [
-                            'unlisted_stockx'            => ['label' => 'Stocks',           'key' => 'stockx'],
+                            'unlisted_stocks'            => ['label' => 'Stocks',           'key' => 'stocks'],
                             'unlisted_leads'             => ['label' => 'Leads',            'key' => 'leads'],
                             'unlisted_leads_allocation'  => ['label' => 'Leads Allocation', 'key' => 'leads_allocation'],
                             'unlisted_orders'            => ['label' => 'Orders',           'key' => 'orders'],
@@ -136,6 +137,38 @@
                     @foreach($pgItems as $name => $item)
                         <label class="priv-pill {{ !empty($pg[$item['key']]) ? 'active' : '' }}">
                             <input type="checkbox" name="{{ $name }}" {{ $checked(!empty($pg[$item['key']])) }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            {{ $item['label'] }}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- CMS Access --}}
+            <div class="priv-section">
+                <div class="priv-section-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    CMS Access
+                </div>
+
+                <div class="priv-pill-grid">
+                    @php
+                        $cmsItems = [
+                            'cms_author'   => ['label' => 'Author',       'key' => 'author'],
+                            'cms_reviewer' => ['label' => 'Reviewer',     'key' => 'reviewer'],
+                        ];
+                    @endphp
+
+                    @foreach($cmsItems as $name => $item)
+                        <label class="priv-pill {{ !empty($cms[$item['key']]) ? 'active' : '' }}">
+                            <input type="checkbox" name="{{ $name }}" {{ $checked(!empty($cms[$item['key']])) }}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="20 6 9 17 4 12"/>

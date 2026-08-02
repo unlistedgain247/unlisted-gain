@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'My Profile | UnlistedGain')
 @section('meta_description', 'Manage your UnlistedGain account — update personal details and change your password.')
@@ -103,6 +103,12 @@
                 </div>
                 <form id="passwordForm" autocomplete="off">
                     @csrf
+                    <div class="pf-group">
+                        <label class="pf-label" for="pf_current_pw">Current Password</label>
+                        <input id="pf_current_pw" name="current_password" type="password"
+                               class="pf-input" autocomplete="current-password">
+                        <p class="pf-error" id="err_current_pw"></p>
+                    </div>
                     <div class="pf-group">
                         <label class="pf-label" for="pf_new_pw">New Password</label>
                         <input id="pf_new_pw" name="new_password" type="password"
@@ -493,6 +499,7 @@
             method:  'POST',
             headers: { 'X-CSRF-TOKEN': CSRF },
             data:    {
+                current_password:          $('#pf_current_pw').val(),
                 new_password:              $('#pf_new_pw').val(),
                 new_password_confirmation: $('#pf_conf_pw').val(),
             },
@@ -504,6 +511,7 @@
         .fail(function (xhr) {
             if (xhr.status === 422) {
                 var errs = xhr.responseJSON.errors || {};
+                if (errs.current_password) showFieldError('err_current_pw', 'pf_current_pw', errs.current_password[0]);
                 if (errs.new_password) showFieldError('err_new_pw', 'pf_new_pw', errs.new_password[0]);
             } else {
                 showToast('passwordToast', 'error', 'Something went wrong.');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\SessionAuth;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class GuestOnly
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (session('uid') && session('session_token')) {
+        if (SessionAuth::valid()) {
             return redirect('/');
         }
 

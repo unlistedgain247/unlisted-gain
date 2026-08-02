@@ -99,6 +99,21 @@ class StocksController extends Controller
         return view('public.buy', compact('stocks'));
     }
 
+    public function sell(Request $request)
+    {
+        $q    = trim($request->input('q', ''));
+        $sort = $request->input('sort', 'mcap');
+
+        ['sql' => $sql, 'bindings' => $bindings] = $this->stocksQuery($q, $sort);
+        $stocks = DB::select($sql, $bindings);
+
+        if ($request->ajax()) {
+            return view('partials.stocks-rows', compact('stocks'));
+        }
+
+        return view('public.sell', compact('stocks'));
+    }
+
     private function priceListResults(string $q = '', string $sort = 'mcap'): \Illuminate\Support\Collection
     {
         $orderBy = match ($sort) {
@@ -236,8 +251,7 @@ class StocksController extends Controller
     {
         ['sql' => $sql, 'bindings' => $bindings] = $this->stocksQuery();
 
-        return response()->json(DB::select($sql, $bindings))
-            ->header('Access-Control-Allow-Origin', '*');
+        return response()->json(DB::select($sql, $bindings));
     }
 
     public function searchList()
@@ -305,6 +319,14 @@ class StocksController extends Controller
             ->orderByDesc('UL_THESIS_ID')
             ->first();
 
+        $documents = DB::table('unlisted_documents')
+            ->where('UL_DOC_FINCODE', $fincode)
+            ->where('UL_DOC_STATUS', '1')
+            ->orderByDesc('UL_DOC_DATE')
+            ->orderByDesc('UL_DOC_ID')
+            ->get()
+            ->groupBy('UL_DOC_TYPE');
+
         // Fix relative image src paths (e.g. src="images/...") so they resolve correctly
         // from any route depth by prepending a leading slash.
         $thesisHtml = null;
@@ -345,7 +367,7 @@ class StocksController extends Controller
 
         return view('public.company', compact(
             'stock', 'priceData', 'priceHistory', 'latestFin', 'financials', 'quarterlyFin', 'thesis', 'thesisHtml',
-            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue'
+            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue', 'documents'
         ));
     }
 }

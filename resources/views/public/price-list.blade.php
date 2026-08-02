@@ -1,4 +1,4 @@
-﻿@extends('layout.app')
+@extends('layout.app')
 
 @section('title', 'Unlisted Share Price List 2026 | Daily Updated Prices India')
 @section('meta_description', 'Get the latest, daily updated prices for all major unlisted and pre-IPO shares in India. Check face value, book value, and market cap of top unlisted companies.')
@@ -7,33 +7,6 @@
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/unlisted.css') }}?v={{ filemtime(public_path('assets/css/pagecss/unlisted.css')) }}">
 <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
-<style>
-    .ug-price-section .company-info img {
-        width: 35px; height: 35px; object-fit: contain;
-        border: 1px solid #eee; border-radius: 6px;
-        padding: 3px; background: #fff;
-    }
-    .ug-price-section .action-btns { display: flex; gap: 6px; }
-    .ug-price-section .buy-btn, .ug-price-section .sell-btn {
-        padding: 5px 14px; border-radius: 5px; font-size: 12px;
-        font-weight: 600; cursor: pointer; border: none;
-        transition: background 0.2s;
-    }
-    .ug-price-section .buy-btn  { background: #28a745; color: #fff; }
-    .ug-price-section .sell-btn { background: #dc3545; color: #fff; }
-    .ug-price-section .buy-btn:hover  { background: #218838; }
-    .ug-price-section .sell-btn:hover { background: #c82333; }
-    .ug-price-section td.td-price,
-    .ug-price-section td.td-mcap { font-weight: 700; color: #1a1a1a; }
-    .pricing-disclaimer-row {
-        font-size: 13px; color: #666; margin-bottom: 16px;
-        display: flex; align-items: center; gap: 6px;
-    }
-    .pricing-disclaimer-row i { color: #87b942; flex-shrink: 0; }
-    #priceTableContainer .pl-loading {
-        text-align: center; padding: 48px; color: #94a3b8; font-size: 15px;
-    }
-</style>
 @endpush
 
 @section('subheader')
@@ -42,20 +15,65 @@
 
 @section('content')
 <main>
+    {{-- Hero --}}
+    <section class="price-hero">
+        <div class="price-hero-inner">
+            <span class="price-hero-eyebrow">Updated {{ \Carbon\Carbon::now()->format('F j, Y') }}</span>
+            <h1 class="price-hero-title">Unlisted <span>Share Price List</span></h1>
+            <p class="price-hero-subtitle">Daily updated prices, face value, book value and market cap for every major unlisted company in India.</p>
+
+            <div class="price-hero-search">
+                <div class="search-box-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="companySearch" value="{{ $q }}" placeholder="Search company name...">
+                </div>
+                <div class="price-hero-chips">
+                    <span class="price-hero-chips-label">Popular:</span>
+                    @foreach(['NSE', 'OYO', 'CSK', 'HDB Financial', 'Boat'] as $chip)
+                    <button type="button" class="pi-chip" data-term="{{ $chip }}">{{ $chip }}</button>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Stats --}}
+    <section class="price-stats-section">
+        <div class="price-stats-grid">
+            <div class="price-stat-card">
+                <span class="price-stat-icon"><i class="fa-solid fa-building-columns"></i></span>
+                <div>
+                    <div class="price-stat-value">{{ $stocks->total() }}+</div>
+                    <div class="price-stat-label">Companies Tracked</div>
+                </div>
+            </div>
+            <div class="price-stat-card">
+                <span class="price-stat-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                <div>
+                    <div class="price-stat-value">Daily</div>
+                    <div class="price-stat-label">Price Updates</div>
+                </div>
+            </div>
+            <div class="price-stat-card">
+                <span class="price-stat-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <div>
+                    <div class="price-stat-value">Verified</div>
+                    <div class="price-stat-label">Company Data</div>
+                </div>
+            </div>
+            <div class="price-stat-card">
+                <span class="price-stat-icon"><i class="fa-solid fa-chart-line"></i></span>
+                <div>
+                    <div class="price-stat-value">100%</div>
+                    <div class="price-stat-label">Price Transparency</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="ug-price-section">
 
-        <div class="price-header">
-            <h1>Unlisted <span>Share Price List</span></h1>
-            <p class="last-updated">Last Updated: {{ \Carbon\Carbon::now()->format('F j, Y') }}</p>
-        </div>
-
         <div class="table-controls">
-            <div class="search-box">
-                <input type="text" id="companySearch" value="{{ $q }}" placeholder="Search by company name...">
-                <svg viewBox="0 0 24 24" width="20" height="20">
-                    <path fill="#888" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
-                </svg>
-            </div>
             <div class="sort-box">
                 <select id="sortSelect">
                     <option value="mcap"  {{ $sort === 'mcap'  ? 'selected' : '' }}>Market Cap ↓</option>
@@ -66,14 +84,17 @@
         </div>
 
         <p class="pricing-disclaimer-row">
-            <i class="fas fa-info-circle"></i>
+            <i class="fa-solid fa-circle-info"></i>
             Pricing is tentative &amp; subject to change at the time of execution.
         </p>
 
-        <h2 class="about-title">About <span>Unlisted Shares</span></h2>
-
         <div id="priceTableContainer">
             @include('public.partials.price-list-rows', ['stocks' => $stocks])
+        </div>
+
+        <div class="about-unlisted-box">
+            <h2 class="about-title">About <span>Unlisted Shares</span></h2>
+            <p>Unlisted shares are equity in companies that are not yet listed on a stock exchange like the NSE or BSE. This price list shows the latest available trading price, face value, book value, market capitalisation and P/E ratio for each company, sourced daily so you can track valuations before buying or selling.</p>
         </div>
 
     </section>
@@ -138,7 +159,9 @@ function loadPriceListPage(page) {
     var q    = $('#companySearch').val().trim();
     var sort = $('#sortSelect').val();
 
-    $('#priceTableContainer').html('<div class="pl-loading"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:22px"></i></div>');
+    var skeletonRows = '';
+    for (var i = 0; i < 5; i++) { skeletonRows += '<div class="pi-skeleton-row"></div>'; }
+    $('#priceTableContainer').html('<div class="pi-skeleton">' + skeletonRows + '</div>');
 
     $.get('{{ route("public.price-list.data") }}', { q: q, sort: sort, page: page })
      .done(function (html) {
@@ -167,6 +190,23 @@ $(document).ready(function () {
     // Sort
     $('#sortSelect').on('change', function () {
         loadPriceListPage(1);
+    });
+
+    // Row click → company page
+    $(document).on('click', '.stock-row', function (e) {
+        if ($(e.target).closest('.invest-trigger').length) return;
+        var href = $(this).data('href');
+        if (href) window.location.href = href;
+    });
+
+    // Quick-search chips
+    $('.pi-chip').on('click', function () {
+        $('#companySearch').val($(this).data('term'));
+        loadPriceListPage(1);
+        var target = $('.ug-price-section');
+        if (target.length) {
+            $('html,body').animate({ scrollTop: target.offset().top - 80 }, 400);
+        }
     });
 });
 </script>

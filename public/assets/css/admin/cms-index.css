@@ -1,0 +1,14 @@
+.cms-new-btn { display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#2196f3;color:#fff;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none; }
+.cms-new-btn:hover { background:#1976d2;color:#fff; }
+.cms-flash-success { background:#e8f5e9;color:#2e7d32;padding:10px 16px;border-radius:8px;margin-bottom:14px;font-size:13px;font-weight:600; }
+.cms-status-tabs { display:flex;gap:4px; }
+.cms-status-tab { padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;color:#666;text-decoration:none; }
+.cms-status-tab:hover { background:#f4f4f4;color:#333; }
+.cms-status-tab.active { background:#2196f3;color:#fff; }
+.cms-search-input { padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:7px;font-size:13px;min-width:200px; }
+.cms-search-btn { padding:7px 12px;border:1.5px solid #e2e8f0;border-radius:7px;background:#fff;cursor:pointer;color:#666; }
+.cms-action-btn { padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;border:1.5px solid #e2e8f0;background:#fff;color:#333;cursor:pointer;text-decoration:none;display:inline-block; }
+.cms-action-btn:hover { background:#f4f4f4;color:#333; }
+.cms-trash-btn:hover { border-color:#e53935;color:#e53935; }
+.cms-danger-btn { border-color:#e53935;color:#e53935; }
+.cms-danger-btn:hover { background:#e53935;color:#fff; }

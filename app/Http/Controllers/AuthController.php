@@ -117,6 +117,8 @@ class AuthController extends Controller
             return $user;
         });
 
+        $request->session()->regenerate();
+
         session([
             'uid'                => $user->uid,
             'session_token'      => $user->session_token,
@@ -216,6 +218,8 @@ class AuthController extends Controller
 
         $newToken = Str::random(60);
         $user->update(['session_token' => $newToken]);
+
+        $request->session()->regenerate();
 
         session([
             'uid'                => $user->uid,
