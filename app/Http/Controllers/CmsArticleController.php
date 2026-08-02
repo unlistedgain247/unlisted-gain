@@ -88,11 +88,22 @@ class CmsArticleController extends Controller
     }
 
     // Claiming the lock is metadata, not a content edit — must not bump
-    // updated_at, which the sidebar shows as "Last updated".
+    // updated_at, which the sidebar shows as "Last updated". A plain
+    // query-builder update (not the Eloquent model's save()) avoids that
+    // automatically, and also avoids Eloquent's `timestamps = false` trick,
+    // which has a nasty side effect: it disables the model's automatic
+    // Carbon-casting of created_at/updated_at for the rest of that instance's
+    // lifetime, so the view would get raw date strings instead of Carbon
+    // objects and crash on ->format().
     private function claimLock(Article $article, $uid): void
     {
-        $article->timestamps = false;
-        $article->forceFill(['locked_by' => $uid, 'locked_at' => now()])->save();
+        $now = now();
+        DB::table('articles')->where('id', $article->id)->update([
+            'locked_by' => $uid,
+            'locked_at' => $now,
+        ]);
+        $article->locked_by = $uid;
+        $article->locked_at = $now;
     }
 
     public function edit(int $id)
