@@ -240,8 +240,12 @@
                             @php $netSale=0; $netPurchase=0; @endphp
                             @foreach($orderReportRows as $r)
                             @php
-                                $label = $r->UL_ORD_TYPE === 'Buy' ? 'Purchase' : 'Sale';
-                                $net   = $r->UL_ORD_TYPE === 'Buy'
+                                // UL_ORD_TYPE is stored lowercase ('buy'/'sell') everywhere
+                                // it's written — compare case-insensitively so this doesn't
+                                // silently mislabel every row as "Sale".
+                                $isBuy = strtolower($r->UL_ORD_TYPE ?? '') === 'buy';
+                                $label = $isBuy ? 'Purchase' : 'Sale';
+                                $net   = $isBuy
                                        ? ($r->total_amount - $r->total_commission)
                                        : ($r->total_amount + $r->total_commission);
                                 if ($label === 'Sale') $netSale = $net;

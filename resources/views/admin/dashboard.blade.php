@@ -162,7 +162,7 @@
                             <td>{{ $order->UL_STOCKS_COMPNAME ?? '—' }}</td>
                             <td>{{ $order->user_name ?? '—' }}</td>
                             <td>
-                                <span class="admin-badge {{ $order->UL_ORD_TYPE === 'Sell' ? 'badge-sell' : 'badge-buy' }}">
+                                <span class="admin-badge {{ strtolower($order->UL_ORD_TYPE ?? '') === 'sell' ? 'badge-sell' : 'badge-buy' }}">
                                     {{ $order->UL_ORD_TYPE ?? '—' }}
                                 </span>
                             </td>
