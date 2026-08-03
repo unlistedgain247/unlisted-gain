@@ -985,3 +985,16 @@ html { scroll-behavior: smooth; }
 
 /* Breadcrumb share trigger, floating share/scroll-top buttons and the
    share modal now live site-wide in global.css (see reading-utils partial). */
+
+/* ── CMS draft/preview banner (public/articles/show.blade.php) ── */
+.article-preview-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff8e1;
+    color: #8a6d00;
+    border-bottom: 1px solid #f0dd94;
+    padding: 12px 20px;
+    font-size: 13.5px;
+}
+.article-preview-banner i { color: #c99a00; flex-shrink: 0; }

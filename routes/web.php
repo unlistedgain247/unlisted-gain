@@ -436,6 +436,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/create',              [CmsArticleController::class, 'create'])->name('cms.articles.create');
         Route::post('/',                   [CmsArticleController::class, 'store'])->name('cms.articles.store');
         Route::get('/{id}/edit',           [CmsArticleController::class, 'edit'])->name('cms.articles.edit');
+        Route::get('/{id}/preview',        [CmsArticleController::class, 'preview'])->name('cms.articles.preview');
         Route::put('/{id}',                [CmsArticleController::class, 'update'])->name('cms.articles.update');
         Route::post('/{id}/heartbeat',     [CmsArticleController::class, 'heartbeat'])->name('cms.articles.heartbeat');
         Route::post('/{id}/release-lock',  [CmsArticleController::class, 'releaseLock'])->name('cms.articles.release-lock');

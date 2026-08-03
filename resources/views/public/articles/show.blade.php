@@ -71,6 +71,15 @@
 
 @section('content')
 
+@if($article->status !== 'published')
+    <div class="article-preview-banner">
+        <i class="fa-solid fa-eye"></i>
+        <span>
+            <strong>Preview only</strong> — this article is {{ $article->status === 'draft' ? 'a draft' : $article->status }} and isn't visible to the public yet. Only you can see this page.
+        </span>
+    </div>
+@endif
+
 <div class="reading-progress-bar" id="readingProgressBar"></div>
 
 <main>

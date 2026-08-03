@@ -106,6 +106,17 @@ class CmsArticleController extends Controller
         $article->locked_at = $now;
     }
 
+    // Reuses the exact public article template so a draft previews as it will
+    // actually look once published — gated by the same privilege:cms as every
+    // other route in this group, so only CMS authors/reviewers can reach it,
+    // not the general public.
+    public function preview(int $id)
+    {
+        $article = Article::with('author', 'unlistedStocks')->findOrFail($id);
+
+        return view('public.articles.show', compact('article'));
+    }
+
     public function edit(int $id)
     {
         $article = Article::findOrFail($id);

@@ -62,6 +62,10 @@
                                 <br><a href="{{ route('public.articles.show', $article->slug) }}" target="_blank" style="font-size:12px;color:#2196f3;">
                                     View live <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;"></i>
                                 </a>
+                            @elseif(!$article->trashed())
+                                <br><a href="{{ route('admin.cms.articles.preview', $article->id) }}" target="_blank" style="font-size:12px;color:#e65100;">
+                                    Preview draft <i class="fa-solid fa-eye" style="font-size:10px;"></i>
+                                </a>
                             @endif
                         </td>
                         <td>{{ $article->author->name ?? '—' }}</td>
