@@ -242,12 +242,19 @@
                             @php
                                 // UL_ORD_TYPE is stored lowercase ('buy'/'sell') everywhere
                                 // it's written — compare case-insensitively so this doesn't
-                                // silently mislabel every row as "Sale".
+                                // silently mislabel every row.
+                                //
+                                // This report is from the platform's own books, not the
+                                // customer's: a customer 'buy' order means the platform sold
+                                // shares to them (platform Sale, commission is extra earning
+                                // on top of the amount); a customer 'sell' order means the
+                                // platform bought those shares back (platform Purchase,
+                                // commission reduces the effective cost).
                                 $isBuy = strtolower($r->UL_ORD_TYPE ?? '') === 'buy';
-                                $label = $isBuy ? 'Purchase' : 'Sale';
+                                $label = $isBuy ? 'Sale' : 'Purchase';
                                 $net   = $isBuy
-                                       ? ($r->total_amount - $r->total_commission)
-                                       : ($r->total_amount + $r->total_commission);
+                                       ? ($r->total_amount + $r->total_commission)
+                                       : ($r->total_amount - $r->total_commission);
                                 if ($label === 'Sale') $netSale = $net;
                                 else $netPurchase = $net;
                             @endphp
