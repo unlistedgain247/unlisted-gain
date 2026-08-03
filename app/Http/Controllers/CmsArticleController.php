@@ -234,7 +234,7 @@ class CmsArticleController extends Controller
     {
         $request->validate(['file' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120']);
 
-        $folder = public_path('images/article-content');
+        $folder = SafeUpload::webRoot() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'article-content';
         if (!is_dir($folder)) mkdir($folder, 0755, true);
 
         $file = $request->file('file');
@@ -316,7 +316,7 @@ class CmsArticleController extends Controller
 
     private function storeFeaturedImage(Request $request): string
     {
-        $folder = public_path('images/articles');
+        $folder = SafeUpload::webRoot() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'articles';
         if (!is_dir($folder)) mkdir($folder, 0755, true);
 
         $file = $request->file('featured_image');
@@ -332,7 +332,12 @@ class CmsArticleController extends Controller
     {
         if (!$relativePath) return;
 
-        $fullPath = public_path($relativePath);
-        if (is_file($fullPath)) @unlink($fullPath);
+        // Delete from both the real web root and the legacy public_path()
+        // location — older uploads (before this path fix) may only exist in
+        // the latter, or in both if a deploy's rsync copied it across.
+        foreach ([SafeUpload::webRoot(), public_path()] as $root) {
+            $fullPath = $root . DIRECTORY_SEPARATOR . $relativePath;
+            if (is_file($fullPath)) @unlink($fullPath);
+        }
     }
 }

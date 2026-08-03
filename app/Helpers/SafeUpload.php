@@ -45,4 +45,23 @@ class SafeUpload
     {
         return self::DOCUMENT_MIME_EXTENSIONS[$file->getMimeType()] ?? null;
     }
+
+    /**
+     * The real, web-served document root for public uploads (company logos,
+     * documents, article images, thesis images, ...).
+     *
+     * On this app's Hostinger deployment, public_html/ sits next to the app
+     * directory as a separate folder — it is NOT the same as public_path()
+     * (<app>/public), which is not web-accessible there. deploy.sh only
+     * copies public_path('images/...') into public_html/images/ as a one-way
+     * rsync during deploy, so anything written to public_path() directly is
+     * invisible to visitors until the next deploy runs. Always write public
+     * uploads here instead, so they're served immediately.
+     */
+    public static function webRoot(): string
+    {
+        $parentPublicHtml = dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html';
+
+        return is_dir($parentPublicHtml) ? $parentPublicHtml : public_path();
+    }
 }

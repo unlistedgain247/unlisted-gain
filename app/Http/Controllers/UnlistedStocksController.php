@@ -91,13 +91,7 @@ class UnlistedStocksController extends Controller
 
     private function docsDestDir(): string
     {
-        // Same production-safe resolution as the company-logo upload above:
-        // on Hostinger, public_html/ sits next to the app dir, and public_path()
-        // is not web-accessible there.
-        $parentPublicHtml = dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html';
-        $webRoot = is_dir($parentPublicHtml) ? $parentPublicHtml : public_path();
-
-        return $webRoot . DIRECTORY_SEPARATOR . 'company-docs';
+        return SafeUpload::webRoot() . DIRECTORY_SEPARATOR . 'company-docs';
     }
 
     private function storeDocumentFile($file, int $fincode, string $type): string
@@ -667,11 +661,7 @@ class UnlistedStocksController extends Controller
             abort_if($ext === null, 422, 'Unsupported image type.');
             $slug = $stock->UL_STOCKS_SLUG;
             $filename = $slug . '.' . $ext;
-            // On Hostinger, public_html/ sits next to the app dir (unlisted-gain/../public_html)
-            // public_path() returns unlisted-gain/public/ which is NOT web-accessible there
-            $parentPublicHtml = dirname(base_path()) . DIRECTORY_SEPARATOR . 'public_html';
-            $webRoot  = is_dir($parentPublicHtml) ? $parentPublicHtml : public_path();
-            $destDir  = $webRoot . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'company-logo';
+            $destDir  = SafeUpload::webRoot() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'company-logo';
 
             if (!is_dir($destDir)) {
                 mkdir($destDir, 0755, true);
@@ -749,7 +739,7 @@ class UnlistedStocksController extends Controller
 
         $request->validate(['file' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:5120']);
 
-        $folder = public_path('images/unlisted-thesis-images');
+        $folder = SafeUpload::webRoot() . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'unlisted-thesis-images';
         if (!is_dir($folder)) mkdir($folder, 0755, true);
 
         $file = $request->file('file');
