@@ -104,7 +104,7 @@
             <h2>9. Contact Us</h2>
             <p>If you have any questions or concerns about this Privacy Policy, please contact us:</p>
             <ul>
-                <li><strong>Email:</strong> privacy@unlistedgain.com</li>
+                <li><strong>Email:</strong> support@unlistedgain.com</li>
                 <li><strong>Address:</strong> 113/2, 1st Floor, Meenakshi Garden, Tilak Nagar, New Delhi - 110018
                 </li>
             </ul>

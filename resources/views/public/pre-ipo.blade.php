@@ -98,102 +98,163 @@
     <section class="ug-info-section">
         <div class="info-container">
 
-            <div class="info-row">
-                <div class="info-text">
-                    <h2 class="main-title">Best Platform To <span>Buy Pre-IPO | Unlisted Shares</span></h2>
+            <div class="info-section-head">
+                <h2 class="main-title">Best Platform To <span>Buy Pre-IPO | Unlisted Shares</span></h2>
+            </div>
 
-                    <div class="tab-buttons">
-                        <button class="tab-btn active" data-tab="what"><i class="fa-solid fa-circle-info"></i> What?</button>
-                        <button class="tab-btn" data-tab="why"><i class="fa-solid fa-chart-line"></i> Why?</button>
-                        <button class="tab-btn" data-tab="how"><i class="fa-solid fa-list-check"></i> How?</button>
+            {{-- What --}}
+            <div class="wwh-row">
+                <div class="wwh-visual">
+                    <svg viewBox="0 0 280 220" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="272" height="212" rx="24" fill="url(#whatBg)"/>
+                        <rect x="82" y="46" width="100" height="128" rx="8" fill="#fff" stroke="#cfe3ac" stroke-width="2"/>
+                        <rect x="98" y="66" width="68" height="8" rx="4" fill="#dcecc0"/>
+                        <rect x="98" y="84" width="68" height="6" rx="3" fill="#e9f3d9"/>
+                        <rect x="98" y="98" width="52" height="6" rx="3" fill="#e9f3d9"/>
+                        <rect x="98" y="120" width="68" height="6" rx="3" fill="#e9f3d9"/>
+                        <rect x="98" y="134" width="40" height="6" rx="3" fill="#e9f3d9"/>
+                        <circle cx="132" cy="152" r="10" fill="#87b942"/>
+                        <path d="M127 152l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="188" cy="150" r="30" fill="none" stroke="#4a7c20" stroke-width="7"/>
+                        <line x1="209" y1="171" x2="230" y2="192" stroke="#4a7c20" stroke-width="8" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="whatBg" x1="0" y1="0" x2="280" y2="220" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#f2f8ea"/>
+                                <stop offset="1" stop-color="#e4f0d3"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="wwh-content">
+                    <span class="wwh-tag"><i class="fa-solid fa-circle-info"></i> What</span>
+                    <h3>What Are Pre-IPO Shares?</h3>
+                    <div class="definition-box">
+                        <i class="fa-solid fa-quote-left definition-icon"></i>
+                        <p>Pre-IPO Companies are private firms who intend to have a listing on the stock market. In India that would mean being listed on the NSE or BSE or both. Once listed, these companies are referred to as publicly listed companies.</p>
                     </div>
+                    <p>Companies who have opened their IPO but have not yet been listed on the stock market, or have not yet made an Initial Public Offering, are referred to as Unlisted/Pre-IPO shares.</p>
+                </div>
+            </div>
 
-                    <div class="content-box" id="tab-what">
-                        <h3>What Are Pre-IPO Shares?</h3>
-                        <div class="definition-box">
-                            <i class="fa-solid fa-quote-left definition-icon"></i>
-                            <p>Pre-IPO Companies are private firms who intend to have a listing on the stock market. In India that would mean being listed on the NSE or BSE or both. Once listed, these companies are referred to as publicly listed companies.</p>
+            {{-- Why --}}
+            <div class="wwh-row reverse">
+                <div class="wwh-visual">
+                    <svg viewBox="0 0 280 220" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="272" height="212" rx="24" fill="url(#whyBg)"/>
+                        <line x1="60" y1="170" x2="230" y2="170" stroke="#cfe3ac" stroke-width="3" stroke-linecap="round"/>
+                        <rect x="72" y="130" width="26" height="40" rx="4" fill="#cfe3ac"/>
+                        <rect x="110" y="104" width="26" height="66" rx="4" fill="#a9cd6f"/>
+                        <rect x="148" y="118" width="26" height="52" rx="4" fill="#87b942"/>
+                        <rect x="186" y="80" width="26" height="90" rx="4" fill="#4a7c20"/>
+                        <path d="M66 96l38-22 30 16 46-38" stroke="#2d5711" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M162 44h20v20" stroke="#2d5711" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="whyBg" x1="0" y1="0" x2="280" y2="220" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#f2f8ea"/>
+                                <stop offset="1" stop-color="#e4f0d3"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="wwh-content">
+                    <span class="wwh-tag"><i class="fa-solid fa-chart-line"></i> Why</span>
+                    <h3>Why Invest in Pre-IPO Shares?</h3>
+                    <p>Pre-IPO investing offers the opportunity to buy shares at a price lower than the eventual IPO price, allowing early investors to benefit from significant listing gains.</p>
+                    <ul class="benefit-list">
+                        <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Potential for multifold returns compared to listed stocks</li>
+                        <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Early access before public listing drives valuations higher</li>
+                        <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Portfolio diversification with high-growth private companies</li>
+                        <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Less volatility compared to listed markets in growth phase</li>
+                    </ul>
+                </div>
+            </div>
+
+            {{-- How --}}
+            <div class="wwh-row">
+                <div class="wwh-visual">
+                    <svg viewBox="0 0 280 220" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="272" height="212" rx="24" fill="url(#howBg)"/>
+                        <rect x="70" y="40" width="90" height="140" rx="10" fill="#fff" stroke="#cfe3ac" stroke-width="2"/>
+                        <rect x="98" y="32" width="34" height="14" rx="4" fill="#87b942"/>
+                        <circle cx="92" cy="70" r="8" fill="#87b942"/>
+                        <path d="M88 70l3 3 6-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="108" y="66" width="38" height="7" rx="3.5" fill="#dcecc0"/>
+                        <circle cx="92" cy="98" r="8" fill="#87b942"/>
+                        <path d="M88 98l3 3 6-6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="108" y="94" width="38" height="7" rx="3.5" fill="#dcecc0"/>
+                        <circle cx="92" cy="126" r="8" fill="none" stroke="#cfe3ac" stroke-width="2.4"/>
+                        <rect x="108" y="122" width="30" height="7" rx="3.5" fill="#e9f3d9"/>
+                        <path d="M175 100l30-14v56l-30-14z" fill="#4a7c20"/>
+                        <circle cx="222" cy="100" r="20" fill="#87b942"/>
+                        <path d="M214 100l6 6 12-12" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="howBg" x1="0" y1="0" x2="280" y2="220" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#f2f8ea"/>
+                                <stop offset="1" stop-color="#e4f0d3"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="wwh-content">
+                    <span class="wwh-tag"><i class="fa-solid fa-list-check"></i> How</span>
+                    <h3>How to Buy Pre-IPO Shares?</h3>
+                    <p>Buying pre-IPO shares in India is straightforward through UnlistedGain:</p>
+                    <div class="steps-list">
+                        <div class="step-item">
+                            <span class="step-number">1</span>
+                            <p>Browse the listing below and select your desired company</p>
                         </div>
-                        <p>Companies who have opened their IPO but have not yet been listed on the stock market, or have not yet made an Initial Public Offering, are referred to as Unlisted/Pre-IPO shares.</p>
-                    </div>
-
-                    <div class="content-box" id="tab-why" style="display:none;">
-                        <h3>Why Invest in Pre-IPO Shares?</h3>
-                        <p>Pre-IPO investing offers the opportunity to buy shares at a price lower than the eventual IPO price, allowing early investors to benefit from significant listing gains.</p>
-                        <ul class="benefit-list">
-                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Potential for multifold returns compared to listed stocks</li>
-                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Early access before public listing drives valuations higher</li>
-                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Portfolio diversification with high-growth private companies</li>
-                            <li><span class="benefit-check"><i class="fa-solid fa-check"></i></span> Less volatility compared to listed markets in growth phase</li>
-                        </ul>
-                    </div>
-
-                    <div class="content-box" id="tab-how" style="display:none;">
-                        <h3>How to Buy Pre-IPO Shares?</h3>
-                        <p>Buying pre-IPO shares in India is straightforward through UnlistedGain:</p>
-                        <div class="steps-list">
-                            <div class="step-item">
-                                <span class="step-number">1</span>
-                                <p>Browse the listing below and select your desired company</p>
-                            </div>
-                            <div class="step-item">
-                                <span class="step-number">2</span>
-                                <p>Click <strong>Buy</strong> and fill in the quantity</p>
-                            </div>
-                            <div class="step-item">
-                                <span class="step-number">3</span>
-                                <p>Our team will contact you to complete the transfer to your Demat account</p>
-                            </div>
-                            <div class="step-item">
-                                <span class="step-number">4</span>
-                                <p>Shares appear in your Demat account within 2&ndash;3 working days</p>
-                            </div>
+                        <div class="step-item">
+                            <span class="step-number">2</span>
+                            <p>Click <strong>Buy</strong> and fill in the quantity</p>
                         </div>
-                        <p class="steps-note"><i class="fa-solid fa-circle-info"></i> Minimum investment varies per company based on lot size.</p>
+                        <div class="step-item">
+                            <span class="step-number">3</span>
+                            <p>Our team will contact you to complete the transfer to your Demat account</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-number">4</span>
+                            <p>Shares appear in your Demat account within 2&ndash;3 working days</p>
+                        </div>
+                    </div>
+                    <p class="steps-note"><i class="fa-solid fa-circle-info"></i> Minimum investment varies per company based on lot size.</p>
+                </div>
+            </div>
+
+            <div class="info-highlights">
+                <div class="info-highlight-item">
+                    <span class="info-highlight-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                    <div>
+                        <h4>Verified Companies</h4>
+                        <p>Every listing is checked before it goes live.</p>
                     </div>
                 </div>
-
-                <div class="info-visual">
-                    <div class="info-highlights">
-                        <div class="info-highlight-item">
-                            <span class="info-highlight-icon"><i class="fa-solid fa-shield-halved"></i></span>
-                            <div>
-                                <h4>Verified Companies</h4>
-                                <p>Every listing is checked before it goes live.</p>
-                            </div>
-                        </div>
-                        <div class="info-highlight-item">
-                            <span class="info-highlight-icon"><i class="fa-solid fa-chart-line"></i></span>
-                            <div>
-                                <h4>Transparent Pricing</h4>
-                                <p>Real market cap, P/E and price data, no hidden markups.</p>
-                            </div>
-                        </div>
-                        <div class="info-highlight-item">
-                            <span class="info-highlight-icon"><i class="fa-solid fa-wallet"></i></span>
-                            <div>
-                                <h4>Secure Demat Transfer</h4>
-                                <p>Shares move straight into your demat account.</p>
-                            </div>
-                        </div>
-                        <div class="info-highlight-item">
-                            <span class="info-highlight-icon"><i class="fa-solid fa-headset"></i></span>
-                            <div>
-                                <h4>Dedicated Support</h4>
-                                <p>Our team guides you through every transaction.</p>
-                            </div>
-                        </div>
+                <div class="info-highlight-item">
+                    <span class="info-highlight-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <div>
+                        <h4>Transparent Pricing</h4>
+                        <p>Real market cap, P/E and price data, no hidden markups.</p>
                     </div>
-                    <div class="action-btns">
-                        <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="outline-btn">View Listing</a>
-                        <a href="#faqSection" class="outline-btn">View FAQ</a>
+                </div>
+                <div class="info-highlight-item">
+                    <span class="info-highlight-icon"><i class="fa-solid fa-wallet"></i></span>
+                    <div>
+                        <h4>Secure Demat Transfer</h4>
+                        <p>Shares move straight into your demat account.</p>
+                    </div>
+                </div>
+                <div class="info-highlight-item">
+                    <span class="info-highlight-icon"><i class="fa-solid fa-headset"></i></span>
+                    <div>
+                        <h4>Dedicated Support</h4>
+                        <p>Our team guides you through every transaction.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="promo-banner">
-                <h2 class="promo-title">Investment In Pre-IPO | Unlisted Shares <span>Delivers Multifold Returns.</span></h2>
-                <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="promo-cta">Browse all listings <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="action-btns">
+                <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="outline-btn">View Listing</a>
+                <a href="#faqSection" class="outline-btn">View FAQ</a>
             </div>
 
         </div>
@@ -308,14 +369,6 @@ $(document).ready(function () {
         if (target.length) {
             $('html,body').animate({ scrollTop: target.offset().top - 80 }, 400);
         }
-    });
-
-    // Tab switching
-    $('.tab-btn').on('click', function () {
-        $('.tab-btn').removeClass('active');
-        $(this).addClass('active');
-        $('.content-box').hide();
-        $('#tab-' + $(this).data('tab')).show();
     });
 
     // Smooth scroll for anchor buttons

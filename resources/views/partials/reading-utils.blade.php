@@ -2,6 +2,10 @@
      Self-contained (reads document.title / window.location.href), so it's
      safe to @include on any public page without extra Blade variables. --}}
 
+<a href="https://wa.me/919891881886" target="_blank" rel="noopener" class="whatsapp-float-btn" title="Chat with us on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
 <button type="button" class="scroll-top-btn" id="scrollTopBtn" title="Back to top">
     <i class="fas fa-arrow-up"></i>
 </button>
@@ -111,17 +115,6 @@
         bcShareBtn.innerHTML = '<i class="fas fa-share-nodes"></i> Share';
         bcInner.appendChild(bcShareBtn);
         bcShareBtn.addEventListener('click', openShareModal);
-    } else {
-        // No breadcrumb on this page — fall back to a floating button
-        // (next to scroll-to-top) so sharing is still available everywhere.
-        var floatingShareBtn = document.createElement('button');
-        floatingShareBtn.type = 'button';
-        floatingShareBtn.id = 'floatingShareBtn';
-        floatingShareBtn.className = 'floating-share-btn';
-        floatingShareBtn.title = 'Share this page';
-        floatingShareBtn.innerHTML = '<i class="fas fa-share-nodes"></i>';
-        document.body.appendChild(floatingShareBtn);
-        floatingShareBtn.addEventListener('click', openShareModal);
     }
 
     if (shareModalClose) shareModalClose.addEventListener('click', closeShareModal);

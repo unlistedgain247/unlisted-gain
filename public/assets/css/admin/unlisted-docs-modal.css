@@ -18,6 +18,14 @@
         background: #fff; border-radius: 14px; width: 100%; max-width: 640px; max-height: 90vh;
         display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2); overflow: hidden;
     }
+    /* The <form> sits between the header and the body/footer in the markup,
+       so it must also be a flex column passing the layout through — otherwise
+       .docs-modal-body's overflow-y:auto never has a constrained height to
+       scroll within, and the footer (Save button) can get clipped off the
+       bottom on short screens with no way to reach it. */
+    .docs-modal form {
+        display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;
+    }
     .docs-modal-header {
         display: flex; align-items: center; justify-content: space-between;
         padding: 16px 20px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0;

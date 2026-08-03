@@ -111,7 +111,7 @@
             <h2>11. Contact</h2>
             <p>For questions regarding these Terms of Use, contact us at:</p>
             <ul>
-                <li><strong>Email:</strong> legal@unlistedgain.com</li>
+                <li><strong>Email:</strong> support@unlistedgain.com</li>
                 <li><strong>Address:</strong> 113/2, 1st Floor, Meenakshi Garden, Tilak Nagar, New Delhi - 110018
                 </li>
             </ul>

@@ -113,7 +113,7 @@
                         <div class="cp-bid-price cp-price-na">&mdash;</div>
                         <p class="cp-price-na-note">Contact us for the latest price</p>
                     </div>
-                    <a href="/connect" class="cp-btn-quote"><i class="fas fa-phone-alt"></i> Get a Quote</a>
+                    <a href="/contact-us" class="cp-btn-quote"><i class="fas fa-phone-alt"></i> Get a Quote</a>
                     @endif
                 </div>
 

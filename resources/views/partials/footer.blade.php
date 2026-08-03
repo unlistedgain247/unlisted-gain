@@ -21,7 +21,7 @@
             <h3>UnlistedGain</h3>
             <ul class="footer-links">
                 <li><a href="{{ url('/about') }}">About Us</a></li>
-                <li><a href="{{ url('/connect') }}">Contact Us</a></li>
+                <li><a href="{{ url('/contact-us') }}">Contact Us</a></li>
                 <li><a href="{{ url('/privacy-policy') }}">Privacy Policy</a></li>
                 <li><a href="{{ url('/terms-of-use') }}">Terms of Use</a></li>
             </ul>

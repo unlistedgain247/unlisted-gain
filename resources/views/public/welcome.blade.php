@@ -442,69 +442,10 @@
         </div>
     </section>
 
-    {{-- Lead Modal --}}
-    <div id="ugModal" class="stock-modal-overlay">
-        <div class="stock-modal-content">
-            <button class="modal-close" id="closeModal">&times;</button>
-
-            <div class="modal-header">
-                <img src="{{ asset('assets/img/unlisted-head.jpeg') }}" alt="UnlistedGain" class="modal-logo">
-            </div>
-
-            <form id="trendingStocksForm">
-                <div class="form-group">
-                    <input type="text" placeholder="First Name" required name="fname">
-                </div>
-                <div class="form-group">
-                    <input type="text" placeholder="Last Name" required name="lname">
-                </div>
-                <div class="form-group phone-group">
-                    <select name="countryCode">
-                        <option value="+91">+91 - India</option>
-                    </select>
-                    <input type="tel" placeholder="Mobile" required name="mobile">
-                </div>
-                <div class="form-group">
-                    <input type="email" placeholder="Email" required name="email">
-                </div>
-                <div class="form-group">
-                    <input type="text" placeholder="City" required name="city">
-                </div>
-
-                <div class="captcha-wrapper">
-                    <label>What Is <span id="mathQuestion">2 + 3</span>?</label>
-                    <input type="number" id="captchaInput" placeholder="?" required>
-                    <button type="button" id="refreshCaptcha" class="refresh-btn">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path fill="currentColor"
-                                d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" />
-                        </svg>
-                        New
-                    </button>
-                </div>
-
-                <div class="form-actions">
-                    <button type="reset" class="btn-reset">Reset</button>
-                    <button type="submit" class="btn-submit">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="successToast" class="success-toast">
-        <div class="toast-content">
-            <span class="check-icon">&#10003;</span>
-            <p>Form submitted successfully!</p>
-            <button class="toast-close">&times;</button>
-        </div>
-        <div class="toast-progress"></div>
-    </div>
-
 @push('scripts')
 <script src="{{ asset('assets/js/home-search.js') }}"></script>
 <script src="{{ asset('assets/js/slider.js') }}?v={{ filemtime(public_path('assets/js/slider.js')) }}"></script>
 <script src="{{ asset('assets/js/shares-icon-slider.js') }}?v={{ filemtime(public_path('assets/js/shares-icon-slider.js')) }}"></script>
-<script src="{{ asset('assets/js/trending-stocks.js') }}?v={{ filemtime(public_path('assets/js/trending-stocks.js')) }}"></script>
 <script src="{{ asset('assets/js/live-market-widget.js') }}?v={{ filemtime(public_path('assets/js/live-market-widget.js')) }}"></script>
 @endpush
 

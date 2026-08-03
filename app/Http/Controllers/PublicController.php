@@ -187,9 +187,9 @@ class PublicController extends Controller
         return view('public.about');
     }
 
-    public function connect()
+    public function contactUs()
     {
-        return view('public.connect');
+        return view('public.contact-us');
     }
 
     public function privacyPolicy()

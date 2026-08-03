@@ -69,31 +69,25 @@
                 </div>
             </div>
 
-            {{-- Directors Grid --}}
-            <div class="ab-directors-grid">
-                <div class="ab-director-card">
-                    <div class="ab-avatar-placeholder dir">MA</div>
-                    <div class="ab-director-info">
-                        <span class="ab-role-tag">Director</span>
-                        <h4>Manish Arora</h4>
-                        <p>A key leader at Dhanlabh Capital Services LLP, instrumental in delivering data-driven wealth strategies to over <strong>5,000 families</strong>. With deep expertise in Indian financial markets — from SIPs to high-growth opportunities — he ensures every client experience is rooted in transparency and our "Right Planning" philosophy.</p>
-                    </div>
+            {{-- Directors --}}
+            <div class="ab-ceo-card">
+                <div class="ab-ceo-avatar">
+                    <div class="ab-avatar-placeholder ceo">MA</div>
                 </div>
-                <div class="ab-director-card">
-                    <div class="ab-avatar-placeholder dir">PKS</div>
-                    <div class="ab-director-info">
-                        <span class="ab-role-tag">Director</span>
-                        <h4>Pawan Kumar Singh</h4>
-                        <p>Leading our franchise network's strategic expansion with over <strong>12 years</strong> of experience. He excels in building high-value partnerships and specializing in Unlisted Shares and Pre-IPO placements, driving revenue growth and providing expert training support to business associates.</p>
-                    </div>
+                <div class="ab-ceo-info">
+                    <span class="ab-role-tag">Director</span>
+                    <h3>Manish Arora</h3>
+                    <p>A key leader at Dhanlabh Capital Services LLP, instrumental in delivering data-driven wealth strategies to over <strong>5,000 families</strong>. With deep expertise in Indian financial markets — from SIPs to high-growth opportunities — he ensures every client experience is rooted in transparency and our "Right Planning" philosophy.</p>
                 </div>
-                <div class="ab-director-card">
-                    <div class="ab-avatar-placeholder dir">ASD</div>
-                    <div class="ab-director-info">
-                        <span class="ab-role-tag">Director</span>
-                        <h4>Amrinder Singh Dhillon</h4>
-                        <p>Providing critical strategic oversight with a distinguished career spanning more than <strong>25 years</strong> in the financial and real estate sectors. His extensive background allows him to provide a holistic approach to portfolio building, ensuring every asset class works in synergy to achieve long-term financial goals.</p>
-                    </div>
+            </div>
+            <div class="ab-ceo-card">
+                <div class="ab-ceo-avatar">
+                    <div class="ab-avatar-placeholder ceo">ASD</div>
+                </div>
+                <div class="ab-ceo-info">
+                    <span class="ab-role-tag">Director</span>
+                    <h3>Amrinder Singh Dhillon</h3>
+                    <p>Providing critical strategic oversight with a distinguished career spanning more than <strong>25 years</strong> in the financial and real estate sectors. His extensive background allows him to provide a holistic approach to portfolio building, ensuring every asset class works in synergy to achieve long-term financial goals.</p>
                 </div>
             </div>
         </div>
@@ -223,11 +217,11 @@
                 <h2>Ready to Take Your Portfolio to the Next Level?</h2>
                 <p>At Unlistedgain Advantage Solutions, we believe that the most significant wealth-building opportunities shouldn't be reserved for a select few.</p>
                 <div class="ab-cta-actions">
-                    <a href="/connect" class="ab-cta-btn primary">Get in Touch</a>
+                    <a href="/contact-us" class="ab-cta-btn primary">Get in Touch</a>
                     <a href="/unlisted" class="ab-cta-btn outline">Browse Stocks</a>
                 </div>
                 <div class="ab-cta-contact">
-                    <span>+91 85068 94923</span>
+                    <span>+91 98918 81886</span>
                     <span>www.Unlistedgain.com</span>
                     <span>113/2, Meenakshi Garden, Tilak Nagar, New Delhi</span>
                 </div>

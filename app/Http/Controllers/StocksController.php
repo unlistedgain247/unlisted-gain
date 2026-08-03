@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\UnlistedStock;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -245,6 +246,22 @@ class StocksController extends Controller
         $stocks = $this->makePricePaginator($request);
 
         return view('public.partials.price-list-rows', compact('stocks'));
+    }
+
+    public function priceListPdf(Request $request)
+    {
+        $q       = trim($request->input('q', ''));
+        $sort    = $request->input('sort', 'mcap');
+        $stocks  = $this->priceListResults($q, $sort);
+        $logoUri = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(public_path('assets/img/unlisted-head.jpeg')));
+
+        $pdf = Pdf::loadView('public.price-list-pdf', [
+            'stocks'      => $stocks,
+            'logoUri'     => $logoUri,
+            'generatedAt' => now()->format('F j, Y'),
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('unlistedgain-share-price-list-' . now()->format('Y-m-d') . '.pdf');
     }
 
     public function stocks()

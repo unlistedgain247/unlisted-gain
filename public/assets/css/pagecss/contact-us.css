@@ -1,5 +1,5 @@
 /* ================================================
-   Connect / Contact Page
+   Contact Us Page
    ================================================ */
 
 .cn-container {
@@ -46,10 +46,18 @@
    HERO
    ================================================ */
 .cn-hero {
-    padding: 72px 0 60px;
+    padding: 72px 0 64px;
     background: #fff;
-    text-align: center;
 }
+
+.cn-hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 56px;
+    align-items: center;
+}
+
+.cn-hero-copy { text-align: left; }
 
 .cn-hero h1 {
     font-size: 40px;
@@ -61,19 +69,18 @@
 
 .cn-hero h1 span { color: #87b942; }
 
-.cn-hero > .cn-container > p {
+.cn-hero-copy > p {
     font-size: 16px;
     color: #666;
-    max-width: 560px;
-    margin: 0 auto 48px;
+    max-width: 480px;
+    margin: 0 0 36px;
     line-height: 1.8;
 }
 
-.cn-info-row {
+.cn-info-list {
     display: flex;
-    justify-content: center;
-    gap: 32px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 14px;
 }
 
 .cn-info-item {
@@ -83,11 +90,8 @@
     background: #f8fdf2;
     border: 1px solid #e5f5c8;
     border-radius: 14px;
-    padding: 20px 24px;
+    padding: 18px 22px;
     text-align: left;
-    min-width: 220px;
-    flex: 1;
-    max-width: 300px;
     transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 
@@ -124,6 +128,7 @@
 }
 
 .cn-info-item span {
+    display: block;
     font-size: 13px;
     color: #666;
     line-height: 1.5;
@@ -135,6 +140,56 @@
 }
 
 .cn-info-item a:hover { text-decoration: underline; }
+
+/* Map card, right column of the hero */
+.cn-hero-map {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cn-map-card {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3.4;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    background: #f2f2f2;
+}
+
+.cn-map-card iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.cn-map-directions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 12px 24px;
+    border-radius: 10px;
+    background: #87b942;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.cn-map-directions:hover {
+    background: #729d34;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
 
 /* ================================================
    TEAM
@@ -292,6 +347,13 @@
    RESPONSIVE
    ================================================ */
 @media (max-width: 992px) {
+    .cn-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .cn-hero-copy { text-align: center; }
+    .cn-hero-copy > p { margin: 0 auto 36px; }
+    .cn-info-list { max-width: 480px; margin: 0 auto; }
+    .cn-map-card { aspect-ratio: 16 / 9; }
+    .cn-hero-map { align-items: center; }
+    .cn-map-directions { align-self: center; }
     .cn-team-grid { grid-template-columns: 1fr 1fr; }
     .cn-social-grid { grid-template-columns: repeat(3, 1fr); }
 }
@@ -300,8 +362,6 @@
     .cn-hero h1 { font-size: 30px; }
     .cn-section-head h2 { font-size: 26px; }
     .cn-team-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
-    .cn-info-row { flex-direction: column; align-items: center; }
-    .cn-info-item { max-width: 100%; }
 }
 
 @media (max-width: 480px) {

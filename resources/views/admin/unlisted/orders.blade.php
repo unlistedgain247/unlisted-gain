@@ -3,6 +3,7 @@
 @section('title', 'Orders | Admin | UnlistedGain')
 
 @push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css">
 <link rel="stylesheet" href="{{ asset('assets/css/admin/unlisted-orders.css') }}?v={{ filemtime(public_path('assets/css/admin/unlisted-orders.css')) }}">
 @endpush
 
@@ -158,7 +159,12 @@
             <div class="eom-grid-2">
                 <div class="eom-field">
                     <label>User ID</label>
-                    <input type="text" id="eomIntermediary" placeholder="">
+                    <select id="eomIntermediary">
+                        <option value="">— Select —</option>
+                        @foreach($adminUsers as $au)
+                        <option value="{{ $au->uid }}">{{ $au->name }} ({{ $au->uid }})</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="eom-field">
                     <label>Commission</label>
@@ -250,6 +256,7 @@
 </div>
 
 @push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/js/select2.min.js"></script>
 <script>
 var ORDERS_DATA_URL   = '{{ url("/admin/unlisted/orders/data") }}';
 var ORDERS_UPDATE_URL = '{{ url("/admin/unlisted/orders") }}';
@@ -394,14 +401,14 @@ $(document).on('click', '.open-edit-ord', function () {
     }
 
     // Intermediary
-    $('#eomIntermediary').val(ord.UL_ORD_INTERMEDIARY_USER_ID || '');
+    $('#eomIntermediary').val(ord.UL_ORD_INTERMEDIARY_USER_ID || '').trigger('change');
     $('#eomMargin').val(ord.UL_ORD_INTERMEDIARY_MARGIN || '');
     $('#eomCommission').val(ord.UL_ORD_INTERMEDIARY_COMMISSION || '');
     $('#eomLp').val(ord.UL_ORD_LP != null ? ord.UL_ORD_LP : '');
     $('#eomMlp').val(ord.UL_ORD_MLP != null ? ord.UL_ORD_MLP : '0');
 
     // Order Added By
-    $('#eomAddedBy').val(ord.UL_ORD_ADDED_BY || '');
+    $('#eomAddedBy').val(ord.UL_ORD_ADDED_BY || '').trigger('change');
 
     // Direct Flag (hidden)
     // var isDirect = !!parseInt(ord.UL_ORD_DIRECT_FLAG || 0);
@@ -521,7 +528,18 @@ $('#qsSubmitBtn').on('click', function () {
 // Search on Enter
 $('#fSearch').on('keydown', function (e) { if (e.key === 'Enter') loadOrders(1); });
 
-$(function () { loadOrders(1); });
+$(function () {
+    loadOrders(1);
+
+    // Searchable dropdowns of staff with leads/leads-allocation access, instead
+    // of a blind free-text UID field / a long plain <select>.
+    $('#eomIntermediary, #eomAddedBy').select2({
+        dropdownParent: $('#editOrdModal'),
+        placeholder: '— Select —',
+        allowClear: true,
+        width: '100%',
+    });
+});
 </script>
 @endpush
 

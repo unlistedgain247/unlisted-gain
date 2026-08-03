@@ -81,6 +81,9 @@
                     <option value="desc"  {{ $sort === 'desc'  ? 'selected' : '' }}>Z &ndash; A</option>
                 </select>
             </div>
+            <a id="downloadPdfBtn" href="{{ route('public.price-list.pdf', ['q' => $q, 'sort' => $sort]) }}" class="download-pdf-btn">
+                <i class="fa-solid fa-file-arrow-down"></i> Download PDF
+            </a>
         </div>
 
         <p class="pricing-disclaimer-row">
@@ -155,9 +158,17 @@
 
 @push('scripts')
 <script>
+function updatePdfLink() {
+    var q    = $('#companySearch').val().trim();
+    var sort = $('#sortSelect').val();
+    var base = '{{ route("public.price-list.pdf") }}';
+    $('#downloadPdfBtn').attr('href', base + '?q=' + encodeURIComponent(q) + '&sort=' + encodeURIComponent(sort));
+}
+
 function loadPriceListPage(page) {
     var q    = $('#companySearch').val().trim();
     var sort = $('#sortSelect').val();
+    updatePdfLink();
 
     var skeletonRows = '';
     for (var i = 0; i < 5; i++) { skeletonRows += '<div class="pi-skeleton-row"></div>'; }

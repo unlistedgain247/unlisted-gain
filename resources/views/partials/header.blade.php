@@ -23,14 +23,14 @@
 
             <ul>
                 <li class="has-dropdown">
-                    <a href="#" class="nav-link {{ request()->is('about') || request()->is('connect') ? 'nav-current' : '' }}">
+                    <a href="#" class="nav-link {{ request()->is('about') || request()->is('contact-us') ? 'nav-current' : '' }}">
                         <span class="nav-icon-wrap"><i class="fa-solid fa-circle-info nav-icon"></i></span>
                         <span>About Us</span>
                         <span class="arrow"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url('/about') }}"><i class="fa-solid fa-building-columns sub-icon"></i>About</a></li>
-                        <li><a href="{{ url('/connect') }}"><i class="fa-solid fa-address-book sub-icon"></i>Connect</a></li>
+                        <li><a href="{{ url('/contact-us') }}"><i class="fa-solid fa-address-book sub-icon"></i>Contact Us</a></li>
                     </ul>
                 </li>
                 <li class="has-dropdown">

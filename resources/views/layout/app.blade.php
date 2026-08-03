@@ -40,7 +40,6 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="{{ asset('assets/js/main.js') }}?v={{ filemtime(public_path('assets/js/main.js')) }}"></script>
-    <script src="{{ asset('assets/js/modal.js') }}?v={{ filemtime(public_path('assets/js/modal.js')) }}"></script>
     <script src="{{ asset('assets/js/invest-modal.js') }}?v={{ filemtime(public_path('assets/js/invest-modal.js')) }}"></script>
 
     @stack('scripts')

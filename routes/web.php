@@ -34,7 +34,8 @@ Route::post('/logout',   [AuthController::class, 'logout'])->name('logout');
 // Public routes
 Route::get('/',               [PublicController::class, 'welcome'])->name('public.home');
 Route::get('/about',          [PublicController::class, 'about'])->name('public.about');
-Route::get('/connect',        [PublicController::class, 'connect'])->name('public.connect');
+Route::get('/contact-us',     [PublicController::class, 'contactUs'])->name('public.connect');
+Route::redirect('/connect', '/contact-us', 301); // old URL — keep working for existing links/SEO
 Route::get('/privacy-policy',      [PublicController::class, 'privacyPolicy'])->name('public.privacy-policy');
 Route::get('/terms-of-use',        [PublicController::class, 'termsOfUse'])->name('public.terms-of-use');
 Route::get('/off-market-annexure', [PublicController::class, 'offMarketAnnexure'])->name('public.off-market-annexure');
@@ -96,6 +97,7 @@ Route::get('/pre-ipo-unlisted-shares/data',  [StocksController::class, 'preIpoDa
 
 Route::get('/unlisted-shares-price-list-india',       [StocksController::class, 'priceList'])->name('public.price-list');
 Route::get('/unlisted-shares-price-list-india/data',  [StocksController::class, 'priceListData'])->name('public.price-list.data')->middleware('throttle:public-data');
+Route::get('/unlisted-shares-price-list-india/download', [StocksController::class, 'priceListPdf'])->name('public.price-list.pdf')->middleware('throttle:public-data');
 
 Route::get('/companies/{slug}/', [StocksController::class, 'company'])->name('public.company');
 

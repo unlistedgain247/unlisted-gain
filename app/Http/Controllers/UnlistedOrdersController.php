@@ -13,7 +13,10 @@ class UnlistedOrdersController extends Controller
     {
         if (!$this->canAccess()) abort(403);
 
+        // Same "leads OR leads_allocation" definition of an eligible intermediary/
+        // added-by staff member used elsewhere (UnlistedLeadsController::getLeadAgents).
         $adminUsers = User::whereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads')) = 'true'")
+            ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads_allocation')) = 'true'")
             ->orderBy('name')
             ->get(['uid', 'name']);
 
@@ -125,7 +128,27 @@ class UnlistedOrdersController extends Controller
                 : null;
         }
 
-        if ($request->has('intermediary_uid')) $data['UL_ORD_INTERMEDIARY_USER_ID']    = $request->input('intermediary_uid') ?: null;
+        if ($request->has('intermediary_uid')) {
+            $intermediaryUid = $request->input('intermediary_uid');
+
+            if ($intermediaryUid === '' || $intermediaryUid === null) {
+                $data['UL_ORD_INTERMEDIARY_USER_ID'] = null;
+            } else {
+                // The dropdown only *shows* leads-eligible staff — that's UX, not
+                // security. A direct API call could submit any uid, so re-check the
+                // same eligibility rule server-side before saving it.
+                $intermediaryUid = (int) $intermediaryUid;
+                $isEligibleIntermediary = User::whereKey($intermediaryUid)
+                    ->where(function ($q) {
+                        $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads')) = 'true'")
+                          ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads_allocation')) = 'true'");
+                    })
+                    ->exists();
+
+                abort_if(!$isEligibleIntermediary, 422, 'Selected intermediary is not a valid leads-eligible staff user.');
+                $data['UL_ORD_INTERMEDIARY_USER_ID'] = $intermediaryUid;
+            }
+        }
         if ($request->has('margin'))            $data['UL_ORD_INTERMEDIARY_MARGIN']     = $request->input('margin') !== '' ? (float) $request->input('margin') : null;
         if ($request->has('commission'))        $data['UL_ORD_INTERMEDIARY_COMMISSION'] = $request->input('commission') !== '' ? (float) $request->input('commission') : null;
         if ($request->has('lp'))                $data['UL_ORD_LP']                      = $request->input('lp') !== '' ? (float) $request->input('lp') : null;
