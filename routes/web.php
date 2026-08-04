@@ -10,6 +10,7 @@ use App\Http\Controllers\StocksController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\UnlistedOrdersController;
+use App\Http\Controllers\UnlistedNewsController;
 use App\Http\Controllers\PgController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\UnlistedReportController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\CmsArticleController;
 use App\Http\Controllers\CmsAuthorProfileController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\NewsController;
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -47,6 +49,11 @@ Route::get('/market-widget-data',  [PublicController::class, 'marketWidgetData']
 
 Route::get('/articles',         [ArticleController::class, 'index'])->name('public.articles');
 Route::get('/articles/{slug}',  [ArticleController::class, 'show'])->name('public.articles.show');
+
+Route::get('/unlisted-shares/news',               [NewsController::class, 'index'])->name('public.news');
+Route::get('/unlisted-shares/news/data',          [NewsController::class, 'data'])->name('public.news.data')->middleware('throttle:public-data');
+Route::get('/unlisted-shares/news/search/stocks', [NewsController::class, 'searchStocks'])->name('public.news.search-stocks')->middleware('throttle:public-data');
+Route::get('/unlisted-shares/news/{id}',          [NewsController::class, 'show'])->name('public.news.show')->middleware('throttle:public-data');
 
 Route::get('/authors/{uid}/{slug?}', [AuthorController::class, 'show'])->name('public.authors.show');
 
@@ -192,6 +199,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/unlisted/stocks/{fincode}/price-list', [UnlistedStocksController::class, 'getPriceList'])
         ->middleware('privilege:unlisted')
         ->name('unlisted.stocks.price.list');
+
+    Route::post('/unlisted/stocks/price-import/preview', [UnlistedStocksController::class, 'previewPriceImport'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.stocks.price-import.preview');
+
+    Route::post('/unlisted/stocks/price-import', [UnlistedStocksController::class, 'executePriceImport'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.stocks.price-import');
 
     Route::patch('/unlisted/stocks/{fincode}/price/{date}', [UnlistedStocksController::class, 'updatePriceEntry'])
         ->middleware('privilege:unlisted')
@@ -406,6 +421,51 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/unlisted/orders/{orderId}/update', [UnlistedOrdersController::class, 'updateOrder'])
         ->middleware('privilege:unlisted')
         ->name('unlisted.orders.update');
+
+    Route::get('/unlisted/orders/search-customers', [UnlistedOrdersController::class, 'searchCustomers'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.orders.search-customers');
+
+    Route::get('/unlisted/orders/search-stocks', [UnlistedOrdersController::class, 'searchStocks'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.orders.search-stocks');
+
+    Route::post('/unlisted/orders', [UnlistedOrdersController::class, 'storeOrder'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.orders.store');
+
+    // ── Unlisted News ────────────────────────────────────────────────────────
+    Route::get('/unlisted/news', [UnlistedNewsController::class, 'index'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news');
+
+    Route::get('/unlisted/news/data', [UnlistedNewsController::class, 'data'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.data');
+
+    Route::post('/unlisted/news/upload-image', [UnlistedNewsController::class, 'uploadContentImage'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.upload-image');
+
+    Route::get('/unlisted/news/search/stocks', [UnlistedNewsController::class, 'searchStocks'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.search-stocks');
+
+    Route::get('/unlisted/news/{id}', [UnlistedNewsController::class, 'show'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.show');
+
+    Route::post('/unlisted/news', [UnlistedNewsController::class, 'store'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.store');
+
+    Route::post('/unlisted/news/{id}/update', [UnlistedNewsController::class, 'update'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.update');
+
+    Route::post('/unlisted/news/{id}/status', [UnlistedNewsController::class, 'changeStatus'])
+        ->middleware('privilege:unlisted')
+        ->name('unlisted.news.status');
 
     // ── Unlisted Reports ─────────────────────────────────────────────────────
     Route::get('/unlisted/reports', [UnlistedReportController::class, 'index'])

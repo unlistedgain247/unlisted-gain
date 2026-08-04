@@ -2,81 +2,76 @@
    FOOTER STYLES
    ============================================= */
 .main-footer {
-    background-color: #000;
+    --ftr-accent: #87b942;
+    position: relative;
+    background-color: #0a0d0a;
     color: #fff;
-    padding: 50px 20px 20px;
+    padding: 64px 24px 28px;
     font-family: 'Inter', sans-serif;
 }
 
-.main-footer .footer-bottom {
-    border-top: 1px solid #222;
-    margin-top: 20px;
-    padding-top: 16px;
-    text-align: center;
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ftr-accent), transparent);
+    opacity: .55;
 }
 
-.main-footer .copyright {
-    border-top: none;
-    margin-top: 0;
-    padding-top: 0;
-    color: #555;
-    font-size: 12px;
-}
-
-.main-footer .disclaimer {
-    margin-top: 12px;
-    color: #444;
-    font-size: 10px;
-    line-height: 1.5;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.main-footer .disclaimer strong {
-    color: #666;
-}
-
-.main-footer .footer-top {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.main-footer .footer-logo img {
-    height: 40px;
-}
-
-.main-footer .tagline {
-    font-size: 12px;
-    color: #888;
-    font-style: italic;
-    margin-top: -5px;
-}
-
-/* 3-Column Layout */
-.main-footer .footer-content {
-    display: flex;
-    max-width: 1100px;
+.main-footer .footer-inner {
+    max-width: 1160px;
     margin: 0 auto;
-    justify-content: space-between;
-    gap: 50px;
 }
 
-.main-footer .footer-column {
-    flex: 1;
+/* Grid layout: brand + 3 link columns */
+.main-footer .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 48px;
 }
 
-/* Column Headers */
-.main-footer .footer-column h3 {
+/* Brand column */
+.main-footer .footer-brand-logo {
+    height: 38px;
+    display: block;
+    margin-bottom: 14px;
+}
+
+.main-footer .footer-tagline {
     font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #888;
+    line-height: 1.6;
+    color: #9aa39a;
+    max-width: 260px;
     margin-bottom: 20px;
 }
 
-/* Link Lists */
+/* Column headers */
+.main-footer .footer-column h3 {
+    position: relative;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: #fff;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+.main-footer .footer-column h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 26px;
+    height: 2px;
+    background: var(--ftr-accent);
+    border-radius: 2px;
+}
+
+/* Link lists */
 .main-footer .footer-links {
     list-style: none;
     margin: 0;
@@ -84,111 +79,145 @@
 }
 
 .main-footer .footer-links li {
-    margin-bottom: 10px;
+    margin-bottom: 11px;
 }
 
 .main-footer .footer-links li a {
-    color: #ddd;
+    position: relative;
+    display: inline-block;
+    color: #b7bfb7;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 400;
-    transition: color 0.2s;
+    transition: color .2s var(--ug-ease, ease);
+}
+
+.main-footer .footer-links li a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 1px;
+    background: var(--ftr-accent);
+    transition: width .25s var(--ug-ease, ease);
 }
 
 .main-footer .footer-links li a:hover {
-    color: #87b942;
+    color: #fff;
 }
 
-/* Address Box */
+.main-footer .footer-links li a:hover::after {
+    width: 100%;
+}
+
+/* Address box */
 .main-footer .address-box {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .main-footer .address-box h4 {
     color: #fff;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 700;
     margin: 0 0 4px;
 }
 
 .main-footer .address-box p {
-    font-size: 13px;
-    color: #bbb;
+    font-size: 12.5px;
+    color: #9aa39a;
     line-height: 1.6;
     margin: 0;
 }
 
-/* Social Icons - Centered */
-.main-footer .footer-social {
-    max-width: 1100px;
-    margin: 30px auto 0;
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #222;
-}
-
+/* Social icons */
 .main-footer .social-icons {
     display: flex;
-    justify-content: center;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .main-footer .social-btn {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    transition: transform 0.2s;
+    background: #14181450;
+    border: 1px solid #262b26;
+    transition: transform .2s var(--ug-ease, ease), background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
-.main-footer .social-btn:nth-child(1) { background: #25D366; } /* WhatsApp */
-.main-footer .social-btn:nth-child(2) { background: #1DA1F2; } /* Twitter */
-.main-footer .social-btn:nth-child(3) { background: #3B5998; } /* Facebook */
-.main-footer .social-btn:nth-child(4) { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); } /* Instagram */
-.main-footer .social-btn:nth-child(5) { background: #0088CC; } /* Telegram */
-.main-footer .social-btn:nth-child(6) { background: #0077B5; } /* LinkedIn */
-.main-footer .social-btn:nth-child(7) { background: #FF0000; } /* YouTube */
-.main-footer .social-btn:nth-child(8) { background: #666666; } /* Phone */
-
 .main-footer .social-btn img {
-    width: 22px;
-    height: 22px;
+    width: 16px;
+    height: 16px;
     object-fit: contain;
 }
 
 .main-footer .social-btn:hover {
-    transform: scale(1.1);
-    opacity: 0.9;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, .35);
 }
 
-/* Copyright */
-.main-footer .copyright {
-    border-top: 1px solid #222;
-    margin-top: 20px;
-    padding-top: 16px;
+.main-footer .sb-whatsapp:hover { background: #25D366; border-color: #25D366; }
+.main-footer .sb-x { color: #fff; }
+.main-footer .sb-x:hover { background: #fff; color: #000; border-color: #fff; }
+.main-footer .sb-facebook:hover { background: #3B5998; border-color: #3B5998; }
+.main-footer .sb-instagram:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); border-color: transparent; }
+.main-footer .sb-linkedin:hover { background: #0077B5; border-color: #0077B5; }
+.main-footer .sb-youtube:hover { background: #FF0000; border-color: #FF0000; }
+.main-footer .sb-phone:hover { background: var(--ftr-accent); border-color: var(--ftr-accent); }
+
+/* Bottom bar */
+.main-footer .footer-bottom {
+    border-top: 1px solid #1c211c;
+    margin-top: 48px;
+    padding-top: 22px;
     text-align: center;
-    color: #555;
+}
+
+.main-footer .copyright {
+    color: #6b746b;
     font-size: 12px;
+    margin: 0 0 10px;
+}
+
+.main-footer .disclaimer {
+    color: #4d554d;
+    font-size: 10px;
+    line-height: 1.6;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.main-footer .disclaimer strong {
+    color: #6b746b;
 }
 
 /* =============================================
    RESPONSIVE
    ============================================= */
-@media (max-width: 768px) {
-    .main-footer .footer-content {
-        flex-direction: column;
-        gap: 30px;
+@media (max-width: 900px) {
+    .main-footer .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 40px;
     }
-    .main-footer { padding: 40px 16px 16px; }
+    .main-footer .footer-brand {
+        grid-column: 1 / -1;
+    }
+    .main-footer .footer-tagline {
+        max-width: 420px;
+    }
 }
 
-@media (max-width: 480px) {
-    .main-footer { padding: 30px 16px 16px; }
-    .main-footer .footer-content { gap: 20px; }
-    .main-footer .social-icons { flex-wrap: wrap; justify-content: center; gap: 10px; }
-    .main-footer .footer-links li a { font-size: 13px; }
-    .main-footer .disclaimer { font-size: 9px; }
+@media (max-width: 560px) {
+    .main-footer { padding: 48px 18px 22px; }
+    .main-footer .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    .main-footer .social-icons { gap: 8px; }
+    .main-footer .disclaimer { font-size: 9.5px; }
 }

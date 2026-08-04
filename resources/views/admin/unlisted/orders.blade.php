@@ -17,6 +17,9 @@
             Orders
             <span id="ordersCount" style="font-size:14px;font-weight:400;color:#aaa;margin-left:8px;"></span>
         </h1>
+        <button type="button" id="openAddOrdBtn" style="padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:#87b942;color:#fff;">
+            <i class="fa-solid fa-plus"></i> Add Order
+        </button>
     </div>
 
     <div class="admin-card" style="padding:0;">
@@ -251,6 +254,64 @@
         </div>
         <div style="padding:0 24px 20px;">
             <button id="qsSubmitBtn" style="padding:9px 28px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:#1d4ed8;color:#fff;">Submit</button>
+        </div>
+    </div>
+</div>
+
+{{-- ── Add Order Modal ───────────────────────────────────────── --}}
+<div id="addOrdOverlay">
+    <div id="addOrdModal">
+        <div class="eom-header">
+            <div class="eom-title">Add New Order</div>
+            <button class="eom-close" id="addOrdClose">&times;</button>
+        </div>
+        <div class="eom-body">
+
+            <div id="addOrdRespMsg"></div>
+
+            <div class="eom-grid-2">
+                <div class="eom-field">
+                    <label>Customer</label>
+                    <div class="aom-search-wrap">
+                        <input type="text" id="addOrdCustomerSearch" placeholder="Type name, UID or phone…" autocomplete="off">
+                        <input type="hidden" id="addOrdUserId">
+                        <div id="addOrdCustomerDropdown" class="aom-search-dropdown"></div>
+                    </div>
+                </div>
+                <div class="eom-field">
+                    <label>Company</label>
+                    <div class="aom-search-wrap">
+                        <input type="text" id="addOrdStockSearch" placeholder="Type company name…" autocomplete="off">
+                        <input type="hidden" id="addOrdFincode">
+                        <div id="addOrdStockDropdown" class="aom-search-dropdown"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="eom-grid-3">
+                <div class="eom-field">
+                    <label>Type</label>
+                    <select id="addOrdType">
+                        <option value="">Select</option>
+                        <option value="Buy">Buy</option>
+                        <option value="Sell">Sell</option>
+                    </select>
+                </div>
+                <div class="eom-field">
+                    <label id="addOrdQtyLabel">QTY</label>
+                    <input type="number" id="addOrdQty" min="1" placeholder="0">
+                </div>
+                <div class="eom-field">
+                    <label>Price Per Share</label>
+                    <input type="number" id="addOrdPrice" min="0" step="0.01" placeholder="0">
+                </div>
+            </div>
+            <div class="aom-hint">New orders start as <strong>Pending</strong>. Status, LP/MLP, and intermediary details can be filled in afterwards via Edit.</div>
+
+        </div>
+        <div class="eom-footer">
+            <button id="addOrdSubmitBtn">Submit</button>
+            <button id="addOrdCancelBtn">Cancel</button>
         </div>
     </div>
 </div>
@@ -538,6 +599,108 @@ $(function () {
         placeholder: '— Select —',
         allowClear: true,
         width: '100%',
+    });
+});
+
+// ── Add Order Modal ─────────────────────────────────────────
+var ADD_ORD_SEARCH_CUSTOMERS_URL = '{{ url("/admin/unlisted/orders/search-customers") }}';
+var ADD_ORD_SEARCH_STOCKS_URL    = '{{ url("/admin/unlisted/orders/search-stocks") }}';
+var ADD_ORD_STORE_URL            = '{{ url("/admin/unlisted/orders") }}';
+
+function aomMakeDropdown(inputId, dropdownId, hiddenId, searchUrl, labelField, valueField, minLength, onSelect) {
+    minLength = minLength || 2;
+    var timer;
+    $('#' + inputId).on('input', function () {
+        var q = $(this).val().trim();
+        $('#' + hiddenId).val('');
+        if (q.length < minLength) { $('#' + dropdownId).hide(); return; }
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            $.getJSON(searchUrl, { q: q }, function (rows) {
+                var dd = $('#' + dropdownId).empty();
+                if (!rows.length) { dd.hide(); return; }
+                rows.forEach(function (r) {
+                    $('<div>').text(r[labelField]).css({ padding: '6px 10px', cursor: 'pointer' })
+                        .on('click', function () {
+                            $('#' + inputId).val(r[labelField]);
+                            $('#' + hiddenId).val(r[valueField]);
+                            dd.hide();
+                            if (onSelect) onSelect(r);
+                        }).appendTo(dd);
+                });
+                dd.show();
+            });
+        }, 250);
+    });
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('#' + inputId + ',#' + dropdownId).length) $('#' + dropdownId).hide();
+    });
+}
+
+aomMakeDropdown('addOrdCustomerSearch', 'addOrdCustomerDropdown', 'addOrdUserId', ADD_ORD_SEARCH_CUSTOMERS_URL, 'label', 'uid', 1);
+aomMakeDropdown('addOrdStockSearch', 'addOrdStockDropdown', 'addOrdFincode', ADD_ORD_SEARCH_STOCKS_URL, 'label', 'fincode', 2, function (r) {
+    // Prefill with the stock's lot size / current bid price — a starting
+    // point only, both stay freely editable (no minimum is enforced here;
+    // this order is entered by staff, not placed by the public user).
+    $('#addOrdQtyLabel').text('QTY' + (r.lot_size ? ' (Lot size — ' + r.lot_size + ')' : ''));
+    if (r.lot_size)  $('#addOrdQty').val(r.lot_size);
+    if (r.bid_price) $('#addOrdPrice').val(r.bid_price);
+});
+
+function resetAddOrdForm() {
+    $('#addOrdRespMsg').removeClass('has-msg success error').empty();
+    $('#addOrdCustomerSearch, #addOrdStockSearch').val('');
+    $('#addOrdUserId, #addOrdFincode').val('');
+    $('#addOrdType').val('');
+    $('#addOrdQty, #addOrdPrice').val('');
+    $('#addOrdQtyLabel').text('QTY');
+    $('#addOrdCustomerDropdown, #addOrdStockDropdown').hide();
+    $('#addOrdSubmitBtn').prop('disabled', false).text('Submit');
+}
+
+function closeAddOrdModal() {
+    $('#addOrdOverlay').removeClass('open');
+}
+
+$('#openAddOrdBtn').on('click', function () {
+    resetAddOrdForm();
+    $('#addOrdOverlay').addClass('open');
+});
+
+$('#addOrdClose, #addOrdCancelBtn').on('click', closeAddOrdModal);
+$('#addOrdOverlay').on('click', function (e) {
+    if ($(e.target).is('#addOrdOverlay')) closeAddOrdModal();
+});
+
+$('#addOrdSubmitBtn').on('click', function () {
+    var $btn = $(this).prop('disabled', true).text('Saving...');
+
+    $.ajax({
+        url:     ADD_ORD_STORE_URL,
+        method:  'POST',
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        data: {
+            uid:             $('#addOrdUserId').val(),
+            fincode:         $('#addOrdFincode').val(),
+            type:            $('#addOrdType').val(),
+            qty:             $('#addOrdQty').val(),
+            price_per_share: $('#addOrdPrice').val(),
+        },
+    })
+    .done(function (res) {
+        if (res.success) {
+            $('#addOrdRespMsg').addClass('has-msg success').text(res.message || 'Order created.');
+            loadOrders(1);
+            setTimeout(closeAddOrdModal, 900);
+        } else {
+            $('#addOrdRespMsg').addClass('has-msg error').text(res.message || 'Failed to create order.');
+            $btn.prop('disabled', false).text('Submit');
+        }
+    })
+    .fail(function (xhr) {
+        var msg = (xhr.responseJSON && (xhr.responseJSON.message || (xhr.responseJSON.errors && Object.values(xhr.responseJSON.errors)[0][0]))) || 'Failed to create order.';
+        $('#addOrdRespMsg').addClass('has-msg error').text(msg);
+        $btn.prop('disabled', false).text('Submit');
     });
 });
 </script>

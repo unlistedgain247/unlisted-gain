@@ -107,6 +107,7 @@
 
 @include('admin.unlisted.stocks-modal')
 @include('admin.unlisted.industry-modal')
+@include('admin.unlisted.price-import-modal')
 
 {{-- Overview modal container —  injected via AJAX --}}
 <div id="overviewModalWrap"></div>

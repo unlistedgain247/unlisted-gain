@@ -11,6 +11,7 @@
     $_stocks  = !empty($_ul['stocks']);
     $_leads   = !empty($_ul['leads']) || !empty($_ul['leads_allocation']);
     $_orders  = !empty($_ul['orders']);
+    $_news    = !empty($_ul['news']);
     $_reports = !empty($_ul['unlisted_reports']);
 @endphp
 
@@ -44,6 +45,13 @@
         </a>
         @endif
 
+        @if($_news)
+        <a href="{{ url('/admin/unlisted/news') }}"
+            class="admin-sub-subnav-tab {{ request()->routeIs('admin.unlisted.news') ? 'active' : '' }}">
+            News
+        </a>
+        @endif
+
         @if($_reports)
         <a href="{{ url('/admin/unlisted/reports') }}"
             class="admin-sub-subnav-tab {{ request()->routeIs('admin.unlisted.reports') ? 'active' : '' }}">
@@ -57,6 +65,9 @@
         </button>
         <button type="button" class="admin-sub-subnav-tab" id="industryNavBtn">
             + Add Industry
+        </button>
+        <button type="button" class="admin-sub-subnav-tab" id="priceImportNavBtn">
+            <i class="fa-solid fa-file-excel"></i> Upload Prices
         </button>
         @endif
     </div>

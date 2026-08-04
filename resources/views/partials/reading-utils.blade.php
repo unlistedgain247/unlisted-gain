@@ -46,6 +46,20 @@
         });
     }
 
+    // ── Step aside once the footer scrolls into view, so these floating
+    //    buttons stop sitting on top of footer links/text ──
+    var whatsappFloatBtn = document.querySelector('.whatsapp-float-btn');
+    var mainFooter = document.querySelector('.main-footer');
+    if (mainFooter && 'IntersectionObserver' in window) {
+        var footerObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (whatsappFloatBtn) whatsappFloatBtn.classList.toggle('ftr-clear', entry.isIntersecting);
+                if (scrollTopBtn) scrollTopBtn.classList.toggle('ftr-clear', entry.isIntersecting);
+            });
+        }, { rootMargin: '0px 0px -60px 0px' });
+        footerObserver.observe(mainFooter);
+    }
+
     // ── Share buttons ──
     var pageUrl = window.location.href;
     var pageTitle = document.title;

@@ -103,6 +103,7 @@ class UsersController extends Controller
                 'leads'            => $request->boolean('unlisted_leads'),
                 'leads_allocation' => $request->boolean('unlisted_leads_allocation'),
                 'orders'           => $request->boolean('unlisted_orders'),
+                'news'             => $request->boolean('unlisted_news'),
                 'unlisted_reports' => $request->boolean('unlisted_unlisted_reports'),
                 'order_backend'    => $request->boolean('unlisted_order_backend'),
             ],

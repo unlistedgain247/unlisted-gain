@@ -12,6 +12,8 @@ use App\Models\UnlistedDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class UnlistedStocksController extends Controller
 {
@@ -342,6 +344,153 @@ class UnlistedStocksController extends Controller
         );
 
         return response()->json(['success' => true, 'message' => 'Price saved successfully.']);
+    }
+
+    public function previewPriceImport(Request $request)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $request->validate([
+            'price_csv' => 'required|file|mimes:xlsx|max:5120',
+        ]);
+
+        try {
+            $sheet = IOFactory::load($request->file('price_csv')->getRealPath())->getActiveSheet();
+        } catch (\Throwable) {
+            return response()->json(['success' => false, 'message' => 'Could not read the Excel file.'], 422);
+        }
+
+        $expected = ['UL_PD_FINCODE', 'UL_PD_DATE', 'UL_PD_BID_PRICE'];
+        $header   = [
+            trim((string) $sheet->getCell('A1')->getValue()),
+            trim((string) $sheet->getCell('B1')->getValue()),
+            trim((string) $sheet->getCell('C1')->getValue()),
+        ];
+        if ($header !== $expected) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Excel header must be exactly: UL_PD_FINCODE, UL_PD_DATE, UL_PD_BID_PRICE',
+            ], 422);
+        }
+
+        $rows       = [];
+        $errors     = [];
+        $highestRow = $sheet->getHighestDataRow();
+
+        for ($rowNo = 2; $rowNo <= $highestRow; $rowNo++) {
+            // Each cell is fetched and fully consumed before the next getCell()
+            // call — PhpSpreadsheet's worksheet only keeps one "current" cell
+            // object live at a time, so holding a Cell reference (e.g. the date
+            // cell) across a getCell() for a different column silently returns
+            // stale style/number-format data for it afterwards.
+            $fincode = trim((string) $sheet->getCell("A{$rowNo}")->getCalculatedValue());
+
+            $dateCell = $sheet->getCell("B{$rowNo}");
+            $dateRaw  = $dateCell->getCalculatedValue();
+            // A date column can arrive either as a real Excel date (serial
+            // number under a date format) or as plain typed text.
+            $date     = (is_numeric($dateRaw) && ExcelDate::isDateTime($dateCell))
+                ? ExcelDate::excelToDateTimeObject($dateRaw)->format('Y-m-d H:i:s')
+                : trim((string) $dateRaw);
+
+            $price = trim((string) $sheet->getCell("C{$rowNo}")->getCalculatedValue());
+
+            if ($fincode === '' && $date === '' && $price === '') {
+                continue;
+            }
+
+            if ($fincode === '' || !ctype_digit($fincode)) {
+                $errors[] = "Row {$rowNo}: FINCODE must be a positive whole number.";
+                continue;
+            }
+            if ($date === '' || strtotime($date) === false) {
+                $errors[] = "Row {$rowNo}: invalid date.";
+                continue;
+            }
+            if ($price === '' || !is_numeric($price)) {
+                $errors[] = "Row {$rowNo}: price must be numeric.";
+                continue;
+            }
+
+            $rows[] = [
+                'UL_PD_FINCODE'   => (int) $fincode,
+                'UL_PD_DATE'      => date('Y-m-d H:i:s', strtotime($date)),
+                'UL_PD_BID_PRICE' => (float) $price,
+            ];
+        }
+
+        if (empty($rows) && empty($errors)) {
+            return response()->json(['success' => false, 'message' => 'No data rows found in file.'], 422);
+        }
+
+        $fincodes = collect($rows)->pluck('UL_PD_FINCODE')->unique()->values();
+        $known    = UnlistedStock::whereIn('UL_STOCKS_FINCODE', $fincodes)
+            ->pluck('UL_STOCKS_COMPNAME', 'UL_STOCKS_FINCODE');
+
+        $preview = collect($rows)->map(fn ($row) => $row + [
+            'company' => $known->get($row['UL_PD_FINCODE']),
+            'known'   => $known->has($row['UL_PD_FINCODE']),
+        ])->values();
+
+        return response()->json([
+            'success'       => true,
+            'rows'          => $preview,
+            'errors'        => $errors,
+            'unknown_count' => $preview->where('known', false)->count(),
+        ]);
+    }
+
+    public function executePriceImport(Request $request)
+    {
+        if (!$this->canAccess()) abort(403);
+
+        $request->validate([
+            'rows'                      => 'required|array|min:1',
+            'rows.*.UL_PD_FINCODE'      => 'required|integer|min:1',
+            'rows.*.UL_PD_DATE'         => 'required|date',
+            'rows.*.UL_PD_BID_PRICE'    => 'required|numeric|min:0',
+        ]);
+
+        $known = UnlistedStock::pluck('UL_STOCKS_FINCODE')->flip();
+
+        $updated = 0;
+        $skipped = 0;
+
+        // Chunked in batches of 200, each in its own transaction — bounds how
+        // long any single transaction holds locks and how much work is lost
+        // if a later chunk fails on a large upload, instead of one unbounded
+        // loop of individual queries across the whole file.
+        collect($request->input('rows'))->chunk(200)->each(function ($chunk) use ($known, &$updated, &$skipped) {
+            DB::transaction(function () use ($chunk, $known, &$updated, &$skipped) {
+                foreach ($chunk as $row) {
+                    if (!$known->has((int) $row['UL_PD_FINCODE'])) {
+                        $skipped++;
+                        continue;
+                    }
+
+                    // Re-normalize server-side rather than trusting the
+                    // client-submitted string's format verbatim.
+                    $date = date('Y-m-d H:i:s', strtotime($row['UL_PD_DATE']));
+
+                    UnlistedPriceData::updateOrInsert(
+                        ['UL_PD_FINCODE' => $row['UL_PD_FINCODE'], 'UL_PD_DATE' => $date],
+                        [
+                            'UL_PD_BID_PRICE'    => $row['UL_PD_BID_PRICE'],
+                            'UL_PD_INVALID_FLAG' => 0,
+                            'UL_PD_UPDTIME'      => now(),
+                        ]
+                    );
+                    $updated++;
+                }
+            });
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$updated} price row(s) saved" . ($skipped ? ", {$skipped} skipped (unknown FINCODE)" : '') . '.',
+            'updated' => $updated,
+            'skipped' => $skipped,
+        ]);
     }
 
     public function getPriceList(Request $request, string $fincode)

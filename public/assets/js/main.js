@@ -151,6 +151,19 @@ window.addEventListener('resize', function () {
     }
 });
 
+// Sticky navbar: shrink + frosted background once the page has scrolled a little.
+(function () {
+    var header = document.querySelector('.main-header');
+    if (!header) return;
+
+    function syncScrolledState() {
+        header.classList.toggle('is-scrolled', window.scrollY > 8);
+    }
+
+    syncScrolledState();
+    window.addEventListener('scroll', syncScrolledState, { passive: true });
+})();
+
 // =============================================
 // VIEW ALL FAQ
 // =============================================

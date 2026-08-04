@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Privilege;
 use App\Models\User;
+use App\Models\UnlistedOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -161,6 +162,102 @@ class UnlistedOrdersController extends Controller
         DB::table('unlisted_orders')->where('UL_ORD_ID', $orderId)->update($data);
 
         return response()->json(['success' => true]);
+    }
+
+    public function searchCustomers(Request $request)
+    {
+        if (!Privilege::get('unlisted.orders')) abort(403);
+
+        $q = trim($request->input('q', ''));
+        if (strlen($q) < 1) return response()->json([]);
+
+        $rows = DB::select(
+            "SELECT uid, name, phone FROM users
+             WHERE (name LIKE ? OR uid LIKE ? OR phone LIKE ?)
+             ORDER BY name LIMIT 20",
+            ['%'.$q.'%', '%'.$q.'%', '%'.$q.'%']
+        );
+
+        return response()->json(array_map(fn ($r) => [
+            'uid'   => $r->uid,
+            'label' => $r->uid . ' — ' . $r->name . ($r->phone ? ' (' . $r->phone . ')' : ''),
+        ], $rows));
+    }
+
+    public function searchStocks(Request $request)
+    {
+        if (!Privilege::get('unlisted.orders')) abort(403);
+
+        $q = trim($request->input('q', ''));
+        if (strlen($q) < 2) return response()->json([]);
+
+        // Same "latest price per fincode" pattern as StocksController::priceListResults.
+        $rows = DB::select(
+            "SELECT
+                s.UL_STOCKS_FINCODE AS fincode,
+                s.UL_STOCKS_COMPNAME AS name,
+                s.UL_STOCKS_LOT_SIZE AS lot_size,
+                p.UL_PD_BID_PRICE AS bid_price
+             FROM unlisted_stocks s
+             LEFT JOIN (
+                 SELECT pd.*
+                 FROM unlisted_price_data pd
+                 INNER JOIN (
+                     SELECT UL_PD_FINCODE, MAX(UL_PD_DATE) AS max_date
+                     FROM unlisted_price_data
+                     WHERE UL_PD_INVALID_FLAG = 0
+                     GROUP BY UL_PD_FINCODE
+                 ) lp ON lp.UL_PD_FINCODE = pd.UL_PD_FINCODE AND pd.UL_PD_DATE = lp.max_date
+                 WHERE pd.UL_PD_INVALID_FLAG = 0
+             ) p ON p.UL_PD_FINCODE = s.UL_STOCKS_FINCODE
+             WHERE s.UL_STOCKS_COMPNAME LIKE ?
+             ORDER BY s.UL_STOCKS_COMPNAME LIMIT 20",
+            ['%'.$q.'%']
+        );
+
+        return response()->json(array_map(fn ($r) => [
+            'fincode'   => $r->fincode,
+            'label'     => $r->name,
+            'lot_size'  => $r->lot_size,
+            'bid_price' => $r->bid_price,
+        ], $rows));
+    }
+
+    public function storeOrder(Request $request)
+    {
+        if (!$this->canAccess()) return response()->json(['success' => false], 403);
+
+        $validated = $request->validate([
+            'uid'             => 'required|integer|exists:users,uid',
+            'fincode'         => 'required|integer|exists:unlisted_stocks,UL_STOCKS_FINCODE',
+            'type'            => 'required|in:Buy,Sell',
+            'qty'             => 'required|integer|min:1',
+            'price_per_share' => 'required|numeric|min:0.01',
+        ], [
+            'uid.required'     => 'Please select a customer.',
+            'uid.exists'       => 'Selected customer could not be found.',
+            'fincode.required' => 'Please select a company.',
+            'fincode.exists'   => 'Selected company could not be found.',
+        ]);
+
+        $qty   = (int) $validated['qty'];
+        $price = (float) $validated['price_per_share'];
+
+        $order = UnlistedOrder::create([
+            'UL_ORD_USER_ID'         => $validated['uid'],
+            'UL_ORD_FINCODE'         => $validated['fincode'],
+            'UL_ORD_TYPE'            => $validated['type'],
+            'UL_ORD_QUANTITY'        => $qty,
+            'UL_ORD_PRICE_PER_SHARE' => $price,
+            'UL_ORD_AMOUNT'          => $qty * $price,
+            'UL_ORD_STATUS'          => 'Pending',
+            'UL_ORD_ADDED_BY'        => session('uid'),
+            'UL_ORD_INSERT_TIME'     => now(),
+            'UL_ORD_UPDATE_TIME'     => now(),
+            'UL_ORD_DATE'            => now(),
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Order created successfully.', 'order_id' => $order->UL_ORD_ID]);
     }
 
     private function canAccess(): bool
