@@ -105,7 +105,7 @@
                        data-date="{{ $featured->published_at?->toDateString() }}">
                         <div class="ah-featured-image">
                             @if($featured->featured_image)
-                                <img src="{{ asset($featured->featured_image) }}" alt="{{ $featured->title }}">
+                                <img class="lazy-img" data-src="{{ asset($featured->featured_image) }}" alt="{{ $featured->title }}">
                             @else
                                 <div class="ah-featured-image-fallback"><i class="fas fa-newspaper"></i></div>
                             @endif
@@ -149,7 +149,7 @@
                            data-date="{{ $article->published_at?->toDateString() }}">
                             <div class="ah-card-image">
                                 @if($article->featured_image)
-                                    <img src="{{ asset($article->featured_image) }}" alt="{{ $article->title }}" loading="lazy">
+                                    <img class="lazy-img" data-src="{{ asset($article->featured_image) }}" alt="{{ $article->title }}">
                                 @else
                                     <div class="ah-card-image-fallback"><i class="fas fa-newspaper"></i></div>
                                 @endif
@@ -202,7 +202,7 @@
                             <a href="{{ route('public.articles.show', $a->slug) }}" class="ah-widget-item">
                                 <div class="ah-widget-thumb">
                                     @if($a->featured_image)
-                                        <img src="{{ asset($a->featured_image) }}" alt="{{ $a->title }}" loading="lazy">
+                                        <img class="lazy-img" data-src="{{ asset($a->featured_image) }}" alt="{{ $a->title }}">
                                     @else
                                         <i class="fas fa-newspaper"></i>
                                     @endif

@@ -83,7 +83,7 @@
                             <a href="javascript:void(0);" onclick="showUnlistedNewsModal({{ $a->id }})" class="nh-widget-item">
                                 <div class="nh-widget-thumb">
                                     @if($a->type !== 'video' && $a->link)
-                                        <img src="{{ asset($a->link) }}" alt="{{ $a->title }}" loading="lazy">
+                                        <img class="lazy-img" data-src="{{ asset($a->link) }}" alt="{{ $a->title }}">
                                     @else
                                         <i class="fa-solid fa-newspaper"></i>
                                     @endif

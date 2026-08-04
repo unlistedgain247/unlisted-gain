@@ -202,3 +202,90 @@ $(function () {
         }
     });
 });
+
+// =============================================
+// LAZY-LOAD IMAGES (site-wide)
+// =============================================
+// `.lazy-img` elements ship with no real `src` — only `data-src` (and
+// optionally `data-srcset`). This starts the real fetch 20px before the
+// image reaches the viewport, then fades it in on load instead of letting
+// it pop in abruptly. Applies to every page automatically, including
+// content injected later via AJAX (news grid, price list, stock tables,
+// admin lists, ...) through the MutationObserver below — new `.lazy-img`
+// elements never need any extra wiring wherever they're inserted.
+(function () {
+    if (!('IntersectionObserver' in window)) {
+        // No IntersectionObserver support: just load everything normally
+        // rather than leaving images permanently blank.
+        document.querySelectorAll('.lazy-img[data-src]').forEach(function (img) {
+            img.src = img.dataset.src;
+            if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+        });
+        return;
+    }
+
+    var lazyObserver = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var img = entry.target;
+            observer.unobserve(img);
+
+            var reveal = function () { img.classList.add('lazy-loaded'); };
+            img.addEventListener('load', reveal, { once: true });
+            img.addEventListener('error', reveal, { once: true }); // don't stay invisible on a broken image
+
+            if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+            img.removeAttribute('data-srcset');
+
+            // Already cached — the load event may never fire.
+            if (img.complete) reveal();
+        });
+    }, { rootMargin: '20px 0px' });
+
+    function observeLazyImages(root) {
+        root.querySelectorAll('.lazy-img[data-src]').forEach(function (img) {
+            lazyObserver.observe(img);
+        });
+    }
+
+    // CMS/News rich-text bodies (Article.content, UnlistedNews.content) are
+    // stored HTML from TinyMCE with plain `<img src="...">` tags we don't
+    // template ourselves — the browser has already started fetching those by
+    // the time this script runs, so the 20px-early-start behavior above isn't
+    // achievable for them, but they still shouldn't pop in abruptly. Give
+    // them the same fade-in via the `load` event instead of the observer.
+    var RICH_CONTENT_SELECTOR = '.article-content img, .news-detail-content img';
+
+    function fadeInRichContentImages(root) {
+        root.querySelectorAll(RICH_CONTENT_SELECTOR).forEach(function (img) {
+            if (img.classList.contains('lazy-img') || img.classList.contains('rich-content-fade')) return;
+            img.classList.add('rich-content-fade');
+            if (img.complete) {
+                img.classList.add('lazy-loaded');
+            } else {
+                var reveal = function () { img.classList.add('lazy-loaded'); };
+                img.addEventListener('load', reveal, { once: true });
+                img.addEventListener('error', reveal, { once: true });
+            }
+        });
+    }
+
+    observeLazyImages(document);
+    fadeInRichContentImages(document);
+
+    var bodyObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            mutation.addedNodes.forEach(function (node) {
+                if (node.nodeType !== 1) return;
+                if (node.matches && node.matches('.lazy-img[data-src]')) lazyObserver.observe(node);
+                if (node.querySelectorAll) {
+                    observeLazyImages(node);
+                    fadeInRichContentImages(node);
+                }
+            });
+        });
+    });
+    bodyObserver.observe(document.body, { childList: true, subtree: true });
+})();

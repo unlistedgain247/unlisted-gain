@@ -34,6 +34,26 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/* ── Site-wide lazy-loaded images (see main.js) — fades in on load instead
+   of popping in abruptly once the deferred fetch resolves.
+   `.rich-content-fade` is the same treatment applied to plain <img> tags
+   found inside CMS/News rich-text bodies (TinyMCE-authored HTML) — those
+   can't be deferred (see main.js comment) but still fade in on load. ── */
+.lazy-img,
+.rich-content-fade {
+    background-color: #f2f4f0;
+    opacity: 0;
+    transition: opacity .35s var(--ug-ease, ease);
+}
+.lazy-img.lazy-loaded,
+.rich-content-fade.lazy-loaded {
+    background-color: transparent;
+    opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+    .lazy-img, .rich-content-fade { transition: none; }
+}
+
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.25;
     letter-spacing: -.01em;

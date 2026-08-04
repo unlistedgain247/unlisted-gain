@@ -151,7 +151,7 @@
             </div>
 
             @if($article->featured_image)
-                <img src="{{ asset($article->featured_image) }}" alt="{{ $article->title }}" class="article-featured-image">
+                <img class="article-featured-image lazy-img" data-src="{{ asset($article->featured_image) }}" alt="{{ $article->title }}">
             @endif
 
             <div class="article-reading-col">
@@ -245,7 +245,7 @@
                             <a href="{{ route('public.articles.show', $ra->slug) }}" class="ah-card">
                                 <div class="ah-card-image">
                                     @if($ra->featured_image)
-                                        <img src="{{ asset($ra->featured_image) }}" alt="{{ $ra->title }}" loading="lazy">
+                                        <img class="lazy-img" data-src="{{ asset($ra->featured_image) }}" alt="{{ $ra->title }}">
                                     @else
                                         <div class="ah-card-image-fallback"><i class="fas fa-newspaper"></i></div>
                                     @endif

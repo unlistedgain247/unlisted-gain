@@ -256,8 +256,48 @@
 .news-detail-media { margin: 20px 0; text-align: center; }
 .news-detail-media img { max-width: 100%; border-radius: 12px; }
 .news-detail-content { margin-top: 18px; font-size: 15.5px; line-height: 1.8; color: #26292c; word-break: break-word; }
-.news-detail-content img { max-width: 100%; height: auto; border-radius: 10px; margin: 14px 0; }
+.news-detail-content img { max-width: 100%; height: auto; border-radius: 10px; margin: 14px 0; display: block; }
 .news-detail-content p { margin-bottom: 14px; }
+
+/* Rich typography — same treatment as .article-content on the Articles page,
+   since this content comes from the same TinyMCE editor and was rendering
+   with bare browser defaults (no color, no spacing rhythm) without it. */
+.news-detail-content h2 { font-size: 21px; font-weight: 750; margin: 28px 0 12px; color: var(--nh-ink); }
+.news-detail-content h3 { font-size: 17.5px; font-weight: 700; margin: 24px 0 10px; color: var(--nh-ink); }
+.news-detail-content h4 { font-size: 15.5px; font-weight: 700; margin: 20px 0 8px; color: var(--nh-ink); }
+.news-detail-content h2:first-child, .news-detail-content h3:first-child { margin-top: 0; }
+.news-detail-content strong { color: var(--nh-ink); }
+.news-detail-content ul, .news-detail-content ol { padding-left: 22px; margin-bottom: 16px; color: #26292c; }
+.news-detail-content li { margin-bottom: 8px; line-height: 1.75; }
+.news-detail-content ul > li::marker { color: var(--nh-green); }
+.news-detail-content ol > li::marker { color: var(--nh-green-dark); font-weight: 700; }
+.news-detail-content a { color: #2196f3; }
+.news-detail-content blockquote {
+    position: relative;
+    background: #fafbf8;
+    border-left: 4px solid var(--nh-green);
+    border-radius: 4px 12px 12px 4px;
+    padding: 14px 18px;
+    margin: 20px 0;
+    color: #3f4a3f;
+    font-style: italic;
+    font-size: 14.5px;
+}
+.news-detail-content .table-scroll { overflow-x: auto; margin: 20px 0; }
+.news-detail-content table {
+    width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px;
+    border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden;
+}
+.news-detail-content table th, .news-detail-content table td {
+    padding: 10px 14px; text-align: left; border-bottom: 1px solid #e5e7eb; border-right: 1px solid #e5e7eb;
+}
+.news-detail-content table th:last-child, .news-detail-content table td:last-child { border-right: none; }
+.news-detail-content table tr:last-child td { border-bottom: none; }
+.news-detail-content table th {
+    background: var(--nh-green-tint); color: var(--nh-green-darker); font-weight: 700;
+    text-transform: uppercase; font-size: 11px; letter-spacing: .03em;
+}
+.news-detail-content table tbody tr:nth-child(even) td { background: #fafbf8; }
 
 @media (max-width: 767px) {
     .news-detail-modal-body { padding: 26px; }

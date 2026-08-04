@@ -37,7 +37,8 @@
                 <div class="company-logo">
                     <span class="company-logo-fallback">{{ $initial }}</span>
                     @if($stock->UL_STOCKS_LOGO_LINK)
-                    <img src="{{ url($stock->UL_STOCKS_LOGO_LINK) }}"
+                    <img class="lazy-img"
+                         data-src="{{ url($stock->UL_STOCKS_LOGO_LINK) }}"
                          alt="{{ $stock->UL_STOCKS_COMPNAME }}"
                          onerror="this.style.display='none'">
                     @endif

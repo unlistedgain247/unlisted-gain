@@ -155,7 +155,7 @@
                         <div class="share-card" onclick="location.href='/companies/{{ $stock->slug }}/'">
                             <div class="logo-box">
                                 @if($stock->logo)
-                                    <img src="{{ url($stock->logo) }}" alt="{{ $stock->name }}" onerror="this.style.display='none'">
+                                    <img class="lazy-img" data-src="{{ url($stock->logo) }}" alt="{{ $stock->name }}" onerror="this.style.display='none'">
                                 @else
                                     <div style="font-weight:700;font-size:22px;color:#87b942;">{{ strtoupper(substr($stock->name,0,2)) }}</div>
                                 @endif

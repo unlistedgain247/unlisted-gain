@@ -236,8 +236,8 @@
                 <div class="ab-partner-card">
                     <h3>Bank / Payment Partners</h3>
                     <div class="ab-bank-logos">
-                        <img src="{{ asset('assets/img/bandhan.jpeg') }}" alt="Bandhan Bank">
-                        <img src="{{ asset('assets/img/icici.png') }}" alt="ICICI Bank">
+                        <img class="lazy-img" data-src="{{ asset('assets/img/bandhan.jpeg') }}" alt="Bandhan Bank">
+                        <img class="lazy-img" data-src="{{ asset('assets/img/icici.png') }}" alt="ICICI Bank">
                     </div>
                 </div>
                 <div class="ab-partner-card">

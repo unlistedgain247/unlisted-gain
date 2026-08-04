@@ -39,7 +39,7 @@
     <div class="nh-featured" onclick="showUnlistedNewsModal({{ $featured->id }})">
         <div class="nh-featured-image">
             @if($fThumb)
-                <img src="{{ $fThumb }}" alt="{{ $featured->title }}">
+                <img class="lazy-img" data-src="{{ $fThumb }}" alt="{{ $featured->title }}">
             @else
                 <div class="nh-image-fallback"><i class="fa-solid {{ $fMeta['icon'] }}"></i></div>
             @endif
@@ -65,7 +65,7 @@
         <div class="nh-card" onclick="showUnlistedNewsModal({{ $item->id }})">
             <div class="nh-card-image">
                 @if($img)
-                    <img src="{{ $img }}" alt="{{ $item->title }}" loading="lazy">
+                    <img class="lazy-img" data-src="{{ $img }}" alt="{{ $item->title }}">
                 @else
                     <div class="nh-image-fallback"><i class="fa-solid {{ $meta['icon'] }}"></i></div>
                 @endif

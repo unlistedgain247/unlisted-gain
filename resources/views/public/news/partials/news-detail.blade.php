@@ -21,7 +21,7 @@
 <div class="news-detail-body">
     @if($news->type === 'image' && $news->link)
         <div class="news-detail-media">
-            <img src="{{ asset($news->link) }}" alt="{{ $news->title }}">
+            <img class="lazy-img" data-src="{{ asset($news->link) }}" alt="{{ $news->title }}">
         </div>
     @elseif($news->type === 'video' && $news->link)
         <div class="news-detail-media">

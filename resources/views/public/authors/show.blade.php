@@ -105,7 +105,7 @@
                     <a href="{{ route('public.articles.show', $article->slug) }}" class="ah-card">
                         <div class="ah-card-image">
                             @if($article->featured_image)
-                                <img src="{{ asset($article->featured_image) }}" alt="{{ $article->title }}" loading="lazy">
+                                <img class="lazy-img" data-src="{{ asset($article->featured_image) }}" alt="{{ $article->title }}">
                             @else
                                 <div class="ah-card-image-fallback"><i class="fas fa-newspaper"></i></div>
                             @endif

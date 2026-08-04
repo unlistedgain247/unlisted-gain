@@ -263,6 +263,11 @@ function initUnnEditor() {
         automatic_uploads: true,
         branding: false,
         promotion: false,
+        // This editor lives inside a scrollable modal (.unn-body has
+        // overflow-y:auto) — without split UI mode, TinyMCE's menu/toolbar
+        // dropdowns get clipped by that ancestor's overflow instead of
+        // floating above it, making them effectively unopenable.
+        ui_mode: 'split',
     });
 }
 

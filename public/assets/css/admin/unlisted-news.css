@@ -43,6 +43,14 @@
     padding: 30px 16px; overflow-y: auto;
 }
 #unnOverlay.open { display: flex; }
+
+/* TinyMCE's ui_mode:'split' (needed since the editor sits inside this modal's
+   scrollable .unn-body) renders menus/toolbars into a sink appended near
+   <body>, outside our DOM — but it keeps TinyMCE's own default z-index
+   (1150), which sits underneath this modal's overlay (9000). Without this,
+   every dropdown menu is present in the DOM and "visible" by computed style,
+   but is actually hidden behind the modal backdrop. */
+.tox-tinymce-aux { z-index: 9999 !important; }
 #unnModal {
     background: #fff; border-radius: 12px; width: 100%; max-width: 900px;
     box-shadow: 0 12px 48px rgba(0,0,0,0.22); overflow: hidden;
