@@ -90,7 +90,7 @@ class AuthController extends Controller
 
         $user = DB::transaction(function () use ($request) {
             $user = User::create([
-                'name'               => $request->name,
+                'name'               => strip_tags($request->name),
                 'email'              => $request->email,
                 'phone'              => $request->phone,
                 'password'           => $request->password,

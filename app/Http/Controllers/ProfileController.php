@@ -53,7 +53,7 @@ class ProfileController extends Controller
         }
 
         $user->update([
-            'name'  => $request->name,
+            'name'  => strip_tags($request->name),
             'phone' => $request->phone,
         ]);
 

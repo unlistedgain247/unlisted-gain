@@ -773,9 +773,18 @@ class UnlistedStocksController extends Controller
 
         // SVG is deliberately excluded — it can carry an embedded <script> that
         // executes if the file's raw URL is opened directly (stored XSS).
-        $request->validate(['logo' => 'nullable|file|mimes:png,jpg,jpeg,webp|max:2048'], [
-            'logo.mimes' => 'Only PNG, JPG, JPEG, WEBP files are allowed.',
-            'logo.max'   => 'Logo must not exceed 2 MB.',
+        //
+        // UL_STOCKS_WEBSITE is pinned to http(s):// — it's rendered as a raw
+        // <a href> on the public company page, and Blade's {{ }} escaping does
+        // not block the javascript: scheme in an href attribute.
+        $request->validate([
+            'logo'              => 'nullable|file|mimes:png,jpg,jpeg,webp|max:2048',
+            'UL_STOCKS_WEBSITE' => ['nullable', 'url', 'regex:/^https?:\/\//i'],
+        ], [
+            'logo.mimes'             => 'Only PNG, JPG, JPEG, WEBP files are allowed.',
+            'logo.max'               => 'Logo must not exceed 2 MB.',
+            'UL_STOCKS_WEBSITE.url'   => 'Please enter a valid website URL.',
+            'UL_STOCKS_WEBSITE.regex' => 'Website URL must start with http:// or https://.',
         ]);
 
         $stock   = UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();

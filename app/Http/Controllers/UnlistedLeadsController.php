@@ -119,6 +119,14 @@ class UnlistedLeadsController extends Controller
         $lead     = UnlistedLead::findOrFail($leadId);
         $agentUid = $request->input('allocated_to') ?: null;
 
+        // The dropdown only *shows* leads-eligible staff — that's UX, not
+        // security. A direct API call could submit any uid, so re-check the
+        // same eligibility rule server-side before saving it (mirrors
+        // UnlistedOrdersController::updateOrder's intermediary_uid check).
+        if ($agentUid && !$this->isEligibleLeadAgent($agentUid)) {
+            return response()->json(['success' => false, 'message' => 'Invalid agent.'], 422);
+        }
+
         $lead->update([
             'UL_LEAD_ALLOCATED_TO' => $agentUid,
             'UL_LEAD_UPDATE_TIME'  => now(),
@@ -142,6 +150,7 @@ class UnlistedLeadsController extends Controller
         if (!$this->canAccessLeads()) return response()->json(['success' => false], 403);
 
         $lead = UnlistedLead::findOrFail($leadId);
+        if (!$this->canAccessLead($lead)) return response()->json(['success' => false], 403);
 
         $cb   = trim($request->input('callback_time', ''));
         $data = [
@@ -173,6 +182,9 @@ class UnlistedLeadsController extends Controller
     {
         if (!$this->canAccessLeads()) abort(403);
 
+        $lead = UnlistedLead::findOrFail($leadId);
+        abort_unless($this->canAccessLead($lead), 403);
+
         $activities = DB::table('unlisted_leads_activity')
             ->leftJoin('users', 'users.uid', '=', 'unlisted_leads_activity.UL_LEAD_ACTY_UID')
             ->select('unlisted_leads_activity.*', 'users.name as actor_name')
@@ -187,7 +199,10 @@ class UnlistedLeadsController extends Controller
     {
         if (!$this->canAccessLeads()) return response()->json(['success' => false], 403);
 
-        UnlistedLead::findOrFail($leadId)->update([
+        $lead = UnlistedLead::findOrFail($leadId);
+        if (!$this->canAccessLead($lead)) return response()->json(['success' => false], 403);
+
+        $lead->update([
             'UL_LEAD_REQUEST_FOR_CALL' => 'No',
             'UL_LEAD_UPDATE_TIME'      => now(),
         ]);
@@ -314,6 +329,31 @@ class UnlistedLeadsController extends Controller
         return !empty(Privilege::get('admin'))
             || !empty(Privilege::get('unlisted.leads_allocation'))
             || !empty(Privilege::get('unlisted.leads'));
+    }
+
+    /**
+     * Admins and leads_allocation staff can reach any lead. A plain
+     * unlisted.leads agent may only reach leads allocated to them —
+     * mirrors the scoping already applied in leadsData()'s list query.
+     */
+    private function canAccessLead(UnlistedLead $lead): bool
+    {
+        if (!empty(Privilege::get('admin')) || !empty(Privilege::get('unlisted.leads_allocation'))) {
+            return true;
+        }
+
+        return !empty(Privilege::get('unlisted.leads'))
+            && (int) $lead->UL_LEAD_ALLOCATED_TO === (int) session('uid');
+    }
+
+    private function isEligibleLeadAgent($uid): bool
+    {
+        return User::whereKey($uid)
+            ->where(function ($q) {
+                $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads')) = 'true'")
+                  ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads_allocation')) = 'true'");
+            })
+            ->exists();
     }
 
     private function getLeadAgents()

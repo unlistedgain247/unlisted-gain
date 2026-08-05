@@ -90,32 +90,45 @@ class UsersController extends Controller
     {
         $user = User::query()->where('uid', $uid)->firstOrFail();
 
-        // Only an existing admin may grant/revoke admin access — user_master alone
-        // must not be able to self-escalate to admin.
-        $isAdmin = (bool) Privilege::get('admin');
-        $admin   = $isAdmin ? $request->boolean('admin') : (bool) ($user->privilege['admin'] ?? false);
+        // A caller may only grant/revoke a privilege they already hold themselves
+        // (or hold admin) — otherwise the target user's existing value for that
+        // key is left untouched. This closes self-escalation (a user_master-only
+        // account could previously grant itself pg/unlisted/cms privileges it
+        // doesn't have) and a related bug where a form that doesn't render
+        // fields for privileges the caller can't see would silently wipe them
+        // (missing checkbox -> $request->boolean() defaults to false).
+        $isAdmin    = (bool) Privilege::get('admin');
+        $callerPriv = Privilege::get() ?: [];
+        $existing   = $user->privilege ?? [];
+
+        $grant = function (string $key, string $field) use ($isAdmin, $callerPriv, $existing, $request) {
+            if ($isAdmin || data_get($callerPriv, $key)) {
+                return $request->boolean($field);
+            }
+            return (bool) data_get($existing, $key);
+        };
 
         $privilege = [
-            'admin'       => $admin,
-            'user_master' => $request->boolean('user_master'),
+            'admin'       => $grant('admin', 'admin'),
+            'user_master' => $grant('user_master', 'user_master'),
             'unlisted'    => [
-                'stocks'           => $request->boolean('unlisted_stocks'),
-                'leads'            => $request->boolean('unlisted_leads'),
-                'leads_allocation' => $request->boolean('unlisted_leads_allocation'),
-                'orders'           => $request->boolean('unlisted_orders'),
-                'news'             => $request->boolean('unlisted_news'),
-                'unlisted_reports' => $request->boolean('unlisted_unlisted_reports'),
-                'order_backend'    => $request->boolean('unlisted_order_backend'),
+                'stocks'           => $grant('unlisted.stocks', 'unlisted_stocks'),
+                'leads'            => $grant('unlisted.leads', 'unlisted_leads'),
+                'leads_allocation' => $grant('unlisted.leads_allocation', 'unlisted_leads_allocation'),
+                'orders'           => $grant('unlisted.orders', 'unlisted_orders'),
+                'news'             => $grant('unlisted.news', 'unlisted_news'),
+                'unlisted_reports' => $grant('unlisted.unlisted_reports', 'unlisted_unlisted_reports'),
+                'order_backend'    => $grant('unlisted.order_backend', 'unlisted_order_backend'),
             ],
             'pg' => [
-                'dashboard'    => $request->boolean('pg_dashboard'),
-                'margin'       => $request->boolean('pg_margin'),
-                'margin_error' => $request->boolean('pg_margin_error'),
-                'transactions' => $request->boolean('pg_transactions'),
+                'dashboard'    => $grant('pg.dashboard', 'pg_dashboard'),
+                'margin'       => $grant('pg.margin', 'pg_margin'),
+                'margin_error' => $grant('pg.margin_error', 'pg_margin_error'),
+                'transactions' => $grant('pg.transactions', 'pg_transactions'),
             ],
             'cms' => [
-                'author'   => $request->boolean('cms_author'),
-                'reviewer' => $request->boolean('cms_reviewer'),
+                'author'   => $grant('cms.author', 'cms_author'),
+                'reviewer' => $grant('cms.reviewer', 'cms_reviewer'),
             ],
         ];
 

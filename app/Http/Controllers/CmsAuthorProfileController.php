@@ -27,6 +27,10 @@ class CmsAuthorProfileController extends Controller
             'author_website'   => 'nullable|url|max:255',
         ]);
 
+        if (isset($data['author_bio'])) {
+            $data['author_bio'] = strip_tags($data['author_bio']);
+        }
+
         $author->update($data);
 
         return redirect()->route('admin.cms.profile.edit')->with('success', 'Author profile updated.');
