@@ -92,7 +92,6 @@
     }
 
     table.price-table thead th.num { text-align: right; }
-    table.price-table thead th.sl  { text-align: center; }
 
     table.price-table tbody td {
         padding: 8px 5px;
@@ -134,17 +133,6 @@
         font-weight: bold;
     }
 
-    /* Must outrank "table.price-table tbody td" (0,1,3) and ".num" (0,2,3) —
-       those were silently overriding this rule's font-size/alignment/font,
-       which is why the serial number kept rendering big, right-aligned and
-       monospace no matter what was set here. */
-    table.price-table tbody td.sl-no {
-        color: #aab3a5;
-        text-align: center;
-        font-size: 8px;
-        font-family: 'Helvetica', 'Arial', sans-serif;
-    }
-
     .pe-good { color: #158a45; font-weight: bold; }
     .pe-mid  { color: #b4740e; font-weight: bold; }
     .pe-high { color: #c1281f; font-weight: bold; }
@@ -178,9 +166,8 @@
 
     <table class="price-table">
         <colgroup>
-            <col width="26">
             <col width="30">
-            <col width="205">
+            <col width="231">
             <col width="80">
             <col width="65">
             <col width="65">
@@ -189,7 +176,6 @@
         </colgroup>
         <thead>
             <tr>
-                <th class="sl">Sl.</th>
                 <th></th>
                 <th>Company</th>
                 <th class="num">Price (Rs.)</th>
@@ -210,7 +196,6 @@
                 $initial = strtoupper(substr($s->UL_STOCKS_COMPNAME, 0, 1));
             @endphp
             <tr class="{{ $i % 2 === 1 ? 'alt' : '' }}">
-                <td class="sl-no">{{ $i + 1 }}</td>
                 <td class="logo-cell">
                     @if($s->logo_data_uri)
                     <span class="logo-box"><img src="{{ $s->logo_data_uri }}"></span>
