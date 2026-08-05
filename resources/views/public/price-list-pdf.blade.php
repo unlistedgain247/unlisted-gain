@@ -108,6 +108,32 @@
 
     .company-name { font-weight: bold; font-size: 11.5px; color: #1a1a1a; }
 
+    /* Fixed box + max-width/max-height (not object-fit, which dompdf doesn't
+       reliably support) so logos of any source aspect ratio stay contained
+       without distortion. */
+    table.price-table tbody td.logo-cell { text-align: center; padding: 6px 4px; }
+
+    .logo-box {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        text-align: center;
+        border: 1px solid #e3e8dd;
+        border-radius: 5px;
+        background: #fff;
+        overflow: hidden;
+    }
+
+    .logo-box img { max-width: 20px; max-height: 20px; vertical-align: middle; }
+
+    .logo-box.logo-fallback {
+        background: #eef5e4;
+        color: #4a7c20;
+        font-size: 9px;
+        font-weight: bold;
+    }
+
     /* Must outrank "table.price-table tbody td" (0,1,3) and ".num" (0,2,3) —
        those were silently overriding this rule's font-size/alignment/font,
        which is why the serial number kept rendering big, right-aligned and
@@ -153,7 +179,8 @@
     <table class="price-table">
         <colgroup>
             <col width="26">
-            <col width="235">
+            <col width="30">
+            <col width="205">
             <col width="80">
             <col width="65">
             <col width="65">
@@ -163,6 +190,7 @@
         <thead>
             <tr>
                 <th class="sl">Sl.</th>
+                <th></th>
                 <th>Company</th>
                 <th class="num">Price (Rs.)</th>
                 <th class="num">Face Val.</th>
@@ -179,9 +207,17 @@
                 if (is_numeric($pe)) {
                     $peClass = $pe < 0 ? 'pe-high' : ($pe <= 25 ? 'pe-good' : ($pe <= 45 ? 'pe-mid' : 'pe-high'));
                 }
+                $initial = strtoupper(substr($s->UL_STOCKS_COMPNAME, 0, 1));
             @endphp
             <tr class="{{ $i % 2 === 1 ? 'alt' : '' }}">
                 <td class="sl-no">{{ $i + 1 }}</td>
+                <td class="logo-cell">
+                    @if($s->logo_data_uri)
+                    <span class="logo-box"><img src="{{ $s->logo_data_uri }}"></span>
+                    @else
+                    <span class="logo-box logo-fallback">{{ $initial }}</span>
+                    @endif
+                </td>
                 <td class="company-name">{{ $s->UL_STOCKS_COMPNAME }}</td>
                 <td class="num">{{ $s->current_price !== null ? number_format($s->current_price, 2) : '-' }}</td>
                 <td class="num">{{ $s->face_value !== null ? number_format($s->face_value, 2) : '-' }}</td>

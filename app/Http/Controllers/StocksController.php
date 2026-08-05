@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SafeUpload;
 use App\Models\UnlistedStock;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -255,6 +256,10 @@ class StocksController extends Controller
         $stocks  = $this->priceListResults($q, $sort);
         $logoUri = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(public_path('assets/img/unlisted-head.jpeg')));
 
+        $stocks->each(function ($s) {
+            $s->logo_data_uri = $this->companyLogoDataUri($s->UL_STOCKS_LOGO_LINK);
+        });
+
         $pdf = Pdf::loadView('public.price-list-pdf', [
             'stocks'      => $stocks,
             'logoUri'     => $logoUri,
@@ -262,6 +267,36 @@ class StocksController extends Controller
         ])->setPaper('a4', 'portrait');
 
         return $pdf->download('unlistedgain-share-price-list-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    /**
+     * dompdf can't reliably fetch remote/relative <img> URLs, so every image
+     * it renders in this app's PDFs (see $logoUri above) is inlined as a
+     * base64 data URI instead. Same treatment here for per-stock logos.
+     */
+    private function companyLogoDataUri(?string $relativePath): ?string
+    {
+        if (!$relativePath) {
+            return null;
+        }
+
+        $mimeByExtension = [
+            'png'  => 'image/png',
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif'  => 'image/gif',
+            'webp' => 'image/webp',
+        ];
+
+        $extension = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+        $mime      = $mimeByExtension[$extension] ?? null;
+        $fullPath  = SafeUpload::webRoot() . DIRECTORY_SEPARATOR . $relativePath;
+
+        if (!$mime || !is_file($fullPath)) {
+            return null;
+        }
+
+        return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($fullPath));
     }
 
     public function stocks()
