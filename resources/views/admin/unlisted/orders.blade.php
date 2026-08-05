@@ -164,8 +164,8 @@
                     <label>User ID</label>
                     <select id="eomIntermediary">
                         <option value="">— Select —</option>
-                        @foreach($adminUsers as $au)
-                        <option value="{{ $au->uid }}">{{ $au->name }} ({{ $au->uid }})</option>
+                        @foreach($channelPartners as $cp)
+                        <option value="{{ $cp->uid }}">{{ $cp->name }} ({{ $cp->uid }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -592,8 +592,9 @@ $('#fSearch').on('keydown', function (e) { if (e.key === 'Enter') loadOrders(1);
 $(function () {
     loadOrders(1);
 
-    // Searchable dropdowns of staff with leads/leads-allocation access, instead
-    // of a blind free-text UID field / a long plain <select>.
+    // Searchable dropdowns (channel-partner customers for Intermediary, staff
+    // with leads/leads-allocation access for Added By), instead of a blind
+    // free-text UID field / a long plain <select>.
     $('#eomIntermediary, #eomAddedBy').select2({
         dropdownParent: $('#editOrdModal'),
         placeholder: '— Select —',

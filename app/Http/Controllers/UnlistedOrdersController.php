@@ -14,14 +14,20 @@ class UnlistedOrdersController extends Controller
     {
         if (!$this->canAccess()) abort(403);
 
-        // Same "leads OR leads_allocation" definition of an eligible intermediary/
-        // added-by staff member used elsewhere (UnlistedLeadsController::getLeadAgents).
+        // Same "leads OR leads_allocation" definition of an eligible added-by
+        // staff member used elsewhere (UnlistedLeadsController::getLeadAgents).
         $adminUsers = User::whereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads')) = 'true'")
             ->orWhereRaw("JSON_UNQUOTE(JSON_EXTRACT(privilege, '$.unlisted.leads_allocation')) = 'true'")
             ->orderBy('name')
             ->get(['uid', 'name']);
 
-        return view('admin.unlisted.orders', compact('adminUsers'));
+        // The intermediary is a channel-partner customer (registered with
+        // unlisted_user_type = channel_partner), not an internal staff member.
+        $channelPartners = User::where('unlisted_user_type', 'channel_partner')
+            ->orderBy('name')
+            ->get(['uid', 'name']);
+
+        return view('admin.unlisted.orders', compact('adminUsers', 'channelPartners'));
     }
 
     public function ordersData(Request $request)
