@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $__env->yieldContent('title', "UnlistedGain | India's #1 Marketplace to Buy & Sell Unlisted Shares") }}</title>
-    <meta name="description" content="{{ $__env->yieldContent('meta_description', 'UnlistedGain is the most trusted platform to buy and sell unlisted, pre-IPO, and ESOP shares in India at the best prices.') }}">
-    <meta name="keywords" content="{{ $__env->yieldContent('meta_keywords', 'unlisted shares, pre-IPO shares, buy unlisted shares India, sell unlisted shares, NSE unlisted price') }}">
+    <title>{!! $__env->yieldContent('title', 'UnlistedGain | India&#039;s #1 Marketplace to Buy &amp; Sell Unlisted Shares') !!}</title>
+    <meta name="description" content="{!! $__env->yieldContent('meta_description', 'UnlistedGain is the most trusted platform to buy and sell unlisted, pre-IPO, and ESOP shares in India at the best prices.') !!}">
+    <meta name="keywords" content="{!! $__env->yieldContent('meta_keywords', 'unlisted shares, pre-IPO shares, buy unlisted shares India, sell unlisted shares, NSE unlisted price') !!}">
     <meta name="author" content="UnlistedGain">
     <meta name="robots" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
