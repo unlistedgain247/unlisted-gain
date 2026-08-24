@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Privilege;
 use App\Helpers\SessionAuth;
+use App\Mail\OrderPlacedMail;
 use App\Models\User;
 use App\Models\UnlistedLead;
 use App\Models\UnlistedLeadActivity;
 use App\Models\UnlistedOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class UnlistedLeadsController extends Controller
 {
@@ -221,7 +223,7 @@ class UnlistedLeadsController extends Controller
         $qty     = (int) $request->input('qty', 0);
 
         $stock = DB::selectOne("
-            SELECT s.UL_STOCKS_LOT_SIZE, p.UL_PD_BID_PRICE
+            SELECT s.UL_STOCKS_LOT_SIZE, s.UL_STOCKS_COMPNAME, p.UL_PD_BID_PRICE
             FROM unlisted_stocks s
             LEFT JOIN (
                 SELECT pd.UL_PD_FINCODE, pd.UL_PD_BID_PRICE
@@ -308,17 +310,38 @@ class UnlistedLeadsController extends Controller
         }
 
         if (in_array($type, ['buy', 'sell'])) {
-            $price = (float) $stock->UL_PD_BID_PRICE;
-            UnlistedOrder::create([
+            $price  = (float) $stock->UL_PD_BID_PRICE;
+            $amount = $price * $qty;
+
+            $order = UnlistedOrder::create([
                 'UL_ORD_USER_ID'         => $uid,
                 'UL_ORD_FINCODE'         => $fincode,
                 'UL_ORD_TYPE'            => $type,
                 'UL_ORD_QUANTITY'        => $qty,
                 'UL_ORD_PRICE_PER_SHARE' => $price,
-                'UL_ORD_AMOUNT'          => $price * $qty,
+                'UL_ORD_AMOUNT'          => $amount,
                 'UL_ORD_INSERT_TIME'     => $now,
                 'UL_ORD_UPDATE_TIME'     => $now,
             ]);
+
+            $emailAllowed = DB::table('user_communication_restrictions')
+                ->where('user_id', $uid)
+                ->value('email');
+
+            if ($emailAllowed !== 0 && session('email')) {
+                try {
+                    Mail::to(session('email'))->send(new OrderPlacedMail(
+                        $type,
+                        $stock->UL_STOCKS_COMPNAME ?: 'this stock',
+                        $qty,
+                        $price,
+                        $amount,
+                        $order->UL_ORD_ID,
+                    ));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
         }
 
         return response()->json(['success' => true]);

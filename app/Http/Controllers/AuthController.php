@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmailOtpMail;
+use App\Models\EmailOtp;
 use App\Models\UnlistedLead;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -16,6 +19,10 @@ class AuthController extends Controller
 
     // Lockout durations per lockout_count: 1st=15min, 2nd=30min, 3rd=1hr, 4th=6hr, 5th+=24hr
     private const LOCKOUT_SCHEDULE = [15, 30, 60, 360, 1440];
+
+    private const OTP_TTL_MINUTES     = 10;
+    private const OTP_MAX_ATTEMPTS    = 5;
+    private const OTP_VERIFIED_WINDOW = 15; // minutes the verified-email session flag stays valid
 
     // ─── Lockout helpers (query-free — work on an already-loaded $user) ──
 
@@ -88,6 +95,16 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'errors' => $e->errors()], 422);
         }
 
+        $email        = strtolower(trim($request->email));
+        $verifiedUntil = session('otp_verified_until');
+
+        if (session('otp_verified_email') !== $email || !$verifiedUntil || now()->gt($verifiedUntil)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please verify your email with the OTP sent to you before signing up.',
+            ], 422);
+        }
+
         $user = DB::transaction(function () use ($request) {
             $user = User::create([
                 'name'               => strip_tags($request->name),
@@ -129,6 +146,8 @@ class AuthController extends Controller
             'unlisted_user_type' => $user->unlisted_user_type,
         ]);
 
+        session()->forget(['otp_verified_email', 'otp_verified_until']);
+
         $returnTo = session()->pull('invest_return_to', '/');
 
         return response()->json([
@@ -136,6 +155,257 @@ class AuthController extends Controller
             'message'  => 'Account created successfully! Redirecting...',
             'redirect' => url($returnTo),
         ]);
+    }
+
+    // ─── Registration email OTP ─────────────────────────────────────────
+
+    public function sendRegistrationOtp(Request $request)
+    {
+        if ($request->filled('_hp')) {
+            return response()->json(['success' => true]);
+        }
+
+        try {
+            $request->validate([
+                'name'  => 'required|string|max:100',
+                'email' => 'required|email|unique:users,email',
+            ], [
+                'name.required'  => 'Full name is required.',
+                'email.required' => 'Email address is required.',
+                'email.email'    => 'Please enter a valid email address.',
+                'email.unique'   => 'This email is already registered. Please sign in instead.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        $email = strtolower(trim($request->email));
+        $code  = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        DB::transaction(function () use ($email, $code, $request) {
+            // Invalidate any earlier still-live codes for this email so only
+            // the latest one is ever accepted.
+            EmailOtp::where('email', $email)
+                ->where('purpose', 'registration')
+                ->whereNull('consumed_at')
+                ->update(['consumed_at' => now()]);
+
+            EmailOtp::create([
+                'email'      => $email,
+                'purpose'    => 'registration',
+                'code_hash'  => Hash::make($code),
+                'ip_address' => $request->ip(),
+                'attempts'   => 0,
+                'expires_at' => now()->addMinutes(self::OTP_TTL_MINUTES),
+            ]);
+        });
+
+        try {
+            Mail::to($email)->send(new EmailOtpMail($code, 'registration'));
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not send the OTP email right now. Please try again in a moment.',
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'A verification code has been sent to your email.',
+        ]);
+    }
+
+    public function verifyRegistrationOtp(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'otp'   => 'required|digits:6',
+            ], [
+                'email.required' => 'Email address is required.',
+                'email.email'    => 'Please enter a valid email address.',
+                'otp.required'   => 'Please enter the OTP.',
+                'otp.digits'     => 'OTP must be a 6-digit code.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        $email = strtolower(trim($request->email));
+
+        $otpRow = EmailOtp::where('email', $email)
+            ->where('purpose', 'registration')
+            ->whereNull('consumed_at')
+            ->latest('id')
+            ->first();
+
+        if (!$otpRow || $otpRow->expires_at->isPast()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This code has expired. Please request a new one.',
+            ], 422);
+        }
+
+        if ($otpRow->attempts >= self::OTP_MAX_ATTEMPTS) {
+            $otpRow->update(['consumed_at' => now()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Too many incorrect attempts. Please request a new code.',
+            ], 422);
+        }
+
+        if (!Hash::check($request->otp, $otpRow->code_hash)) {
+            $otpRow->increment('attempts');
+            $remaining = self::OTP_MAX_ATTEMPTS - $otpRow->attempts;
+
+            return response()->json([
+                'success' => false,
+                'message' => $remaining > 0
+                    ? "Incorrect code. {$remaining} attempt(s) left."
+                    : 'Too many incorrect attempts. Please request a new code.',
+            ], 422);
+        }
+
+        $otpRow->update(['consumed_at' => now()]);
+
+        session([
+            'otp_verified_email' => $email,
+            'otp_verified_until' => now()->addMinutes(self::OTP_VERIFIED_WINDOW),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email verified.',
+        ]);
+    }
+
+    // ─── Login email OTP ────────────────────────────────────────────────
+
+    public function sendLoginOtp(Request $request)
+    {
+        if ($request->filled('_hp')) {
+            return response()->json(['success' => true]);
+        }
+
+        try {
+            $request->validate([
+                'email' => 'required|email',
+            ], [
+                'email.required' => 'Email address is required.',
+                'email.email'    => 'Please enter a valid email address.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        $email = strtolower(trim($request->email));
+        $user  = User::query()->where('email', $email)->first();
+
+        // Always respond the same way whether or not the account exists —
+        // this endpoint must never be usable to enumerate registered emails.
+        if ($user) {
+            $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+            DB::transaction(function () use ($email, $code, $request) {
+                EmailOtp::where('email', $email)
+                    ->where('purpose', 'login')
+                    ->whereNull('consumed_at')
+                    ->update(['consumed_at' => now()]);
+
+                EmailOtp::create([
+                    'email'      => $email,
+                    'purpose'    => 'login',
+                    'code_hash'  => Hash::make($code),
+                    'ip_address' => $request->ip(),
+                    'attempts'   => 0,
+                    'expires_at' => now()->addMinutes(self::OTP_TTL_MINUTES),
+                ]);
+            });
+
+            try {
+                Mail::to($email)->send(new EmailOtpMail($code, 'login'));
+            } catch (\Throwable $e) {
+                report($e);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Could not send the OTP email right now. Please try again in a moment.',
+                ], 500);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'If this email is registered, a sign-in code has been sent to it.',
+        ]);
+    }
+
+    public function verifyLoginOtp(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'otp'   => 'required|digits:6',
+            ], [
+                'email.required' => 'Email address is required.',
+                'email.email'    => 'Please enter a valid email address.',
+                'otp.required'   => 'Please enter the OTP.',
+                'otp.digits'     => 'OTP must be a 6-digit code.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        }
+
+        $email = strtolower(trim($request->email));
+
+        $otpRow = EmailOtp::where('email', $email)
+            ->where('purpose', 'login')
+            ->whereNull('consumed_at')
+            ->latest('id')
+            ->first();
+
+        if (!$otpRow || $otpRow->expires_at->isPast()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This code has expired. Please request a new one.',
+            ], 422);
+        }
+
+        if ($otpRow->attempts >= self::OTP_MAX_ATTEMPTS) {
+            $otpRow->update(['consumed_at' => now()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Too many incorrect attempts. Please request a new code.',
+            ], 422);
+        }
+
+        if (!Hash::check($request->otp, $otpRow->code_hash)) {
+            $otpRow->increment('attempts');
+            $remaining = self::OTP_MAX_ATTEMPTS - $otpRow->attempts;
+
+            return response()->json([
+                'success' => false,
+                'message' => $remaining > 0
+                    ? "Incorrect code. {$remaining} attempt(s) left."
+                    : 'Too many incorrect attempts. Please request a new code.',
+            ], 422);
+        }
+
+        // The OTP row only ever gets created for an email that matched a
+        // real user at send-time, so this should always resolve.
+        $user = User::query()->where('email', $email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Account not found. Please try again.',
+            ], 422);
+        }
+
+        $otpRow->update(['consumed_at' => now()]);
+        $this->clearFailures($user);
+
+        return $this->logUserIn($request, $user);
     }
 
     // ─── Login ───────────────────────────────────────────────────────────
@@ -216,6 +486,11 @@ class AuthController extends Controller
         // ✓ Success — clear counters and rotate session token
         $this->clearFailures($user);
 
+        return $this->logUserIn($request, $user);
+    }
+
+    private function logUserIn(Request $request, User $user)
+    {
         $newToken = Str::random(60);
         $user->update(['session_token' => $newToken]);
 

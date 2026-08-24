@@ -33,6 +33,12 @@ Route::post('/login',    [AuthController::class, 'login'])->name('login.post')->
 Route::post('/register', [AuthController::class, 'register'])->name('register.post')->middleware('throttle:register');
 Route::post('/logout',   [AuthController::class, 'logout'])->name('logout');
 
+Route::post('/register/send-otp',   [AuthController::class, 'sendRegistrationOtp'])->name('register.send-otp')->middleware('throttle:otp-send');
+Route::post('/register/verify-otp', [AuthController::class, 'verifyRegistrationOtp'])->name('register.verify-otp')->middleware('throttle:otp-verify');
+
+Route::post('/login/send-otp',   [AuthController::class, 'sendLoginOtp'])->name('login.send-otp')->middleware('throttle:otp-send');
+Route::post('/login/verify-otp', [AuthController::class, 'verifyLoginOtp'])->name('login.verify-otp')->middleware('throttle:otp-verify');
+
 // Public routes
 Route::get('/',               [PublicController::class, 'welcome'])->name('public.home');
 Route::get('/about',          [PublicController::class, 'about'])->name('public.about');
@@ -40,6 +46,7 @@ Route::get('/contact-us',     [PublicController::class, 'contactUs'])->name('pub
 Route::redirect('/connect', '/contact-us', 301); // old URL — keep working for existing links/SEO
 Route::get('/privacy-policy',      [PublicController::class, 'privacyPolicy'])->name('public.privacy-policy');
 Route::get('/terms-of-use',        [PublicController::class, 'termsOfUse'])->name('public.terms-of-use');
+Route::get('/bank-account-details', [PublicController::class, 'bankAccountDetails'])->name('public.bank-account-details');
 Route::get('/off-market-annexure', [PublicController::class, 'offMarketAnnexure'])->name('public.off-market-annexure');
 Route::get('/pan-unlisted-shares', [PublicController::class, 'panUnlistedShares'])->name('public.pan-unlisted-shares');
 Route::get('/sebi-guidelines',     [PublicController::class, 'sebiGuidelines'])->name('public.sebi-guidelines');

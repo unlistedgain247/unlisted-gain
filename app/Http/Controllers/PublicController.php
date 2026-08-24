@@ -202,6 +202,11 @@ class PublicController extends Controller
         return view('public.terms-of-use');
     }
 
+    public function bankAccountDetails()
+    {
+        return view('public.bank-account-details');
+    }
+
     public function offMarketAnnexure()
     {
         return view('public.off-market-annexure');

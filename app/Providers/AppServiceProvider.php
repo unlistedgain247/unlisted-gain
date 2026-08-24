@@ -48,6 +48,58 @@ class AppServiceProvider extends ServiceProvider
                 ], 429));
         });
 
+        // OTP send: 3/10min + 5/hour per email, 10/hour per IP.
+        // Email is the primary key here — it's what an attacker can't rotate
+        // as cheaply as an IP, so it has to be the layer that actually holds.
+        RateLimiter::for('otp-send', function (Request $request) {
+            $email = strtolower(trim($request->input('email', '')));
+
+            return [
+                Limit::perMinutes(10, 3)
+                    ->by('otp-send|email:' . $email)
+                    ->response(fn () => response()->json([
+                        'success' => false,
+                        'message' => 'Too many OTP requests for this email. Please wait a few minutes.',
+                    ], 429)),
+
+                Limit::perHour(5)
+                    ->by('otp-send|email:' . $email)
+                    ->response(fn () => response()->json([
+                        'success' => false,
+                        'message' => 'Too many OTP requests for this email. Please try again later.',
+                    ], 429)),
+
+                Limit::perHour(10)
+                    ->by('otp-send|ip:' . $request->ip())
+                    ->response(fn () => response()->json([
+                        'success' => false,
+                        'message' => 'Too many requests from your network. Please try again later.',
+                    ], 429)),
+            ];
+        });
+
+        // OTP verify: 8/10min per email (on top of the per-code attempt cap
+        // stored in registration_otps.attempts), 20/hour per IP.
+        RateLimiter::for('otp-verify', function (Request $request) {
+            $email = strtolower(trim($request->input('email', '')));
+
+            return [
+                Limit::perMinutes(10, 8)
+                    ->by('otp-verify|email:' . $email)
+                    ->response(fn () => response()->json([
+                        'success' => false,
+                        'message' => 'Too many attempts. Please wait a few minutes and request a new code.',
+                    ], 429)),
+
+                Limit::perHour(20)
+                    ->by('otp-verify|ip:' . $request->ip())
+                    ->response(fn () => response()->json([
+                        'success' => false,
+                        'message' => 'Too many attempts from your network. Please try again later.',
+                    ], 429)),
+            ];
+        });
+
         // Password change, avatar/KYC document uploads: 10/min per session+IP.
         // (The global ThrottleRequestsException handler in bootstrap/app.php
         // already renders a clean JSON message, so no custom response here.)

@@ -41,6 +41,7 @@
                     <li><a href="{{ url('/off-market-annexure') }}">Off Market Annexure</a></li>
                     <li><a href="{{ url('/pan-unlisted-shares') }}">PAN of unlisted shares</a></li>
                     <li><a href="{{ url('/sebi-guidelines') }}">SEBI guidelines</a></li>
+                    <li><a href="{{ url('/bank-account-details') }}">Bank Account Details</a></li>
                     <li><a href="{{ url('/knowledge-centre') }}">Knowledge centre</a></li>
                     <li><a href="{{ url('/faq') }}">Frequently Asked Questions</a></li>
                 </ul>

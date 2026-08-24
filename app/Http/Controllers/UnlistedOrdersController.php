@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Privilege;
+use App\Mail\OrderStatusMail;
 use App\Models\User;
 use App\Models\UnlistedOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class UnlistedOrdersController extends Controller
 {
@@ -165,9 +167,51 @@ class UnlistedOrdersController extends Controller
 
         $data['UL_ORD_UPDATE_TIME'] = now();
 
+        $statusChangedTo = ($request->has('status') && $newStatus !== $order->UL_ORD_STATUS && in_array($newStatus, ['Completed', 'Cancelled']))
+            ? $newStatus
+            : null;
+
         DB::table('unlisted_orders')->where('UL_ORD_ID', $orderId)->update($data);
 
+        if ($statusChangedTo) {
+            $this->notifyOrderStatus($orderId, $statusChangedTo);
+        }
+
         return response()->json(['success' => true]);
+    }
+
+    private function notifyOrderStatus(int $orderId, string $status): void
+    {
+        $order = DB::table('unlisted_orders')
+            ->leftJoin('unlisted_stocks', 'unlisted_stocks.UL_STOCKS_FINCODE', '=', 'unlisted_orders.UL_ORD_FINCODE')
+            ->where('unlisted_orders.UL_ORD_ID', $orderId)
+            ->first(['unlisted_orders.*', 'unlisted_stocks.UL_STOCKS_COMPNAME']);
+
+        if (!$order) return;
+
+        $customer = User::find($order->UL_ORD_USER_ID);
+
+        if (!$customer || !$customer->email) return;
+
+        $emailAllowed = DB::table('user_communication_restrictions')
+            ->where('user_id', $customer->uid)
+            ->value('email');
+
+        if ($emailAllowed === 0) return;
+
+        try {
+            Mail::to($customer->email)->send(new OrderStatusMail(
+                $status,
+                $order->UL_ORD_TYPE,
+                $order->UL_STOCKS_COMPNAME ?: 'this stock',
+                (int) $order->UL_ORD_QUANTITY,
+                (float) $order->UL_ORD_PRICE_PER_SHARE,
+                (float) $order->UL_ORD_AMOUNT,
+                $order->UL_ORD_ID,
+            ));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function searchCustomers(Request $request)

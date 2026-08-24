@@ -3,126 +3,90 @@
 @section('title', 'Sign Up | UnlistedGain')
 
 @push('styles')
-    <link href="{{ asset('assets/auth/css/pace.min.css') }}" rel="stylesheet">
-    <script src="{{ asset('assets/auth/js/pace.min.js') }}"></script>
-    <link href="{{ asset('assets/auth/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/auth/css/bootstrap-extended.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/auth/css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/auth/css/icons.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/register.css') }}?v={{ filemtime(public_path('assets/css/pagecss/register.css')) }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/pagecss/auth.css') }}?v={{ filemtime(public_path('assets/css/pagecss/auth.css')) }}">
 @endpush
 
 @section('content')
-<div class="auth-page-wrapper">
-    <div class="container">
-        <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-2">
-            <div class="col mx-auto">
-                <div class="card rounded-4">
-                    <div class="card-body">
-                        <div class="border p-4 rounded-4">
-                            <div class="text-center">
-                                <img src="{{ asset('assets/img/unlisted-head.jpeg') }}" height="50" alt="UnlistedGain">
-                                <h5 class="mt-3 mb-0">Welcome</h5>
-                                <p class="mb-4">Create Your New Account</p>
-                            </div>
+<div class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <h1 class="auth-card__title">Welcome</h1>
+            <p class="auth-card__subtitle">Create your new account</p>
+        </div>
 
-                            <div class="form-body">
-                                <div id="registerAlert" class="auth-alert alert"></div>
-                                <form class="row g-3" id="registerForm">
-                                    @csrf
-                                    {{-- Honeypot: bots fill this, humans never see it --}}
-                                    <input type="text" name="_hp" value="" style="display:none!important" tabindex="-1" autocomplete="off" aria-hidden="true">
-                                    <input type="hidden" name="landing_page" value="{{ $landingPage ?? '' }}">
-                                    <div class="col-12">
-                                        <label for="inputName" class="form-label">Full Name</label>
-                                        <input type="text" class="form-control rounded-5" id="inputName" placeholder="John Doe">
-                                        <div class="auth-error" id="errName">Full name is required.</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="inputEmailAddress" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control rounded-5" id="inputEmailAddress" placeholder="example@user.com">
-                                        <div class="auth-error" id="errEmail">Please enter a valid email address.</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="inputChoosePassword" class="form-label">Password</label>
-                                        <div class="input-group" id="show_hide_password">
-                                            <input type="password" class="form-control rounded-5" id="inputChoosePassword" placeholder="Enter Password (min 6 characters)">
-                                        </div>
-                                        <div class="auth-error" id="errPassword">Password must be at least 6 characters.</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="inputPhone" class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control rounded-5" id="inputPhone" placeholder="9811333333">
-                                        <div class="auth-error" id="errPhone">Please enter a valid 10-digit phone number.</div>
-                                    </div>
-                                    <div class="col-12">
-                                        <label for="inputUnlistedUserType" class="form-label">I am interested in</label>
-                                        <select class="form-select rounded-5" id="inputUnlistedUserType">
-                                            <option value="">-- Select --</option>
-                                            <option value="unlisted">Unlisted</option>
-                                            <option value="channel_partner">Channel Partner</option>
-                                        </select>
-                                        <div class="auth-error" id="errUserType">Please select a user type.</div>
-                                    </div>
-                                    {{-- <div class="col-12">
-                                        <label for="inputSelectCountry" class="form-label">Country</label>
-                                        <select class="form-select rounded-5" id="inputSelectCountry">
-                                            <option selected>India</option>
-                                            <option value="1">United Kingdom</option>
-                                            <option value="2">America</option>
-                                            <option value="3">Dubai</option>
-                                        </select>
-                                    </div> --}}
-                                    {{-- <div class="col-12">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="agreeTerms">
-                                            <label class="form-check-label" for="agreeTerms">I read and agree to Terms &amp; Conditions</label>
-                                        </div>
-                                        <div class="auth-error" id="errTerms">You must agree to the Terms &amp; Conditions.</div>
-                                    </div> --}}
-                                    <div class="col-12">
-                                        <div class="d-grid">
-                                            <button type="submit" id="registerBtn" class="btn btn-gradient-info rounded-5">
-                                                <i class="bx bx-user"></i> Sign Up
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {{-- <div class="col-12">
-                                        <div class="login-separater text-center">
-                                            <span>OR SIGN UP WITH</span>
-                                            <hr>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="d-grid">
-                                            <a class="btn mb-3 shadow-sm btn-white rounded-5" href="#">
-                                                <span class="d-flex justify-content-center align-items-center">
-                                                    <img class="me-2" src="{{ asset('assets/auth/images/icons/search.svg') }}" width="16" alt="Google">
-                                                    <span>Sign Up with Google</span>
-                                                </span>
-                                            </a>
-                                            <a href="#" class="btn shadow-sm btn-white rounded-5">
-                                                <i class="bx bxl-facebook"></i> Sign Up with Facebook
-                                            </a>
-                                        </div>
-                                    </div> --}}
-                                    <div class="col-12 text-center">
-                                        <p class="mb-0">Already have an account? <a href="{{ route('login') }}">Sign in here</a></p>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+        <div id="registerAlert" class="auth-alert"></div>
+
+        <form id="registerForm" novalidate>
+            @csrf
+            {{-- Honeypot: bots fill this, humans never see it --}}
+            <input type="text" name="_hp" value="" style="display:none!important" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="landing_page" value="{{ $landingPage ?? '' }}">
+
+            <div class="auth-field" data-reg-step="1">
+                <label for="inputName" class="auth-label">Full Name</label>
+                <input type="text" class="auth-input" id="inputName" placeholder="John Doe">
+                <div class="auth-error" id="errName">Full name is required.</div>
+            </div>
+            <div class="auth-field" data-reg-step="1">
+                <label for="inputEmailAddress" class="auth-label">Email Address</label>
+                <input type="email" class="auth-input" id="inputEmailAddress" placeholder="example@user.com">
+                <div class="auth-error" id="errEmail">Please enter a valid email address.</div>
+            </div>
+            <div class="auth-field" data-reg-step="1">
+                <button type="button" id="sendOtpBtn" class="auth-btn auth-btn-primary">
+                    <i class="fa-solid fa-envelope"></i> Send OTP
+                </button>
+            </div>
+
+            <div class="auth-field" data-reg-step="otp" style="display:none">
+                <label for="inputOtp" class="auth-label">Enter the OTP sent to your email</label>
+                <input type="text" class="auth-input" id="inputOtp" placeholder="6-digit code" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+                <div class="auth-error" id="errOtp">Please enter the 6-digit code.</div>
+                <div class="auth-otp-meta">
+                    <a href="#" id="changeEmailLink">Change email</a>
+                    &nbsp;&middot;&nbsp;
+                    <a href="#" id="resendOtpLink">Resend OTP</a>
+                    <span id="resendTimer"></span>
                 </div>
             </div>
-        </div>
+            <div class="auth-field" data-reg-step="otp" style="display:none">
+                <button type="button" id="verifyOtpBtn" class="auth-btn auth-btn-primary">
+                    <i class="fa-solid fa-shield-halved"></i> Verify OTP
+                </button>
+            </div>
+
+            <div class="auth-field" data-reg-step="2" style="display:none">
+                <label for="inputChoosePassword" class="auth-label">Password</label>
+                <input type="password" class="auth-input" id="inputChoosePassword" placeholder="Enter Password (min 6 characters)">
+                <div class="auth-error" id="errPassword">Password must be at least 6 characters.</div>
+            </div>
+            <div class="auth-field" data-reg-step="2" style="display:none">
+                <label for="inputPhone" class="auth-label">Phone Number</label>
+                <input type="tel" class="auth-input" id="inputPhone" placeholder="9811333333">
+                <div class="auth-error" id="errPhone">Please enter a valid 10-digit phone number.</div>
+            </div>
+            <div class="auth-field" data-reg-step="2" style="display:none">
+                <label for="inputUnlistedUserType" class="auth-label">I am interested in</label>
+                <select class="auth-input" id="inputUnlistedUserType">
+                    <option value="">-- Select --</option>
+                    <option value="unlisted">Unlisted</option>
+                    <option value="channel_partner">Channel Partner</option>
+                </select>
+                <div class="auth-error" id="errUserType">Please select a user type.</div>
+            </div>
+            <div class="auth-field" data-reg-step="2" style="display:none">
+                <button type="submit" id="registerBtn" class="auth-btn auth-btn-primary">
+                    <i class="fa-solid fa-user"></i> Sign Up
+                </button>
+            </div>
+
+            <p class="auth-links">Already have an account? <a href="{{ route('login') }}">Sign in here</a></p>
+        </form>
     </div>
 </div>
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('assets/auth/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/auth/js/jquery.min.js') }}"></script>
     <script>
     $.ajaxSetup({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
@@ -132,7 +96,7 @@
 
         function clearErrors() {
             $('.auth-error').hide();
-            $('.form-control, .form-select').removeClass('is-invalid');
+            $('.auth-input').removeClass('is-invalid');
             $('#registerAlert').hide().removeClass('alert-danger alert-success').text('');
         }
 
@@ -149,8 +113,151 @@
             return /^[6-9]\d{9}$/.test(phone.replace(/[\s\+\-]/g, ''));
         }
 
+        var otpVerified   = false;
+        var resendSeconds = 0;
+        var resendTimerId = null;
+
+        function startResendCooldown(seconds) {
+            resendSeconds = seconds;
+            clearInterval(resendTimerId);
+            $('#resendOtpLink').addClass('disabled').css('pointer-events', 'none');
+            resendTimerId = setInterval(function () {
+                resendSeconds--;
+                if (resendSeconds <= 0) {
+                    clearInterval(resendTimerId);
+                    $('#resendTimer').text('');
+                    $('#resendOtpLink').removeClass('disabled').css('pointer-events', '');
+                } else {
+                    $('#resendTimer').text('(' + resendSeconds + 's)');
+                }
+            }, 1000);
+        }
+
+        function goToStep1() {
+            otpVerified = false;
+            clearInterval(resendTimerId);
+            $('[data-reg-step="otp"]').hide();
+            $('[data-reg-step="2"]').hide();
+            $('[data-reg-step="1"]').show();
+            $('#inputName, #inputEmailAddress').prop('readonly', false);
+            $('#inputOtp').val('');
+        }
+
+        function sendOtp() {
+            clearErrors();
+
+            var name  = $.trim($('#inputName').val());
+            var email = $.trim($('#inputEmailAddress').val());
+            var valid = true;
+
+            if (!name) {
+                showError('inputName', 'errName', 'Full name is required.');
+                valid = false;
+            }
+            if (!email || !isValidEmail(email)) {
+                showError('inputEmailAddress', 'errEmail', 'Please enter a valid email address.');
+                valid = false;
+            }
+            if (!valid) return;
+
+            var btn = $('#sendOtpBtn');
+            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Sending...');
+
+            $.ajax({
+                url: '{{ route("register.send-otp") }}',
+                method: 'POST',
+                data: { name: name, email: email },
+                success: function (res) {
+                    if (res.success) {
+                        $('#registerAlert').addClass('alert-success').text(res.message).show();
+                        $('[data-reg-step="1"]').hide();
+                        $('[data-reg-step="otp"]').show();
+                        $('#inputName, #inputEmailAddress').prop('readonly', true);
+                        $('#inputOtp').val('').focus();
+                        startResendCooldown(30);
+                    } else {
+                        $('#registerAlert').addClass('alert-danger').text(res.message).show();
+                    }
+                },
+                error: function (xhr) {
+                    var errors = xhr.responseJSON && xhr.responseJSON.errors;
+                    if (errors) {
+                        if (errors.name)  showError('inputName', 'errName', errors.name[0]);
+                        if (errors.email) showError('inputEmailAddress', 'errEmail', errors.email[0]);
+                    } else {
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong. Please try again.';
+                        $('#registerAlert').addClass('alert-danger').text(msg).show();
+                    }
+                },
+                complete: function () {
+                    btn.prop('disabled', false).html('<i class="fa-solid fa-envelope"></i> Send OTP');
+                }
+            });
+        }
+
+        $('#sendOtpBtn').on('click', sendOtp);
+
+        $('#resendOtpLink').on('click', function (e) {
+            e.preventDefault();
+            if ($(this).hasClass('disabled')) return;
+            sendOtp();
+        });
+
+        $('#changeEmailLink').on('click', function (e) {
+            e.preventDefault();
+            goToStep1();
+        });
+
+        $('#verifyOtpBtn').on('click', function () {
+            $('#errOtp').hide();
+            $('#inputOtp').removeClass('is-invalid');
+            $('#registerAlert').hide();
+
+            var email = $.trim($('#inputEmailAddress').val());
+            var otp   = $.trim($('#inputOtp').val());
+
+            if (!/^\d{6}$/.test(otp)) {
+                showError('inputOtp', 'errOtp', 'Please enter the 6-digit code.');
+                return;
+            }
+
+            var btn = $('#verifyOtpBtn');
+            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Verifying...');
+
+            $.ajax({
+                url: '{{ route("register.verify-otp") }}',
+                method: 'POST',
+                data: { email: email, otp: otp },
+                success: function (res) {
+                    if (res.success) {
+                        otpVerified = true;
+                        clearInterval(resendTimerId);
+                        $('[data-reg-step="otp"]').hide();
+                        $('[data-reg-step="2"]').show();
+                        $('#registerAlert').addClass('alert-success').text(res.message).show();
+                    } else {
+                        showError('inputOtp', 'errOtp', res.message);
+                    }
+                },
+                error: function (xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong. Please try again.';
+                    showError('inputOtp', 'errOtp', msg);
+                },
+                complete: function () {
+                    btn.prop('disabled', false).html('<i class="fa-solid fa-shield-halved"></i> Verify OTP');
+                }
+            });
+        });
+
         $('#registerForm').on('submit', function (e) {
             e.preventDefault();
+
+            if (!otpVerified) {
+                // Guards against an implicit Enter-key submit from a step-1/otp
+                // field reaching the (hidden) Sign Up submit button early.
+                return;
+            }
+
             clearErrors();
 
             var name      = $.trim($('#inputName').val());
@@ -158,7 +265,6 @@
             var password  = $('#inputChoosePassword').val();
             var phone     = $.trim($('#inputPhone').val());
             var userType  = $('#inputUnlistedUserType').val();
-            // var terms     = $('#agreeTerms').is(':checked');
             var valid     = true;
 
             if (!name) {
@@ -181,15 +287,11 @@
                 showError('inputUnlistedUserType', 'errUserType', 'Please select a user type.');
                 valid = false;
             }
-            // if (!terms) {
-            //     $('#errTerms').show();
-            //     valid = false;
-            // }
 
             if (!valid) return;
 
             var btn = $('#registerBtn');
-            btn.prop('disabled', true).html('<i class="bx bx-loader-alt bx-spin"></i> Signing up...');
+            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Signing up...');
 
             $.ajax({
                 url: '{{ route("register.post") }}',
@@ -204,11 +306,11 @@
                 },
                 success: function (res) {
                     if (res.success) {
-                        $('#registerAlert').addClass('alert alert-success').text(res.message).show();
+                        $('#registerAlert').addClass('alert-success').text(res.message).show();
                         $('#registerForm')[0].reset();
                         if (res.redirect) window.location.href = res.redirect;
                     } else {
-                        $('#registerAlert').addClass('alert alert-danger').text(res.message).show();
+                        $('#registerAlert').addClass('alert-danger').text(res.message).show();
                     }
                 },
                 error: function (xhr) {
@@ -220,11 +322,15 @@
                         if (errors.phone)     showError('inputPhone', 'errPhone', errors.phone[0]);
                         if (errors.unlisted_user_type) showError('inputUnlistedUserType', 'errUserType', errors.unlisted_user_type[0]);
                     } else {
-                        $('#registerAlert').addClass('alert alert-danger').text('Something went wrong. Please try again.').show();
+                        var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Something went wrong. Please try again.';
+                        $('#registerAlert').addClass('alert-danger').text(msg).show();
+                        if (msg.indexOf('verify your email') !== -1) {
+                            goToStep1();
+                        }
                     }
                 },
                 complete: function () {
-                    btn.prop('disabled', false).html('<i class="bx bx-user"></i> Sign Up');
+                    btn.prop('disabled', false).html('<i class="fa-solid fa-user"></i> Sign Up');
                 }
             });
         });
