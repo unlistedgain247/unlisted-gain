@@ -117,6 +117,7 @@
     .bank-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        align-items: start;
         gap: 24px;
         margin-bottom: 10px;
     }
@@ -132,16 +133,6 @@
 
     .bank-card:hover {
         box-shadow: 0 8px 24px rgba(20, 30, 20, .08);
-    }
-
-    /* Grid items stretch to equal height by default, but the card itself
-       needs to be a flex column so the actions block can be pinned to the
-       bottom via margin-top:auto — otherwise a shorter card's buttons sit
-       right under its table instead of aligning with the taller card's. */
-    .bank-card {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
     }
 
     .bank-card__header {
@@ -222,7 +213,6 @@
     }
 
     .bank-card-actions {
-        margin-top: auto;
         padding: 16px 24px 24px;
         display: flex;
         flex-direction: column;
