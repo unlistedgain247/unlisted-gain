@@ -54,15 +54,17 @@
                         </tr>
                         <tr>
                             <td>UPI ID</td>
-                            <td class="bank-value" style="font-size:12.5px;">msunlistedgainadvantagesolutionsprivatelimited.eazypay@icici</td>
+                            <td class="bank-value bank-value-upi">msunlistedgainadvantagesolutionsprivatelimited.eazypay@icici</td>
                         </tr>
                     </table>
-                    <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 008705011429&#10;IFSC Code: ICIC0000087&#10;Account Type: Current Account&#10;Bank: ICICI Bank&#10;Branch: New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058&#10;UPI ID: msunlistedgainadvantagesolutionsprivatelimited.eazypay@icici">
-                        <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
-                    </button>
-                    <a href="{{ asset('assets/img/icici-upi-qr.png') }}" download="UnlistedGain-ICICI-UPI-QR.png" class="bank-copy-btn bank-download-btn">
-                        <i class="fa-solid fa-qrcode"></i> <span>Download QR</span>
-                    </a>
+                    <div class="bank-card-actions">
+                        <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 008705011429&#10;IFSC Code: ICIC0000087&#10;Account Type: Current Account&#10;Bank: ICICI Bank&#10;Branch: New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058&#10;UPI ID: msunlistedgainadvantagesolutionsprivatelimited.eazypay@icici">
+                            <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
+                        </button>
+                        <a href="{{ asset('assets/img/icici-upi-qr.png') }}" download="UnlistedGain-ICICI-UPI-QR.png" class="bank-download-btn">
+                            <i class="fa-solid fa-qrcode"></i> <span>Download QR</span>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="bank-card">
@@ -91,9 +93,11 @@
                             <td>Tilak Nagar Branch, Tilak Nagar, New Delhi – 110018</td>
                         </tr>
                     </table>
-                    <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 20100079496491&#10;IFSC Code: BDBL0002801&#10;Account Type: Current Account&#10;Bank: Bandhan Bank&#10;Branch: Tilak Nagar Branch, Tilak Nagar, New Delhi – 110018">
-                        <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
-                    </button>
+                    <div class="bank-card-actions">
+                        <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 20100079496491&#10;IFSC Code: BDBL0002801&#10;Account Type: Current Account&#10;Bank: Bandhan Bank&#10;Branch: Tilak Nagar Branch, Tilak Nagar, New Delhi – 110018">
+                            <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,6 +132,16 @@
 
     .bank-card:hover {
         box-shadow: 0 8px 24px rgba(20, 30, 20, .08);
+    }
+
+    /* Grid items stretch to equal height by default, but the card itself
+       needs to be a flex column so the actions block can be pinned to the
+       bottom via margin-top:auto — otherwise a shorter card's buttons sit
+       right under its table instead of aligning with the taller card's. */
+    .bank-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
 
     .bank-card__header {
@@ -201,23 +215,42 @@
         font-size: 14px;
     }
 
-    .bank-copy-btn {
+    .bank-value-upi {
+        font-size: 12.5px;
+        word-break: break-all;
+        line-height: 1.5;
+    }
+
+    .bank-card-actions {
+        margin-top: auto;
+        padding: 16px 24px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .bank-copy-btn,
+    .bank-download-btn {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 7px;
-        width: calc(100% - 48px);
-        margin: 16px 24px 24px;
+        width: 100%;
         padding: 10px 18px;
         border-radius: 999px;
         border: 1.5px solid #87b942;
-        background: #fff;
-        color: #87b942;
         font-size: 13px;
         font-weight: 600;
         font-family: inherit;
         cursor: pointer;
+        text-decoration: none;
+        box-sizing: border-box;
         transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+
+    .bank-copy-btn {
+        background: #fff;
+        color: #87b942;
     }
 
     .bank-copy-btn:hover {
@@ -232,15 +265,18 @@
     }
 
     .bank-download-btn {
-        margin-top: 0;
         background: #87b942;
-        color: #fff;
-        text-decoration: none;
+        border-color: #87b942;
+        color: #fff !important;
     }
     .bank-download-btn:hover {
         background: #74a336;
         border-color: #74a336;
-        color: #fff;
+        color: #fff !important;
+    }
+    .bank-download-btn i,
+    .bank-download-btn span {
+        color: inherit;
     }
 
     @media (max-width: 480px) {
