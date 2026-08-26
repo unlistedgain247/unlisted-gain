@@ -15,7 +15,7 @@
         </div>
 
         <div class="auth-tabs" id="loginTabs">
-            <a href="#" class="auth-tab active" data-login-tab="password">Phone &amp; Password</a>
+            <a href="#" class="auth-tab active" data-login-tab="password">Password</a>
             <a href="#" class="auth-tab" data-login-tab="otp">Email OTP</a>
         </div>
 
@@ -26,11 +26,11 @@
             {{-- Honeypot: bots fill this, humans never see it --}}
             <input type="text" name="_hp" value="" style="display:none!important" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-            {{-- Phone + Password tab --}}
+            {{-- Email/Phone + Password tab --}}
             <div class="auth-field" data-login-panel="password">
-                <label for="inputPhone" class="auth-label">Phone Number</label>
-                <input type="tel" class="auth-input" id="inputPhone" placeholder="9811333333">
-                <div class="auth-error" id="errPhone">Please enter a valid 10-digit phone number.</div>
+                <label for="inputIdentifier" class="auth-label">Email or Phone Number</label>
+                <input type="text" class="auth-input" id="inputIdentifier" placeholder="Email or 10-digit phone number">
+                <div class="auth-error" id="errIdentifier">Please enter a valid email or 10-digit phone number.</div>
             </div>
             <div class="auth-field" data-login-panel="password">
                 <label for="inputChoosePassword" class="auth-label">Password</label>
@@ -138,12 +138,12 @@
 
             clearErrors();
 
-            var phone      = $.trim($('#inputPhone').val());
-            var password   = $('#inputChoosePassword').val();
-            var valid      = true;
+            var identifier = $.trim($('#inputIdentifier').val());
+            var password    = $('#inputChoosePassword').val();
+            var valid       = true;
 
-            if (!phone || !isValidPhone(phone)) {
-                showError('inputPhone', 'errPhone', 'Please enter a valid 10-digit phone number.');
+            if (!identifier || (!isValidEmail(identifier) && !isValidPhone(identifier))) {
+                showError('inputIdentifier', 'errIdentifier', 'Please enter a valid email or 10-digit phone number.');
                 valid = false;
             }
 
@@ -154,6 +154,7 @@
 
             if (!valid) return;
 
+            var loginType = isValidEmail(identifier) ? 'email' : 'phone';
             var btn = $('#loginBtn');
             btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin"></i> Signing in...');
 
@@ -161,8 +162,9 @@
                 url: '{{ route("login.post") }}',
                 method: 'POST',
                 data: {
-                    login_type: 'phone',
-                    phone:      phone,
+                    login_type: loginType,
+                    email:      loginType === 'email' ? identifier : '',
+                    phone:      loginType === 'phone' ? identifier : '',
                     password:   password
                 },
                 success: function (res) {
@@ -176,7 +178,7 @@
                 error: function (xhr) {
                     var errors = xhr.responseJSON && xhr.responseJSON.errors;
                     if (errors) {
-                        if (errors.phone) showError('inputPhone', 'errPhone', errors.phone[0]);
+                        if (errors.email || errors.phone) showError('inputIdentifier', 'errIdentifier', (errors.email || errors.phone)[0]);
                         if (errors.password) showError('inputChoosePassword', 'errPassword', errors.password[0]);
                     } else {
                         var msg = xhr.responseJSON && xhr.responseJSON.message

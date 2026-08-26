@@ -233,17 +233,24 @@
 /* ── Detail modal ─────────────────────────────────────────── */
 .news-detail-overlay {
     display: none; position: fixed; inset: 0; background: rgba(20,23,26,.6);
-    z-index: 9500; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+    z-index: 9500; align-items: center; justify-content: center; padding: 24px 16px;
 }
 .news-detail-overlay.open { display: flex; }
-.news-detail-modal { background: #fff; border-radius: 16px; max-width: 800px; width: 100%; margin: auto; position: relative; box-shadow: 0 24px 70px rgba(0,0,0,.3); }
+.news-detail-modal {
+    background: #fff; border-radius: 16px; max-width: 800px; width: 100%;
+    max-height: calc(100vh - 48px);
+    display: flex; flex-direction: column;
+    margin: auto; position: relative; box-shadow: 0 24px 70px rgba(0,0,0,.3);
+    overflow: hidden;
+}
 .news-detail-close {
     position: absolute; top: 14px; right: 16px; width: 34px; height: 34px; border-radius: 50%;
     background: #f4f6f4; border: none; font-size: 20px; color: #667066; cursor: pointer; z-index: 2;
     display: flex; align-items: center; justify-content: center; transition: background .15s, color .15s;
+    flex-shrink: 0;
 }
 .news-detail-close:hover { background: var(--nh-green-tint); color: var(--nh-green-darker); }
-.news-detail-modal-body { padding: 36px; }
+.news-detail-modal-body { padding: 36px; overflow-y: auto; }
 .news-detail-title { font-size: 22px; font-weight: 800; color: var(--nh-ink); margin-bottom: 8px; line-height: 1.35; }
 .news-detail-meta { font-size: 12.5px; color: #98a598; font-weight: 600; margin-bottom: 14px; }
 .news-detail-meta a { color: var(--nh-green-dark); }

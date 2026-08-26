@@ -36,4 +36,28 @@ class UnlistedStock extends Model
         'UL_STOCKS_ABOUT',
         'UL_STOCKS_INSERT_BY',
     ];
+
+    public function articles()
+    {
+        return $this->belongsToMany(
+            Article::class,
+            'article_unlisted_stock',
+            'ul_stocks_fincode',
+            'article_id',
+            'UL_STOCKS_FINCODE',
+            'id'
+        );
+    }
+
+    public function unlistedNews()
+    {
+        return $this->belongsToMany(
+            UnlistedNews::class,
+            'news_unlisted_stock',
+            'ul_stocks_fincode',
+            'news_id',
+            'UL_STOCKS_FINCODE',
+            'id'
+        );
+    }
 }

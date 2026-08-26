@@ -64,6 +64,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('public.news') }}" class="nav-link {{ request()->is('unlisted-shares/news') || request()->is('unlisted-shares/news/*') ? 'nav-current' : '' }}">
+                        <span class="nav-icon-wrap"><i class="fa-solid fa-bolt nav-icon"></i></span>
+                        <span>News</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ url('/unlisted-shares-price-list-india') }}" class="nav-link {{ request()->is('unlisted-shares-price-list-india') ? 'nav-current' : '' }}">
                         <span class="nav-icon-wrap"><i class="fa-solid fa-tags nav-icon"></i></span>
                         <span>Share Price List</span>

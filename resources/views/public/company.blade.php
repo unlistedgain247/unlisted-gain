@@ -6,6 +6,8 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/pagecss/company.css') }}?v={{ filemtime(public_path('assets/css/pagecss/company.css')) }}">
+{{-- Reused for the on-page news detail modal (.news-detail-*) triggered from the Research section --}}
+<link rel="stylesheet" href="{{ asset('assets/css/pagecss/news.css') }}?v={{ filemtime(public_path('assets/css/pagecss/news.css')) }}">
 <link rel="stylesheet" href="{{ asset('assets/css/invest-modal.css') }}?v={{ filemtime(public_path('assets/css/invest-modal.css')) }}">
 @endpush
 
@@ -195,6 +197,9 @@
                 @endif
                 @if($thesisHtml)
                 <a href="#thesis" class="cp-snav-link">Investment Thesis</a>
+                @endif
+                @if($relatedArticles->isNotEmpty() || $relatedNews->isNotEmpty())
+                <a href="#research" class="cp-snav-link">Research</a>
                 @endif
                 <a href="#details" class="cp-snav-link">Company Info</a>
             </nav>
@@ -643,6 +648,59 @@
                 </div>
             </section>
             @endif
+
+            {{-- Research & News --}}
+            @if($relatedArticles->isNotEmpty() || $relatedNews->isNotEmpty())
+            <section class="cp-section" id="research">
+                <div class="cp-section-head">
+                    <h2>Research <span>&amp; News</span></h2>
+                </div>
+
+                <div class="cp-research-tabs">
+                    @if($relatedArticles->isNotEmpty())
+                    <a href="#" class="cp-research-tab active" data-research-tab="articles">Articles</a>
+                    @endif
+                    @if($relatedNews->isNotEmpty())
+                    <a href="#" class="cp-research-tab {{ $relatedArticles->isEmpty() ? 'active' : '' }}" data-research-tab="news">News</a>
+                    @endif
+                </div>
+
+                @if($relatedArticles->isNotEmpty())
+                <ul class="cp-research-list" data-research-panel="articles">
+                    @foreach($relatedArticles as $article)
+                    <li>
+                        <a href="{{ route('public.articles.show', $article->slug) }}">
+                            <span class="cp-research-list-title">{{ $article->title }}</span>
+                            <span class="cp-research-list-date">{{ $article->published_at?->format('d M Y') }}</span>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                @endif
+
+                @if($relatedNews->isNotEmpty())
+                <ul class="cp-research-list" data-research-panel="news" @if($relatedArticles->isNotEmpty()) style="display:none" @endif>
+                    @foreach($relatedNews as $item)
+                    <li>
+                        <a href="javascript:void(0);" onclick="openCompanyNewsModal({{ $item->id }})">
+                            <span class="cp-research-list-title">{{ $item->title }}</span>
+                            <span class="cp-research-list-date">{{ $item->published_at?->format('d M Y') }}</span>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+                @endif
+            </section>
+            @endif
+
+            {{-- News detail modal — reused .news-detail-* styling from news.css so a
+                 tagged news item opens in place here, without leaving the company page. --}}
+            <div id="cpNewsDetailOverlay" class="news-detail-overlay">
+                <div class="news-detail-modal">
+                    <button type="button" class="news-detail-close" id="cpNewsDetailClose">&times;</button>
+                    <div id="cpNewsDetailBody" class="news-detail-modal-body"></div>
+                </div>
+            </div>
 
             {{-- Company Details --}}
             <section class="cp-section" id="details">
@@ -1093,6 +1151,37 @@
         initPage();
     }
 })();
+
+// Research tabs (Articles / News)
+document.querySelectorAll('[data-research-tab]').forEach(function (tab) {
+    tab.addEventListener('click', function (e) {
+        e.preventDefault();
+        var panel = this.dataset.researchTab;
+        document.querySelectorAll('[data-research-tab]').forEach(function (t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        document.querySelectorAll('[data-research-panel]').forEach(function (p) { p.style.display = 'none'; });
+        var target = document.querySelector('[data-research-panel="' + panel + '"]');
+        if (target) target.style.display = '';
+    });
+});
+
+// News detail modal — opens in place, no navigation away from the company page
+function openCompanyNewsModal(id) {
+    fetch('{{ url("/unlisted-shares/news") }}/' + id)
+        .then(function (res) { return res.text(); })
+        .then(function (html) {
+            document.getElementById('cpNewsDetailBody').innerHTML = html;
+            document.getElementById('cpNewsDetailOverlay').classList.add('open');
+        });
+}
+var cpNewsClose = document.getElementById('cpNewsDetailClose');
+if (cpNewsClose) cpNewsClose.addEventListener('click', function () {
+    document.getElementById('cpNewsDetailOverlay').classList.remove('open');
+});
+var cpNewsOverlay = document.getElementById('cpNewsDetailOverlay');
+if (cpNewsOverlay) cpNewsOverlay.addEventListener('click', function (e) {
+    if (e.target === cpNewsOverlay) cpNewsOverlay.classList.remove('open');
+});
 </script>
 @endpush
 @endsection

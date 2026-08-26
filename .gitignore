@@ -21,6 +21,10 @@
 /storage/*.key
 public/images/company-logo/*
 !public/images/company-logo/.gitkeep
+public/images/news/*
+!public/images/news/.gitkeep
+public/images/news-content/*
+!public/images/news-content/.gitkeep
 /storage/pail
 /vendor
 Homestead.json

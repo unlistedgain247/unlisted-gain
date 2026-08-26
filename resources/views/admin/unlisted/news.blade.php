@@ -366,10 +366,10 @@ $(document).on('click', '.open-edit-news', function () {
         if (res.type === 'video') {
             $('#unnFieldVideoLink').val(res.link);
             if (res.video_preview_image) {
-                $('#unnVideoPreviewPreview').html('<a href="' + res.video_preview_image + '" target="_blank">Current preview image</a>');
+                $('#unnVideoPreviewPreview').html('<a href="/' + res.video_preview_image + '" target="_blank">Current preview image</a>');
             }
         } else if (res.link) {
-            $('#unnMediaPreview').html('<a href="' + res.link + '" target="_blank">Current file</a>');
+            $('#unnMediaPreview').html('<a href="/' + res.link + '" target="_blank">Current file</a>');
         }
 
         (res.stocks || []).forEach(function (s) {

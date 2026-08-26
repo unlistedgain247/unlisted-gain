@@ -417,9 +417,12 @@ class StocksController extends Controller
             ? round(((float)$latestFin->UL_FIN_SHAREHOLDER_FUNDS * $unit) / (float)$numShares, 2)
             : null;
 
+        $relatedArticles = $stock->articles()->published()->orderByDesc('published_at')->limit(6)->get();
+        $relatedNews     = $stock->unlistedNews()->active()->orderByDesc('published_at')->limit(6)->get();
+
         return view('public.company', compact(
             'stock', 'priceData', 'priceHistory', 'latestFin', 'financials', 'quarterlyFin', 'thesis', 'thesisHtml',
-            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue', 'documents'
+            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue', 'documents', 'relatedArticles', 'relatedNews'
         ));
     }
 }

@@ -156,8 +156,17 @@ window.addEventListener('resize', function () {
     var header = document.querySelector('.main-header');
     if (!header) return;
 
+    // Hysteresis band (24px on / 8px off) instead of a single bare threshold —
+    // a bare `scrollY > 8` flips on/off repeatedly when scroll position hovers
+    // right around 8px (common with trackpad/momentum scrolling near the top),
+    // snapping the header between its two heights and visibly "vibrating".
     function syncScrolledState() {
-        header.classList.toggle('is-scrolled', window.scrollY > 8);
+        var y = window.scrollY;
+        if (y > 24) {
+            header.classList.add('is-scrolled');
+        } else if (y < 8) {
+            header.classList.remove('is-scrolled');
+        }
     }
 
     syncScrolledState();
