@@ -1016,7 +1016,7 @@
                     borderWidth: 2.5,
                     fill: true,
                     tension: 0.35,
-                    pointRadius: prices.length <= 1 ? 4 : 0,
+                    pointRadius: prices.length === 1 ? 4 : (prices.length <= 30 ? 3 : 0),
                     pointHoverRadius: 5,
                     pointBackgroundColor: lineColor,
                     pointHoverBackgroundColor: lineColor,
