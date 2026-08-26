@@ -26,25 +26,64 @@
 
         <div class="content-section">
             <h2>Our Bank Accounts</h2>
-            <div class="info-grid">
-                <div class="info-card">
-                    <h3>ICICI Bank</h3>
-                    <p><strong>Account Name:</strong> UnlistedGain Advantage Solutions Pvt. Ltd.</p>
-                    <p><strong>Account Number:</strong> 008705011429</p>
-                    <p><strong>IFSC Code:</strong> ICIC0000087</p>
-                    <p><strong>Account Type:</strong> Current Account</p>
-                    <p><strong>Branch:</strong> New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058</p>
+            <div class="bank-grid">
+                <div class="bank-card">
+                    <div class="bank-card__header">
+                        <div class="bank-card__badge">ICICI</div>
+                        <div>
+                            <h3>ICICI Bank</h3>
+                            <span class="bank-card__type">Current Account</span>
+                        </div>
+                    </div>
+                    <table class="bank-table">
+                        <tr>
+                            <td>Account Name</td>
+                            <td>UnlistedGain Advantage Solutions Pvt. Ltd.</td>
+                        </tr>
+                        <tr>
+                            <td>Account Number</td>
+                            <td class="bank-value">008705011429</td>
+                        </tr>
+                        <tr>
+                            <td>IFSC Code</td>
+                            <td class="bank-value">ICIC0000087</td>
+                        </tr>
+                        <tr>
+                            <td>Branch</td>
+                            <td>New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058</td>
+                        </tr>
+                    </table>
                     <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 008705011429&#10;IFSC Code: ICIC0000087&#10;Account Type: Current Account&#10;Bank: ICICI Bank&#10;Branch: New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058">
                         <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
                     </button>
                 </div>
-                <div class="info-card">
-                    <h3>Bandhan Bank</h3>
-                    <p><strong>Account Name:</strong> UnlistedGain Advantage Solutions Pvt. Ltd.</p>
-                    <p><strong>Account Number:</strong> 20100079496491</p>
-                    <p><strong>IFSC Code:</strong> BDBL0002801</p>
-                    <p><strong>Account Type:</strong> Current Account</p>
-                    <p><strong>Branch:</strong> Tilak Nagar Branch, Tilak Nagar, New Delhi – 110018</p>
+
+                <div class="bank-card">
+                    <div class="bank-card__header">
+                        <div class="bank-card__badge">BDBL</div>
+                        <div>
+                            <h3>Bandhan Bank</h3>
+                            <span class="bank-card__type">Current Account</span>
+                        </div>
+                    </div>
+                    <table class="bank-table">
+                        <tr>
+                            <td>Account Name</td>
+                            <td>UnlistedGain Advantage Solutions Pvt. Ltd.</td>
+                        </tr>
+                        <tr>
+                            <td>Account Number</td>
+                            <td class="bank-value">20100079496491</td>
+                        </tr>
+                        <tr>
+                            <td>IFSC Code</td>
+                            <td class="bank-value">BDBL0002801</td>
+                        </tr>
+                        <tr>
+                            <td>Branch</td>
+                            <td>Tilak Nagar Branch, Tilak Nagar, New Delhi – 110018</td>
+                        </tr>
+                    </table>
                     <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 20100079496491&#10;IFSC Code: BDBL0002801&#10;Account Type: Current Account&#10;Bank: Bandhan Bank&#10;Branch: Tilak Nagar Branch, Tilak Nagar, New Delhi – 110018">
                         <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
                     </button>
@@ -64,12 +103,105 @@
 
 @push('styles')
 <style>
-    .bank-copy-btn {
-        display: inline-flex;
+    .bank-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        margin-bottom: 10px;
+    }
+
+    .bank-card {
+        background: #fff;
+        border: 1px solid #e8ece5;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(20, 30, 20, .05);
+        overflow: hidden;
+        transition: box-shadow .2s ease;
+    }
+
+    .bank-card:hover {
+        box-shadow: 0 8px 24px rgba(20, 30, 20, .08);
+    }
+
+    .bank-card__header {
+        display: flex;
         align-items: center;
+        gap: 14px;
+        padding: 20px 24px;
+        background: linear-gradient(135deg, #f0faf2 0%, #fafffe 100%);
+        border-bottom: 1px solid #e8f5e9;
+    }
+
+    .bank-card__badge {
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #87b942;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .3px;
+    }
+
+    .bank-card__header h3 {
+        margin: 0 0 2px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #111;
+    }
+
+    .bank-card__type {
+        font-size: 12px;
+        color: #789;
+        font-weight: 500;
+    }
+
+    .bank-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .bank-table td {
+        padding: 13px 24px;
+        font-size: 13.5px;
+        border-bottom: 1px solid #f0f2ee;
+        vertical-align: top;
+    }
+
+    .bank-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .bank-table td:first-child {
+        color: #8a9188;
+        width: 38%;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .bank-table td:last-child {
+        color: #1a1a1a;
+        font-weight: 600;
+    }
+
+    .bank-value {
+        font-family: 'Courier New', Courier, monospace;
+        letter-spacing: .5px;
+        font-size: 14px;
+    }
+
+    .bank-copy-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 7px;
-        margin-top: 16px;
-        padding: 8px 18px;
+        width: calc(100% - 48px);
+        margin: 16px 24px 24px;
+        padding: 10px 18px;
         border-radius: 999px;
         border: 1.5px solid #87b942;
         background: #fff;
@@ -80,14 +212,20 @@
         cursor: pointer;
         transition: background-color .2s ease, color .2s ease, border-color .2s ease;
     }
+
     .bank-copy-btn:hover {
         background: #87b942;
         color: #fff;
     }
+
     .bank-copy-btn.copied {
         background: #1e8e3e;
         border-color: #1e8e3e;
         color: #fff;
+    }
+
+    @media (max-width: 480px) {
+        .bank-table td:first-child { white-space: normal; }
     }
 </style>
 @endpush
