@@ -52,10 +52,17 @@
                             <td>Branch</td>
                             <td>New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058</td>
                         </tr>
+                        <tr>
+                            <td>UPI ID</td>
+                            <td class="bank-value" style="font-size:12.5px;">msunlistedgainadvantagesolutionsprivatelimited.eazypay@icici</td>
+                        </tr>
                     </table>
-                    <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 008705011429&#10;IFSC Code: ICIC0000087&#10;Account Type: Current Account&#10;Bank: ICICI Bank&#10;Branch: New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058">
+                    <button type="button" class="bank-copy-btn" data-copy-text="Account Name: UnlistedGain Advantage Solutions Pvt. Ltd.&#10;Account Number: 008705011429&#10;IFSC Code: ICIC0000087&#10;Account Type: Current Account&#10;Bank: ICICI Bank&#10;Branch: New Delhi – Janakpuri Branch, Mahatta Towers, 54, B-Block, Community Centre, Janakpuri, New Delhi – 110058&#10;UPI ID: msunlistedgainadvantagesolutionsprivatelimited.eazypay@icici">
                         <i class="fa-regular fa-copy"></i> <span>Copy Details</span>
                     </button>
+                    <a href="{{ asset('assets/img/icici-upi-qr.png') }}" download="UnlistedGain-ICICI-UPI-QR.png" class="bank-copy-btn bank-download-btn">
+                        <i class="fa-solid fa-qrcode"></i> <span>Download QR</span>
+                    </a>
                 </div>
 
                 <div class="bank-card">
@@ -221,6 +228,18 @@
     .bank-copy-btn.copied {
         background: #1e8e3e;
         border-color: #1e8e3e;
+        color: #fff;
+    }
+
+    .bank-download-btn {
+        margin-top: 0;
+        background: #87b942;
+        color: #fff;
+        text-decoration: none;
+    }
+    .bank-download-btn:hover {
+        background: #74a336;
+        border-color: #74a336;
         color: #fff;
     }
 
