@@ -215,7 +215,7 @@
     .bank-card-actions {
         padding: 16px 24px 24px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         gap: 10px;
     }
 
@@ -225,13 +225,15 @@
         align-items: center;
         justify-content: center;
         gap: 7px;
-        width: 100%;
-        padding: 10px 18px;
+        flex: 1;
+        min-width: 0;
+        padding: 10px 14px;
         border-radius: 999px;
         border: 1.5px solid #87b942;
         font-size: 13px;
         font-weight: 600;
         font-family: inherit;
+        white-space: nowrap;
         cursor: pointer;
         text-decoration: none;
         box-sizing: border-box;
@@ -271,6 +273,8 @@
 
     @media (max-width: 480px) {
         .bank-table td:first-child { white-space: normal; }
+        .bank-card-actions { flex-direction: column; }
+        .bank-copy-btn, .bank-download-btn { white-space: normal; }
     }
 </style>
 @endpush
