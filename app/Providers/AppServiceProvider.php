@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,6 +14,14 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Neither the admin panel nor the public site loads Tailwind CSS
+        // (admin uses Bootstrap, public uses its own plain CSS), so
+        // Laravel's default `pagination::tailwind` view renders with dead
+        // classes — duplicated "Showing X to Y" + "Previous/Next" text and
+        // giant unstyled prev/next <svg> icons. Bootstrap's view matches
+        // what's actually loaded.
+        Paginator::useBootstrap();
+
         // Login: 5 attempts/min per IP+identifier, 15/min per IP
         RateLimiter::for('login', function (Request $request) {
             $identifier = strtolower(trim(
