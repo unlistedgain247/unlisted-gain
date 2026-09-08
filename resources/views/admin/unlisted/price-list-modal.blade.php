@@ -27,23 +27,27 @@
                     <tr @class(['pl-row-alt'=> $loop->even]) data-date="{{ $row->UL_PD_DATE }}">
                         <td>{{ \Carbon\Carbon::parse($row->UL_PD_DATE)->format('d-M-Y') }}</td>
                         <td class="pl-bid">{{ $row->UL_PD_BID_PRICE ?? '—' }}</td>
-                        <td>
-                            @if ($row->UL_PD_INVALID_FLAG)
-                            <span style="color:#e53935;font-weight:500">Invalid</span>
-                            @else
-                            <span style="color:#4a7c20;font-weight:500">Valid</span>
-                            @endif
+                        <td style="white-space:nowrap">
+                            <label class="tgl-switch" style="vertical-align:middle;margin-right:8px" title="Toggle valid/invalid">
+                                <input type="checkbox" class="pl-toggle-btn"
+                                    data-date="{{ $row->UL_PD_DATE }}"
+                                    {{ $row->UL_PD_INVALID_FLAG ? '' : 'checked' }}>
+                                <span class="tgl-slider"></span>
+                            </label>
+                            <span class="pl-status">
+                                @if ($row->UL_PD_INVALID_FLAG)
+                                <span style="color:#e53935;font-weight:500">Invalid</span>
+                                @else
+                                <span style="color:#4a7c20;font-weight:500">Valid</span>
+                                @endif
+                            </span>
                         </td>
                         <td>
                             <i class="fa-solid fa-pen pl-edit-btn"
                                 data-date="{{ $row->UL_PD_DATE }}"
                                 data-bid="{{ $row->UL_PD_BID_PRICE ?? '' }}"
-                                style="color:#2196f3;cursor:pointer;margin-right:10px"
+                                style="color:#2196f3;cursor:pointer"
                                 title="Edit"></i>
-                            <i class="fa-solid fa-trash pl-delete-btn"
-                                data-date="{{ $row->UL_PD_DATE }}"
-                                style="color:#e53935;cursor:pointer"
-                                title="Delete"></i>
                         </td>
                     </tr>
                     @empty
@@ -91,8 +95,7 @@
         var bid  = $(this).data('bid');
         $row.find('.pl-bid').html(bid || '—');
         $row.find('td:last').html(
-            '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + bid + '" style="color:#2196f3;cursor:pointer;margin-right:10px" title="Edit"></i>' +
-            '<i class="fa-solid fa-trash pl-delete-btn" data-date="' + date + '" style="color:#e53935;cursor:pointer" title="Delete"></i>'
+            '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + bid + '" style="color:#2196f3;cursor:pointer" title="Edit"></i>'
         );
     });
 
@@ -111,26 +114,33 @@
             if (!res.success) return;
             $row.find('.pl-bid').html(newBid || '—');
             $row.find('td:last').html(
-                '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + newBid + '" style="color:#2196f3;cursor:pointer;margin-right:10px" title="Edit"></i>' +
-                '<i class="fa-solid fa-trash pl-delete-btn" data-date="' + date + '" style="color:#e53935;cursor:pointer" title="Delete"></i>'
+                '<i class="fa-solid fa-pen pl-edit-btn" data-date="' + date + '" data-bid="' + newBid + '" style="color:#2196f3;cursor:pointer" title="Edit"></i>'
             );
         })
         .fail(function () { alert('Update failed.'); });
     });
 
-    $tbody.on('click', '.pl-delete-btn', function () {
-        if (!confirm('Delete this price entry?')) return;
-        var $row = $(this).closest('tr');
-        var date = $(this).data('date');
+    $tbody.on('change', '.pl-toggle-btn', function () {
+        var $cb   = $(this);
+        var $row  = $cb.closest('tr');
+        var date  = $cb.data('date');
         $.ajax({
             url:     STOCKS_BASE + '/' + window.plFincode + '/price/' + date,
             method:  'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF },
         })
         .done(function (res) {
-            if (res.success) $row.fadeOut(200, function () { $(this).remove(); });
+            if (!res.success) { $cb.prop('checked', !$cb.prop('checked')); return; }
+            var valid = !res.invalid;
+            $cb.prop('checked', valid);
+            $row.find('.pl-status').html(valid
+                ? '<span style="color:#4a7c20;font-weight:500">Valid</span>'
+                : '<span style="color:#e53935;font-weight:500">Invalid</span>');
         })
-        .fail(function () { alert('Delete failed.'); });
+        .fail(function () {
+            $cb.prop('checked', !$cb.prop('checked'));
+            alert('Operation failed.');
+        });
     });
 }());
 </script>

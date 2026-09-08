@@ -531,19 +531,25 @@ class UnlistedStocksController extends Controller
         return response()->json(['success' => true, 'message' => 'Updated successfully.']);
     }
 
-    public function deletePriceEntry(string $fincode, string $date)
+    public function togglePriceInvalid(string $fincode, string $date)
     {
         if (!$this->canAccess()) abort(403);
 
         UnlistedStock::where('UL_STOCKS_FINCODE', $fincode)->firstOrFail();
 
-        $updated = UnlistedPriceData::where('UL_PD_FINCODE', $fincode)
+        $entry = UnlistedPriceData::where('UL_PD_FINCODE', $fincode)
                     ->where('UL_PD_DATE', $date)
-                    ->update(['UL_PD_INVALID_FLAG' => 1]);
+                    ->first();
 
-        abort_if(!$updated, 404, 'Record not found.');
+        abort_if(!$entry, 404, 'Record not found.');
 
-        return response()->json(['success' => true, 'message' => 'Marked as invalid.']);
+        $newFlag = $entry->UL_PD_INVALID_FLAG ? 0 : 1;
+
+        UnlistedPriceData::where('UL_PD_FINCODE', $fincode)
+            ->where('UL_PD_DATE', $date)
+            ->update(['UL_PD_INVALID_FLAG' => $newFlag, 'UL_PD_UPDTIME' => now()]);
+
+        return response()->json(['success' => true, 'invalid' => (bool) $newFlag]);
     }
 
     public function getFinancialsModal(string $fincode)
@@ -737,19 +743,27 @@ class UnlistedStocksController extends Controller
         return response()->json(['success' => true, 'message' => 'Updated successfully.']);
     }
 
-    public function softDeleteFinancial(string $fincode, string $periodEnd, string $type, string $noMonths)
+    public function toggleFinancialStatus(string $fincode, string $periodEnd, string $type, string $noMonths)
     {
         if (!$this->canAccess()) abort(403);
 
-        $updated = UnlistedFinancials::where('UL_FIN_FINCODE',   $fincode)
+        $row = UnlistedFinancials::where('UL_FIN_FINCODE',   $fincode)
                     ->where('UL_FIN_Period_end', $periodEnd)
                     ->where('UL_FIN_Type',       $type)
                     ->where('UL_FIN_No_months',  $noMonths)
-                    ->update(['UL_FIN_STATUS' => '0', 'UL_FIN_UPDATE_TIME' => now()]);
+                    ->first();
 
-        abort_if(!$updated, 404, 'Record not found.');
+        abort_if(!$row, 404, 'Record not found.');
 
-        return response()->json(['success' => true, 'message' => 'Marked as inactive.']);
+        $newStatus = $row->UL_FIN_STATUS === '1' ? '0' : '1';
+
+        UnlistedFinancials::where('UL_FIN_FINCODE',   $fincode)
+            ->where('UL_FIN_Period_end', $periodEnd)
+            ->where('UL_FIN_Type',       $type)
+            ->where('UL_FIN_No_months',  $noMonths)
+            ->update(['UL_FIN_STATUS' => $newStatus, 'UL_FIN_UPDATE_TIME' => now()]);
+
+        return response()->json(['success' => true, 'status' => $newStatus]);
     }
 
     public function getOverviewModal(string $fincode)

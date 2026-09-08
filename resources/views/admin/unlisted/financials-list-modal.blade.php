@@ -37,7 +37,15 @@
                         <td>{{ $row->UL_FIN_Type === 'C' ? 'Consolidated' : 'Standalone' }}</td>
                         <td>{{ $row->UL_FIN_No_months }}</td>
                         <td>{{ $row->UL_FIN_Unit ?? '—' }}</td>
-                        <td>
+                        <td style="white-space:nowrap">
+                            <label class="tgl-switch" style="vertical-align:middle;margin-right:8px" title="Toggle active/inactive">
+                                <input type="checkbox" class="fl-toggle-btn"
+                                    data-period-end="{{ $row->UL_FIN_Period_end }}"
+                                    data-type="{{ $row->UL_FIN_Type }}"
+                                    data-no-months="{{ $row->UL_FIN_No_months }}"
+                                    {{ $row->UL_FIN_STATUS == '1' ? 'checked' : '' }}>
+                                <span class="tgl-slider"></span>
+                            </label>
                             <span class="fl-status {{ $row->UL_FIN_STATUS == '1' ? 'fl-badge-active' : 'fl-badge-inactive' }}">
                                 {{ $row->UL_FIN_STATUS == '1' ? 'Active' : 'Inactive' }}
                             </span>
@@ -47,14 +55,8 @@
                                 data-period-end="{{ $row->UL_FIN_Period_end }}"
                                 data-type="{{ $row->UL_FIN_Type }}"
                                 data-no-months="{{ $row->UL_FIN_No_months }}"
-                                style="color:#2196f3;cursor:pointer;margin-right:10px"
+                                style="color:#2196f3;cursor:pointer"
                                 title="Edit"></i>
-                            <i class="fa-solid fa-trash fl-delete-btn"
-                                data-period-end="{{ $row->UL_FIN_Period_end }}"
-                                data-type="{{ $row->UL_FIN_Type }}"
-                                data-no-months="{{ $row->UL_FIN_No_months }}"
-                                style="color:#e53935;cursor:pointer"
-                                title="Deactivate"></i>
                         </td>
                     </tr>
                     @empty
@@ -100,12 +102,12 @@
                 });
         });
 
-        $tbody.on('click', '.fl-delete-btn', function() {
-            if (!confirm('Mark this record as inactive?')) return;
-            var $row = $(this).closest('tr');
-            var periodEnd = $(this).data('period-end');
-            var type = $(this).data('type');
-            var noMonths = $(this).data('no-months');
+        $tbody.on('change', '.fl-toggle-btn', function() {
+            var $cb = $(this);
+            var $row = $cb.closest('tr');
+            var periodEnd = $cb.data('period-end');
+            var type = $cb.data('type');
+            var noMonths = $cb.data('no-months');
             $.ajax({
                     url: STOCKS_BASE + '/' + window.flFincode + '/financials/' + periodEnd + '/' + type + '/' + noMonths,
                     method: 'DELETE',
@@ -114,9 +116,19 @@
                     },
                 })
                 .done(function(res) {
-                    if (res.success) $row.find('.fl-status').text('Inactive').css('color', '#e53935');
+                    if (!res.success) {
+                        $cb.prop('checked', !$cb.prop('checked'));
+                        return;
+                    }
+                    var active = res.status === '1';
+                    $cb.prop('checked', active);
+                    $row.find('.fl-status')
+                        .text(active ? 'Active' : 'Inactive')
+                        .removeClass('fl-badge-active fl-badge-inactive')
+                        .addClass(active ? 'fl-badge-active' : 'fl-badge-inactive');
                 })
                 .fail(function() {
+                    $cb.prop('checked', !$cb.prop('checked'));
                     alert('Operation failed.');
                 });
         });

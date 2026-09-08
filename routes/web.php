@@ -219,7 +219,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->middleware('privilege:unlisted')
         ->name('unlisted.stocks.price.update');
 
-    Route::delete('/unlisted/stocks/{fincode}/price/{date}', [UnlistedStocksController::class, 'deletePriceEntry'])
+    Route::delete('/unlisted/stocks/{fincode}/price/{date}', [UnlistedStocksController::class, 'togglePriceInvalid'])
         ->middleware('privilege:unlisted')
         ->name('unlisted.stocks.price.delete');
 
@@ -243,7 +243,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->middleware('privilege:unlisted')
         ->name('unlisted.stocks.financials.update');
 
-    Route::delete('/unlisted/stocks/{fincode}/financials/{periodEnd}/{type}/{noMonths}', [UnlistedStocksController::class, 'softDeleteFinancial'])
+    Route::delete('/unlisted/stocks/{fincode}/financials/{periodEnd}/{type}/{noMonths}', [UnlistedStocksController::class, 'toggleFinancialStatus'])
         ->middleware('privilege:unlisted')
         ->name('unlisted.stocks.financials.delete');
 
