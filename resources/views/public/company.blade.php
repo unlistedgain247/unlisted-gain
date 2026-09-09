@@ -439,7 +439,7 @@
                     {{-- Yearly Ratio --}}
                     <div class="fin-pane fin-hidden" id="fp-y-ratio">
                         @php
-                        $yRatio=$yFin->map(function($f){$pat=(float)($f->UL_FIN_PAT??0);$sf=(float)($f->UL_FIN_SHAREHOLDER_FUNDS??0);$td=(float)($f->UL_FIN_TOTAL_DEBT??0);$ta=(float)($f->UL_FIN_TOTAL_ASSETS??0);$op=(float)($f->UL_FIN_OPERATING_PROFIT??0);$ca=(float)($f->UL_FIN_CURRENT_ASSETS??0);$cl=(float)($f->UL_FIN_CURRENT_LIABILITIES??0);return['p'=>$f->UL_FIN_Period_end,'roe'=>$sf>0?round($pat/$sf*100,1):null,'roce'=>$ta>0?round($op/$ta*100,1):null,'roa'=>$ta>0?round($pat/$ta*100,1):null,'cr'=>$cl>0?round($ca/$cl,1):null,'de'=>$sf>0?round($td/$sf,2):null];});
+                        $yRatio=$yFin->map(function($f){$pat=(float)($f->UL_FIN_PAT??0);$sf=(float)($f->UL_FIN_SHAREHOLDER_FUNDS??0);$td=(float)($f->UL_FIN_TOTAL_DEBT??0);$ta=(float)($f->UL_FIN_TOTAL_ASSETS??0);$op=(float)($f->UL_FIN_OPERATING_PROFIT??0);$ca=(float)($f->UL_FIN_CURRENT_ASSETS??0);$cl=(float)($f->UL_FIN_CURRENT_LIABILITIES??0);return['p'=>$f->UL_FIN_Period_end,'roe'=>$sf!=0?round($pat/$sf*100,1):null,'roce'=>$ta>0?round($op/$ta*100,1):null,'roa'=>$ta>0?round($pat/$ta*100,1):null,'cr'=>$cl>0?round($ca/$cl,1):null,'de'=>$sf!=0?round($td/$sf,2):null];});
                         $yrL=$yRatio->last();$yrP=$yRatio->count()>=2?$yRatio[$yRatio->count()-2]:null;
                         @endphp
                         <div class="fin-table-wrap"><table class="fin-table">
@@ -499,7 +499,7 @@
                     {{-- Quarterly Ratio --}}
                     <div class="fin-pane fin-hidden" id="fp-q-ratio">
                         @php
-                        $qRatio=$qFin->map(function($f){$pat=(float)($f->UL_FIN_PAT??0);$sf=(float)($f->UL_FIN_SHAREHOLDER_FUNDS??0);$td=(float)($f->UL_FIN_TOTAL_DEBT??0);$ta=(float)($f->UL_FIN_TOTAL_ASSETS??0);$op=(float)($f->UL_FIN_OPERATING_PROFIT??0);$ca=(float)($f->UL_FIN_CURRENT_ASSETS??0);$cl=(float)($f->UL_FIN_CURRENT_LIABILITIES??0);return['p'=>$f->UL_FIN_Period_end,'roe'=>$sf>0?round($pat/$sf*100,1):null,'roce'=>$ta>0?round($op/$ta*100,1):null,'roa'=>$ta>0?round($pat/$ta*100,1):null,'cr'=>$cl>0?round($ca/$cl,1):null,'de'=>$sf>0?round($td/$sf,2):null];});
+                        $qRatio=$qFin->map(function($f){$pat=(float)($f->UL_FIN_PAT??0);$sf=(float)($f->UL_FIN_SHAREHOLDER_FUNDS??0);$td=(float)($f->UL_FIN_TOTAL_DEBT??0);$ta=(float)($f->UL_FIN_TOTAL_ASSETS??0);$op=(float)($f->UL_FIN_OPERATING_PROFIT??0);$ca=(float)($f->UL_FIN_CURRENT_ASSETS??0);$cl=(float)($f->UL_FIN_CURRENT_LIABILITIES??0);return['p'=>$f->UL_FIN_Period_end,'roe'=>$sf!=0?round($pat/$sf*100,1):null,'roce'=>$ta>0?round($op/$ta*100,1):null,'roa'=>$ta>0?round($pat/$ta*100,1):null,'cr'=>$cl>0?round($ca/$cl,1):null,'de'=>$sf!=0?round($td/$sf,2):null];});
                         $qrL=$qRatio->last();$qrP=$qRatio->count()>=2?$qRatio[$qRatio->count()-2]:null;
                         @endphp
                         @php
