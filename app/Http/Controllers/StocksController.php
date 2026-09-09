@@ -342,28 +342,55 @@ class StocksController extends Controller
             ->orderBy('UL_PD_DATE')
             ->get(['UL_PD_DATE', 'UL_PD_BID_PRICE']);
 
+        // A period can have both a Consolidated ('C') and Standalone ('S') row;
+        // prefer Consolidated and keep only one row per period.
+        $dedupeFinByPeriod = function ($rows, int $take) {
+            $seen = [];
+            $out = [];
+            foreach ($rows as $row) {
+                if (isset($seen[$row->UL_FIN_Period_end])) {
+                    continue;
+                }
+                $seen[$row->UL_FIN_Period_end] = true;
+                $out[] = $row;
+                if (count($out) >= $take) {
+                    break;
+                }
+            }
+            return collect($out);
+        };
+
         $latestFin = DB::table('unlisted_financials')
             ->where('UL_FIN_FINCODE', $fincode)
             ->where('UL_FIN_STATUS', 1)
             ->where('UL_FIN_No_months', '12')
             ->orderByDesc('UL_FIN_Period_end')
+            ->orderByRaw("UL_FIN_Type = 'C' DESC")
             ->first();
 
-        $financials = DB::table('unlisted_financials')
-            ->where('UL_FIN_FINCODE', $fincode)
-            ->where('UL_FIN_STATUS', 1)
-            ->where('UL_FIN_No_months', '12')
-            ->orderByDesc('UL_FIN_Period_end')
-            ->limit(5)
-            ->get();
+        $financials = $dedupeFinByPeriod(
+            DB::table('unlisted_financials')
+                ->where('UL_FIN_FINCODE', $fincode)
+                ->where('UL_FIN_STATUS', 1)
+                ->where('UL_FIN_No_months', '12')
+                ->orderByDesc('UL_FIN_Period_end')
+                ->orderByRaw("UL_FIN_Type = 'C' DESC")
+                ->limit(40)
+                ->get(),
+            5
+        );
 
-        $quarterlyFin = DB::table('unlisted_financials')
-            ->where('UL_FIN_FINCODE', $fincode)
-            ->where('UL_FIN_STATUS', 1)
-            ->where('UL_FIN_No_months', '3')
-            ->orderByDesc('UL_FIN_Period_end')
-            ->limit(8)
-            ->get();
+        $quarterlyFin = $dedupeFinByPeriod(
+            DB::table('unlisted_financials')
+                ->where('UL_FIN_FINCODE', $fincode)
+                ->where('UL_FIN_STATUS', 1)
+                ->where('UL_FIN_No_months', '3')
+                ->orderByDesc('UL_FIN_Period_end')
+                ->orderByRaw("UL_FIN_Type = 'C' DESC")
+                ->limit(60)
+                ->get(),
+            8
+        );
 
         $thesis = DB::table('unlisted_thesis')
             ->where('UL_THESIS_FINCODE', $fincode)

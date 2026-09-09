@@ -61,12 +61,17 @@ class PublicController extends Controller
                 SELECT uf.*
                 FROM unlisted_financials uf
                 INNER JOIN (
-                    SELECT UL_FIN_FINCODE, MAX(UL_FIN_Period_end) AS max_period
+                    SELECT UL_FIN_FINCODE, UL_FIN_Period_end, UL_FIN_Type,
+                           ROW_NUMBER() OVER (
+                               PARTITION BY UL_FIN_FINCODE
+                               ORDER BY UL_FIN_Period_end DESC, (UL_FIN_Type = 'C') DESC
+                           ) AS rn
                     FROM unlisted_financials
                     WHERE UL_FIN_STATUS = 1 AND UL_FIN_No_months = '12'
-                    GROUP BY UL_FIN_FINCODE
-                ) lf ON lf.UL_FIN_FINCODE      = uf.UL_FIN_FINCODE
-                       AND uf.UL_FIN_Period_end = lf.max_period
+                ) lf ON lf.UL_FIN_FINCODE     = uf.UL_FIN_FINCODE
+                       AND lf.UL_FIN_Period_end = uf.UL_FIN_Period_end
+                       AND lf.UL_FIN_Type       = uf.UL_FIN_Type
+                       AND lf.rn = 1
                 WHERE uf.UL_FIN_STATUS = 1 AND uf.UL_FIN_No_months = '12'
             ) f ON f.UL_FIN_FINCODE = s.UL_STOCKS_FINCODE
             WHERE s.UL_STOCKS_STATUS = '1' AND p.UL_PD_BID_PRICE > 0
@@ -150,12 +155,17 @@ class PublicController extends Controller
                 SELECT uf.*
                 FROM unlisted_financials uf
                 INNER JOIN (
-                    SELECT UL_FIN_FINCODE, MAX(UL_FIN_Period_end) AS max_period
+                    SELECT UL_FIN_FINCODE, UL_FIN_Period_end, UL_FIN_Type,
+                           ROW_NUMBER() OVER (
+                               PARTITION BY UL_FIN_FINCODE
+                               ORDER BY UL_FIN_Period_end DESC, (UL_FIN_Type = 'C') DESC
+                           ) AS rn
                     FROM unlisted_financials
                     WHERE UL_FIN_STATUS = 1 AND UL_FIN_No_months = '12'
-                    GROUP BY UL_FIN_FINCODE
-                ) lf ON lf.UL_FIN_FINCODE      = uf.UL_FIN_FINCODE
-                       AND uf.UL_FIN_Period_end = lf.max_period
+                ) lf ON lf.UL_FIN_FINCODE     = uf.UL_FIN_FINCODE
+                       AND lf.UL_FIN_Period_end = uf.UL_FIN_Period_end
+                       AND lf.UL_FIN_Type       = uf.UL_FIN_Type
+                       AND lf.rn = 1
                 WHERE uf.UL_FIN_STATUS = 1 AND uf.UL_FIN_No_months = '12'
             ) f ON f.UL_FIN_FINCODE = s.UL_STOCKS_FINCODE
             WHERE s.UL_STOCKS_STATUS = '1' AND p.UL_PD_BID_PRICE > 0
