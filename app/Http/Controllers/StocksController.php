@@ -368,29 +368,38 @@ class StocksController extends Controller
             ->orderByRaw("UL_FIN_Type = 'C' DESC")
             ->first();
 
-        $financials = $dedupeFinByPeriod(
-            DB::table('unlisted_financials')
-                ->where('UL_FIN_FINCODE', $fincode)
-                ->where('UL_FIN_STATUS', 1)
-                ->where('UL_FIN_No_months', '12')
-                ->orderByDesc('UL_FIN_Period_end')
-                ->orderByRaw("UL_FIN_Type = 'C' DESC")
-                ->limit(40)
-                ->get(),
-            5
-        );
+        $fetchFinByType = function (string $type, string $noMonths, int $take) use ($fincode, $dedupeFinByPeriod) {
+            return $dedupeFinByPeriod(
+                DB::table('unlisted_financials')
+                    ->where('UL_FIN_FINCODE', $fincode)
+                    ->where('UL_FIN_STATUS', 1)
+                    ->where('UL_FIN_No_months', $noMonths)
+                    ->where('UL_FIN_Type', $type)
+                    ->orderByDesc('UL_FIN_Period_end')
+                    ->limit($take * 2)
+                    ->get(),
+                $take
+            );
+        };
 
-        $quarterlyFin = $dedupeFinByPeriod(
-            DB::table('unlisted_financials')
-                ->where('UL_FIN_FINCODE', $fincode)
-                ->where('UL_FIN_STATUS', 1)
-                ->where('UL_FIN_No_months', '3')
-                ->orderByDesc('UL_FIN_Period_end')
-                ->orderByRaw("UL_FIN_Type = 'C' DESC")
-                ->limit(60)
-                ->get(),
-            8
-        );
+        $financialsC     = $fetchFinByType('C', '12', 5);
+        $financialsS     = $fetchFinByType('S', '12', 5);
+        $quarterlyFinC   = $fetchFinByType('C', '3', 8);
+        $quarterlyFinS   = $fetchFinByType('S', '3', 8);
+
+        // A company almost always has only one type of financials on file; only
+        // when both exist does the public page show a Consolidated/Standalone
+        // toggle. Consolidated is treated as the default/primary view.
+        $hasConsolidated = $financialsC->isNotEmpty() || $quarterlyFinC->isNotEmpty();
+        $hasStandalone   = $financialsS->isNotEmpty() || $quarterlyFinS->isNotEmpty();
+        $hasAltFin       = $hasConsolidated && $hasStandalone;
+
+        $financials      = $hasConsolidated ? $financialsC : $financialsS;
+        $quarterlyFin    = $hasConsolidated ? $quarterlyFinC : $quarterlyFinS;
+        $financialsAlt   = $hasConsolidated ? $financialsS : $financialsC;
+        $quarterlyFinAlt = $hasConsolidated ? $quarterlyFinS : $quarterlyFinC;
+        $finTypeLabel    = $hasConsolidated ? 'Consolidated' : 'Standalone';
+        $altFinTypeLabel = $hasConsolidated ? 'Standalone' : 'Consolidated';
 
         $thesis = DB::table('unlisted_thesis')
             ->where('UL_THESIS_FINCODE', $fincode)
@@ -449,7 +458,8 @@ class StocksController extends Controller
 
         return view('public.company', compact(
             'stock', 'priceData', 'priceHistory', 'latestFin', 'financials', 'quarterlyFin', 'thesis', 'thesisHtml',
-            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue', 'documents', 'relatedArticles', 'relatedNews'
+            'currentPrice', 'marketCap', 'peRatio', 'eps', 'bookValue', 'documents', 'relatedArticles', 'relatedNews',
+            'hasAltFin', 'financialsAlt', 'quarterlyFinAlt', 'finTypeLabel', 'altFinTypeLabel'
         ));
     }
 }

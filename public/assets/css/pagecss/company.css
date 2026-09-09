@@ -862,6 +862,34 @@
 }
 .fin-note-top i { margin-right: 4px; color: #87b942; }
 
+/* ── Consolidated / Standalone toggle ── */
+.fin-ctype-row {
+    display: inline-flex;
+    gap: 0;
+    background: #f2f4f7;
+    border-radius: 8px;
+    padding: 3px;
+    margin: 12px 28px 0;
+}
+.fin-ctype-btn {
+    padding: 5px 18px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #777;
+    cursor: pointer;
+    transition: all .18s;
+    letter-spacing: .2px;
+}
+.fin-ctype-btn.active {
+    background: #fff;
+    color: #87b942;
+    box-shadow: 0 1px 4px rgba(0,0,0,.10);
+}
+.fin-ctype-btn:hover:not(.active) { color: #444; }
+
 /* ── Pane visibility ── */
 .fin-pane { display: block; padding: 0 0 6px; }
 .fin-hidden { display: none !important; }

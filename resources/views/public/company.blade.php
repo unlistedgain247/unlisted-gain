@@ -386,6 +386,14 @@
                     </div>
                     <p class="fin-note-top"><i class="fas fa-info-circle"></i> All figures are in Crores (&#8377;)</p>
 
+                    @if($hasAltFin)
+                    <div class="fin-ctype-row">
+                        <button class="fin-ctype-btn active" data-fintype="">{{ $finTypeLabel }}</button>
+                        <button class="fin-ctype-btn" data-fintype="-alt">{{ $altFinTypeLabel }}</button>
+                    </div>
+                    @endif
+
+                    <div class="fin-typeset" data-fintype-panel="">
                     {{-- Yearly P&L --}}
                     <div class="fin-pane" id="fp-y-pl">
                         <div class="fin-table-wrap"><table class="fin-table">
@@ -452,11 +460,6 @@
                         </table></div>
                     </div>
 
-                    {{-- Company Documents --}}
-                    <div class="fin-pane fin-hidden" id="fp-y-docs">
-                        @include('public.partials.company-docs', ['documents' => $documents])
-                    </div>
-
                     @if($qFin->isNotEmpty())
                     {{-- Quarterly P&L --}}
                     <div class="fin-pane fin-hidden" id="fp-q-pl">
@@ -519,9 +522,30 @@
                         </table></div>
                     </div>
 
-                    {{-- Company Documents (same content regardless of period) --}}
+                    @endif
+
+                    </div>{{-- /fin-typeset (default) --}}
+
+                    {{-- Company Documents — same regardless of financials type, so kept outside the toggle --}}
+                    <div class="fin-pane fin-hidden" id="fp-y-docs">
+                        @include('public.partials.company-docs', ['documents' => $documents])
+                    </div>
+                    @if($qFin->isNotEmpty())
                     <div class="fin-pane fin-hidden" id="fp-q-docs">
                         @include('public.partials.company-docs', ['documents' => $documents])
+                    </div>
+                    @endif
+
+                    @if($hasAltFin)
+                    <div class="fin-typeset fin-hidden" data-fintype-panel="-alt">
+                        @include('public.partials.company-financials-statements', [
+                            'financials' => $financialsAlt,
+                            'quarterlyFin' => $quarterlyFinAlt,
+                            'suffix' => '-alt',
+                            'toCr' => $toCr, 'fmtCr' => $fmtCr, 'fmtEps' => $fmtEps, 'epsVal' => $epsVal,
+                            'fmtChg' => $fmtChg, 'yearLabel' => $yearLabel, 'periodLabel' => $periodLabel,
+                            'calcYoy' => $calcYoy, 'calcCagr' => $calcCagr,
+                        ])
                     </div>
                     @endif
 
@@ -881,7 +905,7 @@
     }
 
     // ── Financial tabs ──
-    var activePeriod = 'y', activeTab = 'pl', activeMain = 'data', activeChartTab = 'pl';
+    var activePeriod = 'y', activeTab = 'pl', activeMain = 'data', activeChartTab = 'pl', activeFinType = '';
     var _charts = {};
     var GREEN = '#87b942', RED = '#e05c5c';
 
@@ -907,6 +931,20 @@
         btn.classList.add('active');
         if (activeMain === 'data') showPane();
         else { showChartsPeriod(); renderChartTab(); }
+    });
+
+    // Consolidated / Standalone toggle — only present when a company has both.
+    // Only affects the data tables; Charts always reflect the default type.
+    document.addEventListener('click', function(e){
+        var btn = e.target.closest('.fin-ctype-btn');
+        if (!btn) return;
+        activeFinType = btn.dataset.fintype || '';
+        document.querySelectorAll('.fin-ctype-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('[data-fintype-panel]').forEach(function(p){ p.classList.add('fin-hidden'); });
+        var panel = document.querySelector('[data-fintype-panel="' + activeFinType + '"]');
+        if (panel) panel.classList.remove('fin-hidden');
+        showPane();
     });
 
     // Data sub-tab (P&L / BS / CF / Ratio) — only on non-chart tabs
@@ -947,7 +985,10 @@
 
     function showPane() {
         document.querySelectorAll('.fin-pane').forEach(function(p){ p.classList.add('fin-hidden'); });
-        var el = document.getElementById('fp-' + activePeriod + '-' + activeTab);
+        // Company Documents are the same regardless of Consolidated/Standalone, so
+        // that pane is never suffixed even when a type toggle is present.
+        var suffix = (activeTab === 'docs') ? '' : activeFinType;
+        var el = document.getElementById('fp-' + activePeriod + '-' + activeTab + suffix);
         if (el) el.classList.remove('fin-hidden');
     }
 
