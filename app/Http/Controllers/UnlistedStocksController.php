@@ -23,11 +23,21 @@ class UnlistedStocksController extends Controller
             || !empty(Privilege::get('unlisted.stocks'));
     }
 
-    public function index()
+    public function index(Request $request)
     {
         if (!$this->canAccess()) abort(403);
 
-        $stocks   = UnlistedStock::orderByDesc('UL_STOCKS_FINCODE')->paginate(20);
+        $search = trim((string) $request->query('search', ''));
+
+        $stocks = UnlistedStock::orderByDesc('UL_STOCKS_FINCODE')
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($q) use ($search) {
+                    $q->where('UL_STOCKS_COMPNAME', 'like', '%' . $search . '%')
+                      ->orWhere('UL_STOCKS_FINCODE', 'like', '%' . $search . '%');
+                });
+            })
+            ->paginate(20)
+            ->withQueryString();
         $fincodes = $stocks->pluck('UL_STOCKS_FINCODE');
 
         $latestPrices = DB::table('unlisted_price_data as pd')
@@ -45,7 +55,7 @@ class UnlistedStocksController extends Controller
             ->get()
             ->keyBy('UL_PD_FINCODE');
 
-        return view('admin.unlisted.index', compact('stocks', 'latestPrices'));
+        return view('admin.unlisted.index', compact('stocks', 'latestPrices', 'search'));
     }
 
     public function docs()

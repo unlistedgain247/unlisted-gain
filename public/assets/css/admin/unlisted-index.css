@@ -1,3 +1,30 @@
+/* ── Dashboard search ──────────── */
+.us-search-input {
+    padding: 7px 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 7px;
+    font-size: 13px;
+    min-width: 240px;
+    outline: none;
+}
+.us-search-input:focus {
+    border-color: #87b942;
+    box-shadow: 0 0 0 3px rgba(135, 185, 66, .12);
+}
+.us-search-btn {
+    padding: 7px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 7px;
+    background: #fff;
+    cursor: pointer;
+    color: #666;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+.us-search-btn:hover { background: #f8fafc; color: #1a1a1a; }
+
 /* ── Toggle switch ─────────────── */
     .tgl-switch {
         position: relative;

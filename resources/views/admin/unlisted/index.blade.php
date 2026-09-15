@@ -10,7 +10,16 @@
 @include('partials.admin-unlisted-subnav')
 <div class="admin-main">
 
-    <h1 class="admin-page-title">Dashboard</h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <h1 class="admin-page-title" style="margin:0;">Dashboard</h1>
+        <form method="GET" action="{{ url('/admin/unlisted') }}" style="display:flex;gap:6px;">
+            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Search by company / fincode..." class="us-search-input">
+            <button type="submit" class="us-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            @if(!empty($search))
+                <a href="{{ url('/admin/unlisted') }}" class="us-search-btn" title="Clear search"><i class="fa-solid fa-xmark"></i></a>
+            @endif
+        </form>
+    </div>
 
     <div class="admin-card">
         <div class="admin-table-wrap">
@@ -90,7 +99,11 @@
                     <tr>
                         <td colspan="6" style="text-align:center;color:#aaa;padding:32px">
                             <i class="fa-regular fa-folder-open" style="font-size:24px;display:block;margin-bottom:8px"></i>
-                            No stocks added yet. Click <strong>+ Add Stocks</strong> to get started.
+                            @if(!empty($search))
+                                No stocks found matching "{{ $search }}".
+                            @else
+                                No stocks added yet. Click <strong>+ Add Stocks</strong> to get started.
+                            @endif
                         </td>
                     </tr>
                     @endforelse
