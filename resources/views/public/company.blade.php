@@ -795,14 +795,12 @@
                         </div>
                     </div>
                     @endif
-                    @if($stock->UL_STOCKS_WEBSITE)
+                    @if($latestFin?->UL_FIN_NUM_SHARES)
                     <div class="cp-detail-card">
-                        <div class="cp-detail-icon"><i class="fas fa-globe"></i></div>
+                        <div class="cp-detail-icon"><i class="fas fa-hashtag"></i></div>
                         <div class="cp-detail-body">
-                            <span class="cp-detail-label">Website</span>
-                            <a href="{{ $stock->UL_STOCKS_WEBSITE }}" target="_blank" rel="noopener" class="cp-detail-link">
-                                {{ $stock->UL_STOCKS_WEBSITE }} <i class="fas fa-external-link-alt"></i>
-                            </a>
+                            <span class="cp-detail-label">Outstanding Shares</span>
+                            <span class="cp-detail-value">{{ number_format($latestFin->UL_FIN_NUM_SHARES) }}</span>
                         </div>
                     </div>
                     @endif
