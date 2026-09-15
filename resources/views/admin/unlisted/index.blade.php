@@ -12,11 +12,21 @@
 
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
         <h1 class="admin-page-title" style="margin:0;">Dashboard</h1>
-        <form method="GET" action="{{ url('/admin/unlisted') }}" style="display:flex;gap:6px;">
+        <form method="GET" action="{{ url('/admin/unlisted') }}" style="display:flex;gap:6px;flex-wrap:wrap;">
             <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Search by company / fincode..." class="us-search-input">
+            <select name="status" class="us-search-select">
+                <option value="">All Status</option>
+                <option value="1" {{ ($status ?? '') === '1' ? 'selected' : '' }}>Active</option>
+                <option value="0" {{ ($status ?? '') === '0' ? 'selected' : '' }}>Inactive</option>
+            </select>
+            <select name="buy_sell" class="us-search-select">
+                <option value="">Buy/Sell Flag</option>
+                <option value="Yes" {{ ($buySell ?? '') === 'Yes' ? 'selected' : '' }}>Yes</option>
+                <option value="No" {{ ($buySell ?? '') === 'No' ? 'selected' : '' }}>No</option>
+            </select>
             <button type="submit" class="us-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-            @if(!empty($search))
-                <a href="{{ url('/admin/unlisted') }}" class="us-search-btn" title="Clear search"><i class="fa-solid fa-xmark"></i></a>
+            @if(($search ?? '') !== '' || ($status ?? '') !== '' || ($buySell ?? '') !== '')
+                <a href="{{ url('/admin/unlisted') }}" class="us-search-btn" title="Clear filters"><i class="fa-solid fa-xmark"></i></a>
             @endif
         </form>
     </div>

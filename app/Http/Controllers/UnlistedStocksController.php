@@ -27,7 +27,9 @@ class UnlistedStocksController extends Controller
     {
         if (!$this->canAccess()) abort(403);
 
-        $search = trim((string) $request->query('search', ''));
+        $search   = trim((string) $request->query('search', ''));
+        $status   = trim((string) $request->query('status', ''));
+        $buySell  = trim((string) $request->query('buy_sell', ''));
 
         $stocks = UnlistedStock::orderByDesc('UL_STOCKS_FINCODE')
             ->when($search !== '', function ($q) use ($search) {
@@ -36,6 +38,8 @@ class UnlistedStocksController extends Controller
                       ->orWhere('UL_STOCKS_FINCODE', 'like', '%' . $search . '%');
                 });
             })
+            ->when($status !== '', fn($q) => $q->where('UL_STOCKS_STATUS', $status))
+            ->when($buySell !== '', fn($q) => $q->where('UL_STOCKS_BUY_SELL_FLAG', $buySell))
             ->paginate(20)
             ->withQueryString();
         $fincodes = $stocks->pluck('UL_STOCKS_FINCODE');
@@ -55,7 +59,7 @@ class UnlistedStocksController extends Controller
             ->get()
             ->keyBy('UL_PD_FINCODE');
 
-        return view('admin.unlisted.index', compact('stocks', 'latestPrices', 'search'));
+        return view('admin.unlisted.index', compact('stocks', 'latestPrices', 'search', 'status', 'buySell'));
     }
 
     public function docs()
