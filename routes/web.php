@@ -19,6 +19,7 @@ use App\Http\Controllers\CmsAuthorProfileController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\SitemapController;
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -53,6 +54,7 @@ Route::get('/sebi-guidelines',     [PublicController::class, 'sebiGuidelines'])-
 Route::get('/knowledge-centre',    [PublicController::class, 'knowledgeCentre'])->name('public.knowledge-centre');
 Route::get('/faq',                 [PublicController::class, 'faq'])->name('public.faq');
 Route::get('/market-widget-data',  [PublicController::class, 'marketWidgetData'])->name('public.market-widget.data');
+Route::get('/sitemap.xml',         [SitemapController::class, 'index'])->name('public.sitemap');
 
 Route::get('/articles',         [ArticleController::class, 'index'])->name('public.articles');
 Route::get('/articles/{slug}',  [ArticleController::class, 'show'])->name('public.articles.show');
