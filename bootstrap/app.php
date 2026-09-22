@@ -24,6 +24,12 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
+        // Meta's servers POST here with no CSRF token — the request is
+        // authenticated by the verify token / webhook secret instead.
+        $middleware->validateCsrfTokens(except: [
+            'whatsapp/webhook',
+        ]);
+
         // Opt-in only — unset by default, which trusts no proxy (the safe
         // framework default). Only set TRUSTED_PROXIES in .env after confirming
         // with your host that traffic actually passes through a TLS-terminating

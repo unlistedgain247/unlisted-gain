@@ -20,6 +20,10 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\WhatsAppWebhookController;
+
+Route::get('/whatsapp/webhook',  [WhatsAppWebhookController::class, 'verify'])->name('whatsapp.webhook.verify');
+Route::post('/whatsapp/webhook', [WhatsAppWebhookController::class, 'receive'])->name('whatsapp.webhook.receive');
 
 Route::get('/login', function () {
     return view('auth.login');

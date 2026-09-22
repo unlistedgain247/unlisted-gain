@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'whatsapp' => [
+        'phone_number_id'   => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'access_token'      => env('WHATSAPP_ACCESS_TOKEN'),
+        'api_version'       => env('WHATSAPP_API_VERSION', 'v21.0'),
+        'verify_token'      => env('WHATSAPP_VERIFY_TOKEN'),
+        'otp_template'      => env('WHATSAPP_OTP_TEMPLATE', 'otp_login'),
+        'otp_template_lang' => env('WHATSAPP_OTP_TEMPLATE_LANG', 'en_US'),
+    ],
+
 ];
